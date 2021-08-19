@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Access EJBCA using USB Tokens and Smart Cards - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=85929497"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Documentation.html">EJBCA Documentation</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_Integration.html">EJBCA Integration</a></li>
+                                                                                     <li><a href="Integrating_with_Third-Party_Applications.html">Integrating with Third-Party Applications</a></li>
+                                                            </ul>
+</div>            <h1 id="src-85929497"> <span>Access EJBCA using USB Tokens and Smart Cards</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p   
+>The recommended way of authenticating with EJBCA in a high security environment is by using a hard token. This means you use a hardware token instead of storing the private key directly in the browser. You can log in to EJBCA using most USB tokens and smart cards supporting PKCS11.</p>
+<p   
+>This is more secure than using a P12-file (soft token) installed in your browser, because:</p>
+<ul class=" "><li class=" "><p   
+>The token cannot be easily copied.</p>
+</li><li class=" "><p   
+>The private key is never exposed outside the token (the key is generated on the token and signature operations are performed by the token).</p>
+</li><li class=" "><p   
+>The token can lock itself if someone tries to guess the PIN.</p>
+</li></ul><p   
+>The following is a small selection of tokens that have recently been tested for direct simple usage. Note that other tokens and other Card/Token Management Systems (CMS) are also working well and in production all around the world. If you are planning a commercial project, contact PrimeKey for the latest list of supported integrations with tokens and token management systems. For hardware or driver support on specific tokens, contact the token vendor. New tokens are continuously appearing on the market, and this documentation is not updated to reflect this, but should be treated as examples.</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Token</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Tested on</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Enrollment method</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Year tested/documented</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://www.securemetric.com/pki-solution/pki-token/securetoken-st3/">SecureMetric ST3</a></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Linux and Windows</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>SecureTMS Client</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>2018</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://www.securemetric.com/pki-solution/pki-token/securetoken-st3-ace/">SecureMetric ST3 Ace</a></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Linux and Windows</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>SecureTMS Client</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>2018</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://www.yubico.com/product/yubikey-5-nfc/">Yubico YubiKey 5 (NFC</a>)</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Linux</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>YubiKey PIV Manager or PIV Tools</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>2018</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://www.yubico.com/product/yubikey-c-fips/">Yubico YubiKey C FIPS</a></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Linux</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>YubiKey PIV Manager</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>2018</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://www.ftsafe.com/onlinestore/product?id=3">Feitian ePass2003</a></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Windows</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Legacy browser enrollment<br/><img  class="emoticon emoticon-warning"  src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ Browser enrollment is not supported in any web browsers since the end of 2019.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>2018</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://www.aventra.fi/webshop/">Aventra MyEID</a></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Linux and Windows</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>OpenSC/OpenSSL (or ActiveCMS)</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>2017</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://safenet.gemalto.com/multi-factor-authentication/authenticators/pki-usb-authentication/">Gemalto SafeNet eToken</a> 5100</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Windows</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Windows <i class=" "><i class=" ">certreq </i></i>with SafeNet Authentication Client 8.3</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>2019</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://nl.wikipedia.org/wiki/Rijkspas">Rijkspas</a> 2.0</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Windows</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Windows <i class=" ">certreq with AET SafeSign IC Minidriver version 3.5.0.0-AET</i></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>2019</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+<p   
+>The following browsers have known working smart card integration:</p>
+<ul class=" "><li class=" "><p   
+>Firefox</p>
+</li><li class=" "><p   
+>Chromium</p>
+</li><li class=" "><p   
+>Microsoft Edge</p>
+</li><li class=" "><p   
+>Internet Explorer (deprecated un-supported browser)</p>
+</li></ul>    <div class="section section-1" id="src-85929497_id-.AccessEJBCAusingUSBTokensandSmartCardsv7.4.0-SmartCardIntegrationwithFirefox">
+        <h1 class="heading "><span>Smart Card Integration with Firefox</span></h1>
+<p   
+>Support for smart cards is built into Firefox and is accessed as follows:</p>
+<ol class=" "><li class=" "><p   
+>Type <strong class=" ">about:preferences#privacy</strong> in the address bar and press <strong class=" ">Enter.</strong></p>
+</li><li class=" "><p   
+>Scroll down to the bottom of the page and click <strong class=" ">Security Devices</strong>.</p>
+</li><li class=" "><p   
+>Add a new PKCS11 module by clicking <strong class=" ">Load</strong>.</p>
+</li><li class=" "><p   
+>Specify the name of the module, click <strong class=" ">Browse</strong>, and then<strong class=" "> </strong>point to the PKCS11 module you want to use. This is typically a dynamic-link library (.dll) file on Windows, or an shared object (.so) file on Linux.</p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>If you are using a 64-bit version of Firefox, make sure you are loading the 64-bit version of the PKCS11 library.</p>
+        </div>
+    </div>
+<p   
+></p>
+</li><li class=" "><p   
+>Click <strong class=" ">OK</strong> to add the module.</p>
+</li></ol>    </div>
+    <div class="section section-1" id="src-85929497_id-.AccessEJBCAusingUSBTokensandSmartCardsv7.4.0-SmartCardIntegrationinChromium">
+        <h1 class="heading "><span>Smart Card Integration in Chromium</span></h1>
+<p   
+>Chromium does not have a graphical user interface but does have PKCS11 support. For more information, refer to the ubuntu documentation on <a  class="external-link" href="https://help.ubuntu.com/community/CommonAccessCard#Google_Chrome.2FChromium_Setup">Google Chrome/Chromium Setup</a>.</p>
+    <div  class="confbox admonition admonition-info">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>This procedure has been tested on a 64-bit Ubuntu 16.04 with Chromium 70.</p>
+        </div>
+    </div>
+<ol class=" "><li class=" "><p   
+>Install NSS tools.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">sudo apt-get install libnss3-tools</code></div>
+</div>
+    </div>
+<p   
+></p>
+</li><li class=" "><p   
+>Close Chromium if it is running.</p>
+</li><li class=" "><p   
+>Add a new PKCS11 module.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">modutil -dbdir sql:.pki/nssdb/ -add </code><code class="string">"Module Name"</code><code class="plain"> -libfile /path/to/pkc11.so</code></div>
+</div>
+    </div>
+</li></ol>    </div>
+    <div class="section section-1" id="src-85929497_id-.AccessEJBCAusingUSBTokensandSmartCardsv7.4.0-OpenSC">
+        <h1 class="heading "><span>OpenSC</span></h1>
+<p   
+>The <a  class="external-link" href="https://github.com/OpenSC/OpenSC">OpenSC project</a> contains a generic PKCS11 module with support for many different USB tokens and smart cards.</p>
+<p   
+>To install directly from the repository in Ubuntu, run:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">sudo apt-get install opensc</code></div>
+</div>
+    </div>
+<p   
+>There is also a <a  class="external-link" href="https://github.com/OpenSC/OpenSC/releases/">Windows installer</a> available.</p>
+    </div>
+    <div class="section section-1" id="src-85929497_id-.AccessEJBCAusingUSBTokensandSmartCardsv7.4.0-WindowsCertreq">
+        <h1 class="heading "><span>Windows Certreq</span></h1>
+<p   
+>You can enroll a smartcard using the <i class=" ">certreq</i> command on Windows.</p>
+<ol class=" "><li class=" "><p   
+>Create a smartcard.inf file containing:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">[NewRequest] </code></div>
+<div class="line"><code class="plain">Subject = </code><code class="string">"cn=smartcard-authentication,o=Company,c=nl"</code><code class="plain"> </code></div>
+<div class="line"><code class="plain">KeySpec = </code><code class="value">1</code><code class="plain"> </code></div>
+<div class="line"><code class="plain">KeyLength = </code><code class="value">2048</code><code class="plain"> </code></div>
+<div class="line"><code class="plain">Exportable = FALSE </code></div>
+<div class="line"><code class="plain">SMIME = False </code></div>
+<div class="line"><code class="plain">PrivateKeyArchive = FALSE </code></div>
+<div class="line"><code class="plain">UserProtected = FALSE </code></div>
+<div class="line"><code class="plain">UseExistingKeySet = FALSE </code></div>
+<div class="line"><code class="plain">ProviderType = </code><code class="value">1</code><code class="plain"> </code></div>
+<div class="line"><code class="plain">RequestType = PKCS10 </code></div>
+<div class="line"><code class="plain">ProviderName = SEE TABLE BELOW</code></div>
+</div>
+    </div>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Smartcard vendor/type</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Cryptographic Service Provider</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Rijkspas smart card (dutch government ID card) with AET driver</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Microsoft Base Smart Card Crypto Provider</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Gemalto eToken (USB) with SafeNet driver</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>eToken Base Cryptographic Provider</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+<p   
+></p>
+</li><li class=" "><p   
+>Make sure the CA chain of the certificate that will be enrolled on smartcard is trusted; Import the Root CA into the Trusted Root Certification Authorities Certificate Store and import the Issuing Intermediate CA(s) into the Intermediate Certification Authorities store. This can be done in several ways, for example:</p>
+<ol class=" "><li class=" "><p   
+>Centrally, using a GPO or by importing the Root CA into AD</p>
+</li><li class=" "><p   
+>Locally, by (manually) adding the CA certificates to the Trusted Root Certification Authorities Certificate Store. This requires the user has this authorization (no strict root ca policy).<br/>Refer to the Microsoft guidelines if you need more information.</p>
+</li></ol></li><li class=" "><p   
+>Create a CSR:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">PS C:\&gt; certreq -</code><code class="keyword">new</code><code class="plain"> smartcard.inf smartcard.csr</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>Enroll the certificate using EJBCA and the CSR file</p>
+</li><li class=" "><p   
+>Import the certificate to the smartcard:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">PS C:\&gt; certreq -accept receivedcertificate.cer</code></div>
+</div>
+    </div>
+</li></ol><p   
+>The certificate is installed on smart card and ready for use. The contents of the smart card can be listed using:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">certutil -v -scinfo</code></div>
+</div>
+    </div>
+<p   
+>Resources:<br/>Technical Reference Windows and Smart cards: <a  class="external-link" href="https://docs.microsoft.com/en-us/windows/security/identity-protection/smart-cards/smart-card-windows-smart-card-technical-reference">https://docs.microsoft.com/en-us/windows/security/identity-protection/smart-cards/smart-card-windows-smart-card-technical-reference</a></p>
+<p   
+></p>
+    </div>
+    <div class="section section-1" id="src-85929497_id-.AccessEJBCAusingUSBTokensandSmartCardsv7.4.0-RelatedContent">
+        <h1 class="heading "><span>Related Content</span></h1>
+<ul class=" "><li class=" "><p   
+><a   href="Using_YubiKeys_with_EJBCA.html">Using YubiKeys with EJBCA</a></p>
+</li></ul>    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="Integrating_with_Third-Party_Applications.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Integrating with Third-Party Applications</span>
+        </a>
+                <a href="Using_YubiKeys_with_EJBCA.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Using YubiKeys with EJBCA</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

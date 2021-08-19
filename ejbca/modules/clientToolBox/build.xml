@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="clientToolBox" default="build">
+	<description>
+		A stand alone CLI toolbox for interacting with EJBCA
+	</description>
+
+	<dirname property="clientToolBox.dir" file="${ant.file.clientToolBox}"/>
+	<property name="appserver.type" value="dummy. clientToolBox is not using any appserver."/>
+
+    <import file="${clientToolBox.dir}/../build-helpers.xml"/>
+
+	<property name="clientToolBox.build.dir" location="${clientToolBox.dir}/build"/>
+	<property name="clientToolBox.src.dir" location="${clientToolBox.dir}/src"/>
+	<property name="clientToolBox.intresources.dir" location="${clientToolBox.dir}/intresources"/>
+	<property name="clientToolBox.src-test.dir" location="${clientToolBox.dir}/src-test"/>
+	<property name="clientToolBox.build-test.dir" location="${clientToolBox.dir}/build-test"/>
+
+	<path id="clientToolBox.lib.classpath">
+		<path refid="lib.bouncycastle.classpath"/>
+		<path refid="lib.cert-cvc.classpath"/>
+		<path refid="lib.commons-collections.classpath"/>
+		<path refid="lib.commons-config.classpath"/>
+		<path refid="lib.commons-io.classpath"/>	
+		<path refid="lib.commons-lang.classpath"/>
+		<path refid="lib.commons-logging.classpath"/>
+		<path refid="lib.jacknji.classpath"/>
+		<path refid="lib.ldap.classpath"/>
+		<path refid="lib.log4j.classpath"/> 		
+		<path location="${mod.cesecore-common.lib}"/>
+		<path location="${mod.cesecore-ejb-interface.lib}"/>
+		<path location="${mod.ejbca-common.lib}"/>
+		<path location="${mod.ejbca-common-web.lib}"/>
+		<path location="${mod.ejbca-ws.lib}"/>
+		<path location="${mod.ejbca-ws-client.lib}"/>
+		<path location="${mod.caa.lib}.lib}"/>
+        <path refid="lib.hc.classpath"/> <!-- Apache http client for REST API calls -->
+        <path refid="lib.json-simple.classpath"/> <!-- for REST API calls -->
+	</path>
+
+	<path id="compile-test.classpath">
+		<path location="${clientToolBox.build.dir}" />
+		<path refid="lib.system-rules.classpath"/>
+		<path refid="lib.junit.classpath"/>
+		<path refid="lib.commons-lang.classpath" />
+		<path refid="lib.log4j.classpath"/>
+		<path refid="lib.bouncycastle.classpath" />
+		<path refid="lib.cert-cvc.classpath" />
+		<path location="${mod.systemtest-common.lib}"/>
+		<path location="${mod.systemtest-interface.lib}"/>
+		<path location="${mod.cesecore-common.lib}"/>
+		<path location="${mod.cesecore-ejb-interface.lib}"/>
+		<pathelement location="${mod.ejbca-common.lib}"/>
+		<pathelement location="${mod.ejbca-ejb-interface.lib}"/>
+	</path>
+
+
+	<path id="test.classpath">
+		<path refid="compile-test.classpath"/>
+		<path refid="lib.jee-client.classpath"/>
+		<path refid="lib.commons-config.classpath" />
+		<path refid="lib.commons-io.classpath" />
+		<path refid="lib.cert-cvc.classpath" />
+		<path refid="lib.ldap.classpath" />
+		<path location="${clientToolBox.build-test.dir}" />
+		<path location="${mod.cesecore-ejb-interface.lib}"/>
+        <path location="${ejbca.home}/modules/cesecore-x509ca/build/classes"/>
+		<path location="${mod.cesecore-entity.lib}"/>
+		<pathelement location="${mod.ejbca-ws-cli.lib}"/>
+		<pathelement location="${mod.ejbca-common-web.lib}"/>
+	</path>
+
+	<target name="build" description="Build this module" depends="compile">
+		<pathconvert property="clientToolBox.dependencies" pathsep=" ">
+			<path>
+				<fileset dir="${mod.clientToolBox.dist}" includes="lib/*.jar"/>
+			</path>
+			<map from="${mod.clientToolBox.dist}/" to=""/>
+		</pathconvert>
+		<jar jarfile="${mod.clientToolBox.lib}">
+			<manifest >
+                <attribute name="Implementation-Version" value="${app.version}"/>
+				<attribute name="Class-path" value="${clientToolBox.dependencies} ./ properties/" />
+				<attribute name="Main-Class" value="org.ejbca.ui.cli.ClientToolBox"/>
+			</manifest>
+			<fileset dir="${clientToolBox.build.dir}"/>
+			<fileset dir="${clientToolBox.intresources.dir}"/>
+			<fileset dir="${ejbca.home}" includes="conf/*.properties"/>
+		</jar>
+	</target>
+
+	<target name="clean" description="Clean up this module">
+		<delete dir="${clientToolBox.build.dir}" />
+		<delete dir="${clientToolBox.build-test.dir}" />
+		<delete dir="${mod.clientToolBox.dist}" />
+	</target>
+
+	<target name="compile" depends="setup">
+		<mkdir dir="${clientToolBox.build.dir}" />
+		<javac destdir="${clientToolBox.build.dir}" debug="on" includeantruntime="no" encoding="UTF-8" target="${java.target.version}">
+			<classpath>
+				<path refid="clientToolBox.lib.classpath"/>
+			</classpath>
+			<src path="${clientToolBox.src.dir}"/>
+			<include name="org/ejbca/ui/cli/ClientToolBox.java" />
+		</javac>
+	</target>
+
+	<target name="setup">
+		<mkdir dir="${mod.clientToolBox.dist}"/>
+		<!-- Copy all the files in the clientToolBox.lib.classpath to mod.clientToolBox.dist/lib -->
+		<pathconvert property="lib.clientToolBox.classpath.property" pathsep=" ">
+			<path refid="clientToolBox.lib.classpath" />
+			<map from="${ejbca.home}/" to=""/>
+		</pathconvert>
+		<copy todir="${mod.clientToolBox.dist}/lib" flatten="true">
+			<fileset dir="${ejbca.home}" includes="${lib.clientToolBox.classpath.property}"/>
+		</copy>
+        <!-- Copy all the files needed for a WS client to mod.clientToolBox.dist/lib -->
+        <pathconvert property="soapclient.classpath.property" pathsep=" ">
+            <path refid="soapclient.classpath" />
+            <map from="${ejbca.home}/" to=""/>
+        </pathconvert>
+        <copy todir="${mod.clientToolBox.dist}/lib" flatten="true">
+            <fileset dir="${ejbca.home}" includes="${soapclient.classpath.property}"/>
+        </copy>
+		<!-- Copy scripts etc to mod.clientToolBox.dist -->
+		<copy todir="${mod.clientToolBox.dist}">
+			<fileset file="${mod.ejbca-ws-cli.path}/resources/ejbcawsracli.properties"/>
+			<fileset dir="${clientToolBox.dir}/resources">
+				<include name="ejbcaClientToolBox.bat"/>
+				<include name="ejbcaClientToolBox.sh"/>
+				<include name="README"/>
+				<include name="properties/**/*.*"/>
+			</fileset>
+		</copy>		                
+		<copy todir="${mod.clientToolBox.dist}/properties">
+			<fileset file="${mod.ejbca-properties.path}/build/internal.properties"/>				
+		</copy>	
+		<chmod file="${mod.clientToolBox.dist}/*.sh" perm="a+rx"/>
+	</target>
+
+	<!-- Tests -->
+	<target name="compile-tests" depends="build">
+		<mkdir dir="${clientToolBox.build-test.dir}" />
+		<copy file="${log4j.test.file}" tofile="${clientToolBox.build-test.dir}/log4j.xml" failonerror="true"/>
+		<copy file="${jndi.properties.file}" tofile="${clientToolBox.build-test.dir}/jndi.properties" failonerror="true"/>
+		<copy file="${jboss-ejb-client.properties}" todir="${clientToolBox.build-test.dir}" failonerror="true"/>
+		<javac srcdir="${clientToolBox.src-test.dir}" destdir="${clientToolBox.build-test.dir}" debug="on" includeantruntime="no"
+			   encoding="UTF-8" target="${java.target.version}" classpathref="compile-test.classpath">
+			<sourcepath location="${mod.systemtests.path}/src-test/"/>
+		</javac>
+	</target>
+
+	<target name="test:stress" depends="compile-tests" description="Run stress tests for this module">
+		<antcall target="showtime" inheritall="true" inheritrefs="true"/>
+		<junit printsummary="yes" haltonfailure="no" showoutput="${test.showoutput}" dir="${clientToolBox.dir}">
+			<classpath>
+				<path refid="test.classpath"/>
+			</classpath>
+			<formatter type="xml" />
+			<batchtest fork="yes" todir="${reports.dir}">
+				<fileset dir="${clientToolBox.build-test.dir}" includes="**/*Test.class">
+				</fileset>
+			</batchtest>
+			<jvmarg line="${tests.jvmargs}"/>
+		</junit>
+		<antcall target="showtime" inheritall="true" inheritrefs="true"/>
+	</target>
+
+	<target name="runone" depends="compile-tests">
+		<fail message="'test.runone' is not set. Example -Dtest.runone=HealthCheckTest . You can also use -Dtest.showoutput=true to send test output to console." unless="test.runone" />
+		<condition property="remoteDebugJvmArgs"
+				   value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8787"
+				   else="-ea">
+			<istrue value="${remoteDebug}"/>
+		</condition>
+		<junit printsummary="yes" haltonfailure="no" showoutput="${test.showoutput}">
+			<classpath>
+				<path refid="test.classpath"/>
+			</classpath>
+			<formatter type="xml" />
+			<batchtest fork="yes" todir="${reports.dir}">
+				<fileset dir="${clientToolBox.build-test.dir}">
+					<include name="**/${test.runone}.class" />
+				</fileset>
+			</batchtest>
+			<jvmarg line="${tests.jvmargs}"/>
+			<jvmarg value="${remoteDebugJvmArgs}"/>
+		</junit>
+	</target>
+
+
+
+</project>

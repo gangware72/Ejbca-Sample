@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>SCEP - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=93591963"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Documentation.html">EJBCA Documentation</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_Operations.html">EJBCA Operations</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_CA_Concept_Guide.html">EJBCA CA Concept Guide</a></li>
+                                                                                     <li><a href="Protocols.html">Protocols</a></li>
+                                                            </ul>
+</div>            <h1 id="src-93591963"> <span>SCEP</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+    <div  class="confbox admonition admonition-info">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>This page describes EJBCA support of the SCEP protocol. For guides on how to use SCEP with EJBCA, see the <a   href="SCEP_Operations_Guide.html">SCEP Operations Guide</a>.</p>
+        </div>
+    </div>
+<p   
+>SCEP is a protocol commonly used by network equipment to enroll for certificates. It is also used by MdM and EMM solutions to enroll certificates on behalf of devices such as mobiles. SCEP is specified in the IETF draft <a  class="external-link" href="https://tools.ietf.org/id/draft-nourse-scep-23.txt">Simple Certificate Enrollment Protocol (draft-nourse-scep-23)</a>.</p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>SCEP has in general use been supplanted by the similar <a   href="EST.html">EST</a> protocol, which we recommend as an alternative.</p>
+<p   
+>There are some compatibility issues with SCEP, one being whether the CA certificate should be returned in a SCEP enrollment response or not. The CA certificate is optional (and configurable in EJBCA), and some clients such as the Cisco VPN client require it while others, such as Juniper's, prohibit it.</p>
+        </div>
+    </div>
+    <div class="section section-1" id="src-93591963_id-.SCEPv7.4.1-SupportedOperationsLevel_of_SCEP_support">
+        <h1 class="heading "><span id="src-93591963_id-.SCEPv7.4.1-Level_of_SCEP_support" class="confluence-anchor-link"></span><span>Supported Operations </span></h1>
+<p   
+>EJBCA implements features as of (at least) draft 23 of the SCEP specification. The following SCEP messages are implemented:</p>
+<ul class=" "><li class=" "><p   
+><i class=" ">PKCSReq</i> including Client Certificate Renewal</p>
+</li><li class=" "><p   
+><i class=" ">GetCRL</i></p>
+</li><li class=" "><p   
+><i class=" ">GetCACert</i></p>
+</li><li class=" "><p   
+><i class=" ">GetCACertChain</i></p>
+</li><li class=" "><p   
+><i class=" ">GetCACaps</i></p>
+</li><li class=" "><p   
+><i class=" ">GetNextCACert</i></p>
+</li><li class=" "><p   
+><i class=" ">GetCertInitial</i></p>
+</li></ul><p   
+>The following CA capabilities are supported:</p>
+<ul class=" "><li class=" "><p   
+>POSTPKIOperation</p>
+</li><li class=" "><p   
+>SHA-512</p>
+</li><li class=" "><p   
+>SHA-256</p>
+</li><li class=" "><p   
+>SHA-1</p>
+</li><li class=" "><p   
+>DES3</p>
+</li><li class=" "><p   
+>Client Certificate Renewal (Enterprise Edition only)</p>
+</li></ul>    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>Note that EJBCA returns proper SCEP error messages for the majority of failures, but not in all cases of failure.</p>
+        </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-93591963_id-.SCEPv7.4.1-OperationalModesOperation_Mode">
+        <h1 class="heading "><span id="src-93591963_id-.SCEPv7.4.1-Operation_Mode" class="confluence-anchor-link"></span><span>Operational Modes </span></h1>
+<p   
+>SCEP can be run in either <a   href="#src-93591963_id-.SCEPv7.4.1-CAMode">CA Mode</a> or <a   href="#src-93591963_id-.SCEPv7.4.1-RAMode">RA Mode</a>. In CA mode EJBCA acts in a basic CA capacity under the assumption that RA functions (i.e enrollment) are handled by an administrator directly in the RA UI or by a third party acting as RA. In RA mode EJBCA interfaces directly with the client, enrolling the end entity and then issuing the certificate all on its own.</p>
+    <div class="section section-2" id="src-93591963_id-.SCEPv7.4.1-CAMode">
+        <h2 class="heading "><span>CA Mode</span></h2>
+<p   
+>In CA mode, EJBCA receives SCEP <strong class=" ">PKCSReq</strong> requests and sends back the certificate/CRL immediately in a proper SCEP reply message. The SCEP client will send messages directly to the CA, encrypted with the CAs certificate and the CA will authenticate/authorize the request based on username and enrollment code of an end entity pre-created in EJBCA. This mode does not support the 'polling' model, EJBCA uses the direct CA method, where a request is granted or denied immediately.</p>
+<p   
+><img  class="confluence-embedded-image"  src="images/download/attachments/93591963/Screen_Shot_2018-08-02_at_08.59.47.png" alt="images/download/attachments/93591963/Screen_Shot_2018-08-02_at_08.59.47.png" width="600"  />
+    </p>
+<ul class=" "><li class=" "><p   
+>The CN part of the DN in the PKCS#10 request, which is part of the SCEP request, will be used as the 'username' when authenticating the request in EJBCA. Create the SCEP request with a CN matching the username registered in EJBCA.</p>
+</li><li class=" "><p   
+>The challengePassword in the PKCS#10 request, which is part of the SCEP request, will be used as the 'password' when authenticating the request in EJBCA. Create the SCEP request with a challengePassword matching the password registered in EJBCA.</p>
+</li></ul><p   
+>The CA used is either specified by the message or by the property <tt class=" ">scep.defaultca</tt> if no message is sent.</p>
+    <div class="section section-3" id="src-93591963_id-.SCEPv7.4.1-ConfigurationValues">
+        <h3 class="heading "><span>Configuration Values</span></h3>
+    <div  class="tablewrap">
+        <table class="relative-table wrapped confluenceTable">
+                    <colgroup>
+                                    <col  width="24%"/>
+                                    <col  width="75%"/>
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Value Name</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Description</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Include CA Certificate in Response</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Setting this value to true will cause the CA certificate to be included in the response, if applicable.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Allow Client Certificate Renewal</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+<p   
+><span class="status blue " >ENTERPRISE</span>
+ This is an EJBCA Enterprise feature.</p>
+<p   
+>This setting activates Client Certificate Renewal, as defined in IETF <a  class="external-link" href="https://tools.ietf.org/html/draft-nourse-scep-23#appendix-D">Simple Certificate Enrollment Protocol - Appendix D</a>.</p>
+<p   
+>This mode allows the server to interpret enrollment requests as certificate renewal requests, only if the latest issued certificate for the end entity has passed half its validity. To be valid, the PKCS#7 wrapping the CSR must be signed by the old certificate's keypair.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Allow Client Certificate Renewal using Old Key</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+<p   
+><span class="status blue " >ENTERPRISE</span>
+ This is an EJBCA Enterprise feature.</p>
+<p   
+>The SCEP draft does not mandate if old keys may be reused for Client Certificate Renewal or not, so EJBCA includes this as a setting.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>CA Certificate Rollover</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>EJBCA supports creating a rollover certificate for a CA and issuing certificates via SCEP with this new CA certificate. This is useful when changing the CA key during renewal. For more information, refer to IETF: <a  class="external-link" href="https://tools.ietf.org/html/draft-nourse-scep-23#appendix-E">Simple Certificate Enrollment Protocol - Appendix E.</a></p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-3" id="src-93591963_id-.SCEPv7.4.1-WorkflowExample">
+        <h3 class="heading "><span>Workflow Example</span></h3>
+<p   
+>The following illustrates a workflow for running CA mode with or without renewal.</p>
+<p   
+><img  class="drawio-diagram-image"  src="images/inline/3cf0331d780dba20a77e3b1ce4b0b42f5a6655e8.png" alt="images/inline/3cf0331d780dba20a77e3b1ce4b0b42f5a6655e8.png" width="600"  />
+    </p>
+    </div>
+    </div>
+    <div class="section section-2" id="src-93591963_id-.SCEPv7.4.1-RAMode">
+        <h2 class="heading "><span>RA Mode</span></h2>
+<p   
+></p>
+<p   
+><span class="status blue " >ENTERPRISE</span>
+ This is an EJBCA Enterprise feature.</p>
+<p   
+>In RA Mode<i class=" ">, </i>EJBCA receives SCEP <strong class=" ">PKCSReq</strong> requests when a user is to be created (or edited). A certificate is returned immediately in a proper SCEP reply message. The RA is authenticated/authorized based on configuration.</p>
+<p   
+><img  class="confluence-embedded-image"  src="images/download/attachments/93591963/Screen_Shot_2018-08-02_at_09.04.33.png" alt="images/download/attachments/93591963/Screen_Shot_2018-08-02_at_09.04.33.png" width="600"  />
+    </p>
+<p   
+>The RA Mode requires that the operational mode is set to <strong class=" ">RA.</strong> To specify the RA operational mode, either use the command line to set the property <tt class=" ">&lt;alias&gt;.operationmode</tt> or use the CA UI and go to <strong class=" ">System Functions &rarr; SCEP Configuration</strong> and select <strong class=" ">Operational mode</strong> as <strong class=" ">RA</strong>. All the parameters needed to create the new end entity should be set through the command line or the CA UI.</p>
+    <div class="section section-3" id="src-93591963_id-.SCEPv7.4.1-ConfigurationValues.1">
+        <h3 class="heading "><span>Configuration Values</span></h3>
+    <div  class="tablewrap">
+        <table class="relative-table wrapped confluenceTable">
+                    <colgroup>
+                                    <col  width="24%"/>
+                                    <col  width="75%"/>
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Value Name</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Description</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Include CA Certificate in Response</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Setting this value to true will cause the CA certificate to be included in the response, if applicable.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>RA End Entity Profile</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The end entity profile being used when issuing certificates.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>RA Certificate Profile</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The certificate profile being used when issuing certificates.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>RA CA Name</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The CA to use when signing certificates. Also specifies the default CA to use when no message is provided for <tt class=" ">GetCACert</tt>    <span style="color: #172b4d;">
+,     </span>
+<tt class=" ">GetCACertChain</tt>    <span style="color: #172b4d;">
+,     </span>
+<tt class=" ">GetNextCACert</tt>    <span style="color: #172b4d;">
+ and     </span>
+<tt class=" ">GetCACaps</tt> operations.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>RA Authentication Password</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>A shared secret used to authenticate the SCEP client to the RA.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>RA Name Generation Scheme</p>
+            </td>
+                <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>Specifies how the name of the end entity should be generated.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>RA Name Generation Parameters</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>RA Name Generation Prefix</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Specifies a prefix to prepend to the name of end entities.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>RA Name Generation Postfix</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Specifies a postfix to append to the name of end entities.</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-93591963_id-.SCEPv7.4.1-MicrosoftIntuneSupport">
+        <h1 class="heading "><span>Microsoft Intune Support</span></h1>
+<p   
+></p>
+<p   
+><span class="status blue " >ENTERPRISE</span>
+ This is an EJBCA Enterprise feature.</p>
+<p   
+>EJBCA can be used to issue certificates to Microsoft Intune, which happens through SCEP in RA mode. See the <a   href="SCEP_Operations_Guide.html">SCEP Operations Guide</a> for details of how to set up the alias, and our <a   href="Microsoft_Intune_Device_Certificate_Enrollment.html">Intune Setup Guide</a> for how to set up Microsoft Intune to work with EJBCA.</p>
+    </div>
+    <div class="section section-1" id="src-93591963_id-.SCEPv7.4.1-UsingSCEPwithApprovals">
+        <h1 class="heading "><span>Using SCEP with Approvals</span></h1>
+<p   
+></p>
+<p   
+><span class="status blue " >ENTERPRISE</span>
+ This is an EJBCA Enterprise feature.</p>
+<p   
+>EJBCA supports using SCEP with <a   href="Approval_Profiles.html">approvals</a> only in RA mode due to the fact that EJBCA's approvals are run on enrollment (creating the end entity) and not on issuance (issuing the certificate). To enable approvals over SCEP, simply configure approvals to be used in the <a   href="CA_Fields.html">CA</a> or <a   href="Certificate_Profile_Fields.html">Certificate Profile&nbsp;</a>as usual, and they will be active for SCEP enrollment requests as well.</p>
+    <div class="section section-2" id="src-93591963_safe-id-aWQtLlNDRVB2Ny40LjEtQ0HihpRDbGllbnRXb3JrZmxvdw">
+        <h2 class="heading "><span>CA &harr; Client Workflow</span></h2>
+<p   
+>In accordance with <a  class="external-link" href="https://tools.ietf.org/id/draft-nourse-scep-23.txt">draft-nourse-scep-23</a>, the workflow when using approvals is as follows:</p>
+<p   
+><img  class="drawio-diagram-image"  src="images/inline/5815ef58151ab228ea7e9ee490d2cc8debbe8864.png" alt="images/inline/5815ef58151ab228ea7e9ee490d2cc8debbe8864.png" width="600"  />
+    </p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>Should enrollment succeed but issuance fail (for example the key not fulfilling certificate profile requirements), the client merely needs to send a PKCSREQ again without needing to pass the approvals process once more.</p>
+        </div>
+    </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-93591963_id-.SCEPv7.4.1-InternalWorkflow">
+        <h1 class="heading "><span>Internal Workflow</span></h1>
+<p   
+>The following graphs document the internal workflow of EJBCA when processing SCEP requests. Worth noting is that sending a PKCSREQ message on an existing end entity with issued certificate will result in a request for renewal.</p>
+    <div class="section section-2" id="src-93591963_id-.SCEPv7.4.1-PKCSREQ">
+        <h2 class="heading "><span>PKCSREQ</span></h2>
+<p   
+>Note that the following PKCSREQ graph does not illustrate all fail states.</p>
+<p   
+><img  class="drawio-diagram-image"  src="images/inline/387927f3dfa8506bf3c60c9ffacbe9a0424ed296.png" alt="images/inline/387927f3dfa8506bf3c60c9ffacbe9a0424ed296.png" width="400"  />
+    </p>
+    </div>
+    <div class="section section-2" id="src-93591963_id-.SCEPv7.4.1-GetCertInitial">
+        <h2 class="heading "><span>GetCertInitial</span></h2>
+<p   
+>GetCertInital, as mentioned above, is the polling message used to check if a request has received approval.</p>
+<p   
+>Note that the following GetCertInital graph does not illustrate all fail states.</p>
+<p   
+><img  class="drawio-diagram-image"  src="images/inline/97ec27b0f123529def24bbd74f0ddf0754c9caa8.png" alt="images/inline/97ec27b0f123529def24bbd74f0ddf0754c9caa8.png" width="600"  />
+    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-93591963_id-.SCEPv7.4.1-ProxyingSCEPThroughanRA">
+        <h1 class="heading "><span>Proxying SCEP Through an RA</span></h1>
+    <div class="section section-2" id="src-93591963_id-.SCEPv7.4.1-ProxyingSCEPthroughanEJBCARAUsingPeers">
+        <h2 class="heading "><span>Proxying SCEP through an EJBCA RA Using Peers</span></h2>
+<p   
+>Like all other protocols in EJBCA, SCEP requests can be proxied to EJBCA over TLS through another EJBCA instance acting as RA in a DMZ. For more information on how to set this up, see the <a   href="Peer_Systems_Operations.html">Peer Systems Operations page</a>.</p>
+<p   
+><img  class="drawio-diagram-image"  src="images/inline/c48575be20134fd39cd2cdab64c845e42d6a6e91.png" alt="images/inline/c48575be20134fd39cd2cdab64c845e42d6a6e91.png" width="400"  />
+    </p>
+    </div>
+    <div class="section section-2" id="src-93591963_safe-id-aWQtLlNDRVB2Ny40LjEtTGVnYWN5RXh0ZXJuYWxSQVNDRVBTZXJ2ZXJFeHRlcm5hbF9SQV9TQ0VQX1NlcnZlcl8oRW50ZXJwcmlzZV9FZGl0">
+        <h2 class="heading "><span id="src-93591963_safe-id-aWQtLlNDRVB2Ny40LjEtRXh0ZXJuYWxfUkFfU0NFUF9TZXJ2ZXJfKEVudGVycHJpc2VfRWRpdA" class="confluence-anchor-link"></span><span>Legacy External RA SCEP Server </span></h2>
+<p   
+></p>
+<p   
+><span class="status blue " >ENTERPRISE</span>
+ This is an EJBCA Enterprise feature.</p>
+<p   
+></p>
+    <div  class="confbox admonition admonition-warning">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>The External RA SCEP Server functionality is deprecated and will not be supported in the future. Instead, we recommend <a   href="#src-93591963_id-.SCEPv7.4.1-ProxyingSCEPthroughanEJBCARAUsingPeers">proxying SCEP requests synchronously through an RA using Peers</a>.</p>
+        </div>
+    </div>
+<p   
+>EJBCA supports the SCEP 'polling' RA model using the <a   href="External_RA_using_Database_Polling.html">External RA API</a>. Using this, a SCEP client can send a request to the External RA, and then wait, polling the RA for updates. When the request is processed by the CA, which fetches the pkcs10 request from the External RA, the certificate is sent back to the External RA. When the certificate is complete on the External RA, the RA sends back the SCEP certificate response the next time the SCEP client polls the RA. This feature is very useful to securely insulate the CA from the SCEP clients throughout the network.</p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-93591963_safe-id-aWQtLlNDRVB2Ny40LjEtSW50ZXJvcGVyYWJpbGl0eS9UZXN0ZWRMaWJyYXJpZXNhbmREZXZpY2Vz">
+        <h1 class="heading "><span>Interoperability / Tested Libraries and Devices</span></h1>
+<p   
+><span id="src-93591963_id-.SCEPv7.4.1-Tested_devices"></span></p>
+<p   
+>The following provides information on tested devices.</p>
+    <div class="section section-2" id="src-93591963_id-.SCEPv7.4.1-CiscoISECisco_ISE">
+        <h2 class="heading "><span id="src-93591963_id-.SCEPv7.4.1-Cisco_ISE" class="confluence-anchor-link"></span><span>Cisco ISE </span></h2>
+<p   
+>EJBCA SCEP, using RA mode, has been successfully integrated with Cisco ISE. Configuring EJBCA as a backend CA in Cisco ISE, devices can be enrolled with certificates from EJBCA, through the ISE enrollment interfaces. For more information, see <a   href="EJBCA_and_Cisco_ISE.html">EJBCA and Cisco ISE</a>.</p>
+    </div>
+    <div class="section section-2" id="src-93591963_safe-id-aWQtLlNDRVB2Ny40LjEtaVBob25lL2lPU2lQaG9uZS9pT1M">
+        <h2 class="heading "><span id="src-93591963_safe-id-aWQtLlNDRVB2Ny40LjEtaVBob25lL2lPUw" class="confluence-anchor-link"></span><span>iPhone/iOS </span></h2>
+<p   
+>You can enroll certificates for the iOS directly with EJBCA using SCEP.</p>
+    </div>
+    <div class="section section-2" id="src-93591963_id-.SCEPv7.4.1-OpenSCEPOpenScep">
+        <h2 class="heading "><span id="src-93591963_id-.SCEPv7.4.1-OpenScep" class="confluence-anchor-link"></span><span>OpenSCEP </span></h2>
+<p   
+>Note that OpenSCEP only supports OpenSSL 0.9.6. Additionally, there is a know limitation that causes it to crash when receiving SCEP responses.</p>
+<p   
+>To use the <a  class="external-link" href="http://openscep.othello.ch/">OpenSCEP</a> client to request a certificate from this servlet, use the command:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ scep -k </code><code class="functions">test</code><code class="plain">.key -r </code><code class="functions">test</code><code class="plain">.pemreq -c ejbca-ca.pem -q foo123 -u http:</code><code class="plain">//localhost</code><code class="plain">:8080</code><code class="plain">/ejbca/publicweb/apply/scep/ALIAS/pkiclient</code><code class="plain">.exe</code></div>
+</div>
+    </div>
+<p   
+>Where test.key is generated with:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ openssl genrsa -out </code><code class="functions">test</code><code class="plain">.key</code></div>
+</div>
+    </div>
+<p   
+>test.req is generated with:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ openssl req -key </code><code class="functions">test</code><code class="plain">.key -new -days 30 -out </code><code class="functions">test</code><code class="plain">.req -outform DER -config ..</code><code class="plain">/openssl/openscep</code><code class="plain">.cnf</code></div>
+</div>
+    </div>
+<p   
+>and test.pemreq is generated with:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ openssl req -key </code><code class="functions">test</code><code class="plain">.key -new -days 30 -out </code><code class="functions">test</code><code class="plain">.pemreq -outform PEM -config ..</code><code class="plain">/openssl/openscep</code><code class="plain">.cnf</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-93591963_safe-id-aWQtLlNDRVB2Ny40LjEtU2ltcGxlU2NlcENsaWVudChzc2NlcClTaW1wbGVfU2NlcF9DbGllbnRfKHNzY2VwKQ">
+        <h2 class="heading "><span id="src-93591963_safe-id-aWQtLlNDRVB2Ny40LjEtU2ltcGxlX1NjZXBfQ2xpZW50Xyhzc2NlcCk" class="confluence-anchor-link"></span><span>Simple Scep Client (sscep) </span></h2>
+<p   
+>    <span style="color: #000000;">
+<a  class="external-link" href="https://github.com/certnanny/sscep">Simple Scep Client</a>. You should only use CN in the users DN (same as for PIX below).    </span>
+</p>
+    </div>
+    <div class="section section-2" id="src-93591963_id-.SCEPv7.4.1-jSCEPjSCEP">
+        <h2 class="heading "><span id="src-93591963_id-.SCEPv7.4.1-jSCEP" class="confluence-anchor-link"></span><span>jSCEP </span></h2>
+<p   
+><a  class="external-link" href="https://github.com/jscep/jscep">jSCEP</a> uses EJBCA as one of the servers it is tested against.</p>
+<p   
+>There is a <a  class="external-link" href="https://github.com/asyd/jscep-cli-jdk6">CLI for jSCEP</a> by Bruno Bonfils. Note that jSCEP and jSCEP CLI need a recent version from Git (jscep-cli 1.2 or later) to work properly in Java 11, otherwise Java 8 must be on the client-side when using the following command.</p>
+<p   
+>Test the CLI by creating a SCEP alias and issuing a SCEP request, for example:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">cd</code><code class="plain"> ejbca</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">cat</code><code class="plain"> &gt; scepalias-camode.properties</code></div>
+<div class="line"><code class="plain">scep.operationmode = ca</code></div>
+<div class="line"><code class="plain">uploaded.includeca = </code><code class="functions">true</code><code class="plain"> </code></div>
+<div class="line"><code class="plain">$ bin</code><code class="plain">/ejbca</code><code class="plain">.sh config scep uploadfile --</code><code class="functions">alias</code><code class="plain"> scep --</code><code class="functions">file</code><code class="plain"> scepalias-camode.properties</code></div>
+<div class="line"><code class="plain">$ bin</code><code class="plain">/ejbca</code><code class="plain">.sh ra addendentity --username=user --password=foo123 --dn=</code><code class="string">"CN=User Usersson"</code><code class="plain"> --caname=ManagementCA --</code><code class="functions">type</code><code class="plain">=1 --token=USERGENERATED</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">cd</code><code class="plain"> ..</code><code class="plain">/jscep-cli-jdk6</code></div>
+<div class="line"><code class="plain">$ openssl genrsa -out </code><code class="functions">test</code><code class="plain">.key</code></div>
+<div class="line"><code class="plain">$ openssl req -key </code><code class="functions">test</code><code class="plain">.key -new -days 30 -out </code><code class="functions">test</code><code class="plain">.pemreq -outform PEM</code></div>
+<div class="line"><code class="plain">$ java -jar target</code><code class="plain">/jscepcli-1</code><code class="plain">.2-SNAPSHOT-exe.jar --ca-identifier ManagementCA --challenge foo123 --csr-</code><code class="functions">file</code><code class="plain"> </code><code class="functions">test</code><code class="plain">.pemreq --dn </code><code class="string">"CN=user"</code><code class="plain"> --key-</code><code class="functions">file</code><code class="plain"> </code><code class="functions">test</code><code class="plain">.key --url http:</code><code class="plain">//localhost</code><code class="plain">:8080</code><code class="plain">/ejbca/publicweb/apply/scep/pkiclient</code><code class="plain">.exe</code></div>
+</div>
+    </div>
+<p   
+>The following shows an example SCEP alias, using the default alias name <strong class=" ">scep,</strong> to work with the URL above:</p>
+<p   
+><img  class="confluence-embedded-image confluence-thumbnail"  src="images/download/thumbnails/93591963/scep-alias.png" alt="images/download/thumbnails/93591963/scep-alias.png"  height="250" />
+    </p>
+<p   
+>If you use another SCEP alias name, for example <strong class=" ">myalias</strong>, the SCEP URL would be http://localhost:8080/ejbca/publicweb/apply/scep/myalias/pkiclient.exe.</p>
+    </div>
+    <div class="section section-2" id="src-93591963_id-.SCEPv7.4.1-MobileIronMobileIron">
+        <h2 class="heading "><span id="src-93591963_id-.SCEPv7.4.1-MobileIron" class="confluence-anchor-link"></span><span>MobileIron </span></h2>
+<p   
+>EJBCA has been confirmed to work with the MobileIron MDM system.</p>
+<p   
+>Mobile Iron always uses the CA identifier 'MobileIronSCEP' in all SCEP request. SCEP request from MobileIron always start with &quot;operation=GetCACaps&amp;message=MobileIronSCEP&quot;. Therefore the CAs name has to be set to 'MobilIronSCEP' to make it work. When set, both RA and CA modes work with MobilIronMDM.</p>
+    </div>
+    <div class="section section-2" id="src-93591963_safe-id-aWQtLlNDRVB2Ny40LjEtSnVuaXBlck5ldHdvcmtzTmV0U2NyZWVuLTI1L05ldFNjcmVlbi01MEp1bmlwZXJfTmV0d29ya3NfTmV0U2NyZWVuLTI1L05ldFNjcmVlbi0">
+        <h2 class="heading "><span id="src-93591963_safe-id-aWQtLlNDRVB2Ny40LjEtSnVuaXBlcl9OZXR3b3Jrc19OZXRTY3JlZW4tMjUvTmV0U2NyZWVuLQ" class="confluence-anchor-link"></span><span>Juniper Networks NetScreen-25/NetScreen-50 </span></h2>
+<p   
+>To enroll using the Juniper box go to the Web GUI at https://&lt;juniper-ip&gt;/, then click your way to<strong class=" "> Objects &gt; Certificates</strong>. To create a new certificate request:</p>
+<ol class=" "><li class=" "><p   
+>New - enter the DN that your box will receive:</p>
+<ul class=" "><li class=" "><p   
+>Name=netscreen.foo.se</p>
+</li><li class=" "><p   
+>Organization=PrimeKey</p>
+</li><li class=" "><p   
+>Country=SE</p>
+</li><li class=" "><p   
+>IP Address=192.168.1.1</p>
+</li><li class=" "><p   
+>FQSN=netscreen.foo.se</p>
+</li></ul><p   
+>Click <strong class=" ">generate</strong>.</p>
+</li><li class=" "><p   
+>Automatically enroll to<strong class=" "> &gt; New CA Server settings</strong>. You have to configure if EJBCA should use the direct CA mode or the RA polling mode:</p>
+<ul class=" "><li class=" "><p   
+>CGI URL: http://&lt;ra-ip&gt;:8080/scepraserver/scep/&lt;config-alias&gt;/pkiclient.exe</p>
+</li><li class=" "><p   
+>CA IDENT: The CA Name in EJBCA, for example ScepCA.</p>
+</li><li class=" "><p   
+>Challenge: A password for a pre-registered user in CA mode, or a random password used for polling RA mode.</p>
+</li></ul><p   
+>Click <strong class=" ">OK</strong>.</p>
+</li><li class=" "><p   
+>You can now see the request in <strong class=" ">Objects &gt; Certificates</strong>. If you are using polling RA mode, you can click 'Retrieve' after the request has been approved in the CA and the certificate has been generated.</p>
+</li></ol>    </div>
+    <div class="section section-2" id="src-93591963_id-.SCEPv7.4.1-CryptlibCryptlib">
+        <h2 class="heading "><span id="src-93591963_id-.SCEPv7.4.1-Cryptlib" class="confluence-anchor-link"></span><span>Cryptlib </span></h2>
+<p   
+>When using <a  class="external-link" href="http://www.cs.auckland.ac.nz/~pgut001/cryptlib/">Cryptlib</a>, the CA certificate must have KeyUsage 'Key Encipherment' in addition to the usual key usage flags. This is reasonable, since SCEP requires the CA to actually encrypt data (which generally is a bad thing, since a special encryption certificate should be used for that).</p>
+<p   
+>Key usage for a ScepCA should be: Certificate Sign, CRL Sign, Digital Signature, Key Encipherment</p>
+<p   
+>Use the complete path as for the Cisco VPN client below as server name.</p>
+    </div>
+    <div class="section section-2" id="src-93591963_id-.SCEPv7.4.1-CiscoVPNclientCisco_VPN_client">
+        <h2 class="heading "><span id="src-93591963_id-.SCEPv7.4.1-Cisco_VPN_client" class="confluence-anchor-link"></span><span>Cisco VPN client </span></h2>
+<p   
+>To enroll using the Cisco VPN client, use:</p>
+<ul class=" "><li class=" "><p   
+>CA URL='http://127.0.0.1:8080/ejbca/publicweb/apply/scep/ALIAS/pkiclient.exe'</p>
+</li><li class=" "><p   
+>CA Domain=your CAs name in EJBCA</p>
+</li><li class=" "><p   
+>In the DN screen simply enter the username (as added in EJBCA) as 'Name \[CN\]'</p>
+</li></ul><p   
+>When using an External RA to enroll with the Cisco VPN client, the RA certificate must have KeyUsage SigitalSignature and KeyEncipherment for the client to accept the CA certificates. However, to locate the RA encryption certificate, only KeyEncipherment can be set, which makes things quite complicated.</p>
+<p   
+>The conclusion is that RA enrollment does not work with Cisco VPN client.</p>
+    </div>
+    <div class="section section-2" id="src-93591963_id-.SCEPv7.4.1-AutoSscepAutoSscep">
+        <h2 class="heading "><span id="src-93591963_id-.SCEPv7.4.1-AutoSscep" class="confluence-anchor-link"></span><span>AutoSscep </span></h2>
+<p   
+>EJBCA has been tested successfully with AutoSscep for enrollment against the CA and the External RA SCEP service.</p>
+<p   
+>Instructions:</p>
+<ol class=" "><li class=" "><p   
+>Download and build AutoSscep (make).</p>
+</li><li class=" "><p   
+>Create a configuration file, ejbca.conf, as the example below.</p>
+</li><li class=" "><p   
+>Create a user in EJBCA with username (common name) and DN exactly as entered in the configuration file.</p>
+</li><li class=" "><p   
+>Run 'autosscep ejbca.conf'.</p>
+</li></ol><p   
+>Sample configuration file, ejbca.conf:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">Verbose = </code><code class="string">"yes"</code></div>
+<div class="line"><code class="plain">Debug = </code><code class="string">"no"</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">CADir=</code><code class="string">"/home/autosscep/"</code></div>
+<div class="line"><code class="plain">CertDir=</code><code class="string">"/home/autosscep/"</code></div>
+<div class="line"><code class="plain">KeyDir=</code><code class="string">"/home/autosscep/"</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">[CA\]</code></div>
+<div class="line"><code class="plain">DN=</code><code class="string">"C=SE, O=EJBCA Sample, CN=ManagementCA"</code></div>
+<div class="line"><code class="plain">URL=</code><code class="string">"http://localhost:8080/ejbca/publicweb/apply/scep/pkiclient.exe"</code></div>
+<div class="line"><code class="plain">CertFile=</code><code class="string">"ManagementCA.cacert.pem"</code></div>
+<div class="line"><code class="plain">EncCertFile=</code><code class="string">"ManagementCA.cacert.pem"</code></div>
+<div class="line"><code class="plain">[</code><code class="plain">/CA</code><code class="plain">\]</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">[Certificate\]</code></div>
+<div class="line"><code class="plain">CertFile=</code><code class="string">"mycert"</code></div>
+<div class="line"><code class="plain">KeyFile=</code><code class="string">"mykey"</code></div>
+<div class="line"><code class="plain">CADN=</code><code class="string">"C=SE, O=EJBCA Sample, CN=ManagementCA"</code></div>
+<div class="line"><code class="plain"> </code></div>
+<div class="line"><code class="comments"># Create a user with username "router4711" and password "foo123" in EJBCA</code></div>
+<div class="line"><code class="comments"># to automatically enroll</code></div>
+<div class="line"><code class="comments"># Note you need to add a user with exactly these fields in the DN in EJBCA</code></div>
+<div class="line"><code class="plain">Email = </code><code class="string">"mymail@mydomain"</code></div>
+<div class="line"><code class="plain">Country=</code><code class="string">"SE"</code></div>
+<div class="line"><code class="plain">State=</code><code class="string">"BS"</code></div>
+<div class="line"><code class="plain">Location=</code><code class="string">"Stockholm"</code></div>
+<div class="line"><code class="plain">Organization=</code><code class="string">"PrimeKey"</code></div>
+<div class="line"><code class="plain">CommonName=</code><code class="string">"router4711"</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">ChallengePassword=</code><code class="string">"foo123"</code></div>
+<div class="line"><code class="plain">[</code><code class="plain">/Certificate</code><code class="plain">\]</code></div>
+</div>
+    </div>
+<p   
+>AutoSscep also handles enrolling against an RA, where the RA first sends a PENDING response which the request is being processed. After processing (by the CA) you simply run the AutoSscep client again to pick up the generated certificate.</p>
+<p   
+>In order to enroll against the External RA SCEP Server in EJBCA, change the CA part of the configuration file to use the SCEP RA servers certificate for signing and encrypting the messages instead of the CAs, and to use the URL to the RA. The SCEP RA certificate is the end entity certificate issued to the External RA SCEP server (the keystore is usually called scepraserver.p12).</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">[CA\]</code></div>
+<div class="line"><code class="plain">DN=</code><code class="string">"C=SE, O=EJBCA Sample, CN=ManagementCA"</code></div>
+<div class="line"><code class="plain">URL=</code><code class="string">"http://localhost:8080/scepraserver/scep/pkiclient.exe"</code></div>
+<div class="line"><code class="plain">CertFile=</code><code class="string">"scepra.pem"</code></div>
+<div class="line"><code class="plain">EncCertFile=</code><code class="string">"scepra.pem"</code></div>
+<div class="line"><code class="plain">[</code><code class="plain">/CA</code><code class="plain">\]</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-93591963_safe-id-aWQtLlNDRVB2Ny40LjEtQ2lzY29QSVgvMzAwMENpc2NvX1BJWC8zMDAw">
+        <h2 class="heading "><span id="src-93591963_safe-id-aWQtLlNDRVB2Ny40LjEtQ2lzY29fUElYLzMwMDA" class="confluence-anchor-link"></span><span>Cisco PIX/3000 </span></h2>
+<p   
+>Cisco PIX and Cisco 3000 is supported. The following description applies for PIX:</p>
+<ul class=" "><li class=" "><p   
+>Configure JBoss to use port 80 to enroll with PIX: <tt class=" ">APPSRV_HOME/server/default/deploy/jbossweb-tomcat50.sar/service.xml</tt> (or similar depending on version). You must run as root to use port 80.</p>
+</li><li class=" "><p   
+>EJBCA supports the <strong class=" ">ca</strong> mode of enrollment for pix, not <strong class=" ">ra</strong>. For <strong class=" ">ra</strong> and polling enrollment, use the External RA API SCEP module.</p>
+</li><li class=" "><p   
+>The certificate profile used by the SCEP CA must include the key usages KeyEncipherment and DataEncipherment, otherwise PIX will not be able to verify/decrypt encrypted SCEP messages. This is not in the default certificate profile for CAs. Create a new certificate profile before creating the Scep CA, using ROOTCA as template for the new certificate profile.</p>
+</li><li class=" "><p   
+>When enrolling for certificate using SCEP, with for example a Cisco PIX, it is a <strong class=" ">ca_nickname</strong>. This nickname should be the CA-name as defined when creating the CA in EJBCA. For example <strong class=" ">vpnca</strong>.</p>
+</li><li class=" "><p   
+>Only use lower-case names when creating the CA in EJBCA, since PIX will change the CA name VpnCA to vpnca when enrolling.</p>
+</li><li class=" "><p   
+>The username in EJBCA must be the name the PIX identifies itself with <strong class=" ">name.domain</strong>, for example pix.primekey.com.</p>
+</li><li class=" "><p   
+>The end-entity DN must include the DN components CN and unstructuredName, ex &quot;CN=pix.primekey.com, unstructuredName=pix.primekey.com&quot;. You can also include O, C etc in the certificate. A normal DN for a PIX is &quot;CN=pix.primekey.com,unstructuredName=pix.primekey.com,O=PrimeKey,C=SE&quot;.</p>
+</li><li class=" "><p   
+>Certificates used for PIX MUST include the DN component unstructuredName (fqdn) and could also include unstructuredAddress (ip) being the IP-address of the PIX.</p>
+</li><li class=" "><p   
+>The certificate used on the Cisco PIX MUST have a SubjectAltName field dNSName, matching the DN component unstructuredName. This is needed in order for Cisco VPN clients to connect to the PIX. The DNS Name field is not necessary for the PIX to enroll perfectly with EJBCA, only for the client to be able to connect.</p>
+</li><li class=" "><p   
+>Certificates used for PIX may also use the SubjectAltName iPAddress matching the DN component unstructuredAddress, but it is not necessary.</p>
+</li><li class=" "><p   
+>Cisco does not support use of the <strong class=" ">Domain Component</strong>, DC, attribute in DNs, and it is recommended not to use the attribute.</p>
+</li><li class=" "><p   
+>KeyUsage should include <strong class=" ">Digital</strong> <strong class=" ">Signature</strong> and <strong class=" ">Key Encipherment,</strong> the EJBCA defaults work fine.</p>
+</li><li class=" "><p   
+>When the Cisco VPN-client (above) connects to the PIX, the <strong class=" ">ou</strong> part of the clients DN must match a Vpngroup you have specified, otherwise the connection will fail.</p>
+</li><li class=" "><p   
+>Cisco PIX (older) needs the SCEP response messages to use MD5 as hash algorithm, not SHA1, this is handled by EJBCA automatically.</p>
+</li></ul>    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>Ensure that the PIX Firewall clock is set to GMT, month, day, and year before configuring CA. Otherwise, the CA may reject or allow certificates based on an incorrect timestamp. Cisco's PKI protocol uses the clock to make sure that a CRL is not expired. Set the timezone first, then set the time, then check the time using <strong class=" ">show clock</strong>.</p>
+        </div>
+    </div>
+<p   
+>The following displays examples of the enrollment steps:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">-- Connect with pix and enter admin mode</code></div>
+<div class="line"><code class="plain">telnet 10.1.1.1 (default </code><code class="functions">pwd</code><code class="plain"> cisco)</code></div>
+<div class="line"><code class="functions">enable</code><code class="plain"> (default blank </code><code class="functions">pwd</code><code class="plain">)</code></div>
+<div class="line"><code class="plain">configure terminal</code></div>
+<div class="line"><code class="plain">-- Enable CA logging</code></div>
+<div class="line"><code class="plain">debug crypto ca</code></div>
+<div class="line"><code class="plain">-- Clear current PKI config</code></div>
+<div class="line"><code class="functions">clear</code><code class="plain"> ca identity</code></div>
+<div class="line"><code class="plain">-- Enter PKI config, i.e location of CA etc. Don</code><code class="string">'t require CRLs, it'</code><code class="plain">s easier</code></div>
+<div class="line"><code class="plain">ca identity pixca ca-ip:</code><code class="plain">/ejbca/publicweb/apply/scep/pkiclient</code><code class="plain">.exe</code></div>
+<div class="line"><code class="plain">ca configure pixca ca 1 0 crloptional</code></div>
+<div class="line"><code class="plain">ca authenticate pixca</code></div>
+<div class="line"><code class="plain">-- wait --</code></div>
+<div class="line"><code class="plain">-- Look at the fetched certificate</code></div>
+<div class="line"><code class="plain">show ca certificate</code></div>
+<div class="line"><code class="plain">ca save all</code></div>
+<div class="line"><code class="plain">wr mem</code></div>
+<div class="line"><code class="plain">-- Get a CRL </code><code class="keyword">if</code><code class="plain"> you really want to (</code><code class="keyword">if</code><code class="plain"> you did not configure CRL as optional you must)</code></div>
+<div class="line"><code class="plain">ca crl request pixca</code></div>
+<div class="line"><code class="plain">-- wait --</code></div>
+<div class="line"><code class="plain">show ca crl</code></div>
+<div class="line"><code class="plain">-- Generate keys and enroll </code><code class="keyword">for</code><code class="plain"> the certificate (user </code><code class="keyword">in</code><code class="plain"> ejbca has password foo123)</code></div>
+<div class="line"><code class="plain">ca generate rsa key 1024</code></div>
+<div class="line"><code class="plain">ca enroll pixca foo123</code></div>
+<div class="line"><code class="plain">-- wait, wait, this will take a long </code><code class="functions">time</code><code class="plain"> --</code></div>
+<div class="line"><code class="plain">-- Look at the fetched certificate, this should now show both the pix cert and the ca cert</code></div>
+<div class="line"><code class="plain">show ca certificate</code></div>
+</div>
+    </div>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">pix(config)</code><code class="comments"># show ca cert</code></div>
+<div class="line"><code class="plain">Certificate</code></div>
+<div class="line"><code class="plain">  Status: Available</code></div>
+<div class="line"><code class="plain">  Certificate Serial Number: 594f643a6916d78d</code></div>
+<div class="line"><code class="plain">  Key Usage: General Purpose</code></div>
+<div class="line"><code class="plain">  Subject Name:</code></div>
+<div class="line"><code class="plain">    C = SE</code></div>
+<div class="line"><code class="plain">    O = PrimeKey</code></div>
+<div class="line"><code class="plain">    CN = pix.primekey.com</code></div>
+<div class="line"><code class="plain">    UNSTRUCTURED NAME = pix.primekey.com</code></div>
+<div class="line"><code class="plain">    UNSTRUCTURED IP = 10.1.1.1</code></div>
+<div class="line"><code class="plain">  Validity Date:</code></div>
+<div class="line"><code class="plain">    start </code><code class="functions">date</code><code class="plain">: 14:42:29 GMT Sep 17 2005</code></div>
+<div class="line"><code class="plain">    end   </code><code class="functions">date</code><code class="plain">: 14:52:29 GMT Sep 17 2007</code></div>
+</div>
+    </div>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">CA Certificate</code></div>
+<div class="line"><code class="plain">  Status: Available</code></div>
+<div class="line"><code class="plain">  Certificate Serial Number: 7c7cf75236955a51</code></div>
+<div class="line"><code class="plain">  Key Usage: General Purpose</code></div>
+<div class="line"><code class="plain">    C = SE</code></div>
+<div class="line"><code class="plain">    O = PrimeKey</code></div>
+<div class="line"><code class="plain">    CN = pixca</code></div>
+<div class="line"><code class="plain">  Validity Date:</code></div>
+<div class="line"><code class="plain">    start </code><code class="functions">date</code><code class="plain">: 15:59:20 GMT Sep 16 2005</code></div>
+<div class="line"><code class="plain">    end   </code><code class="functions">date</code><code class="plain">: 16:09:20 GMT Sep 14 201</code></div>
+</div>
+    </div>
+<p   
+></p>
+    </div>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="Unid_FNR.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Unid FNR</span>
+        </a>
+                <a href="Web_Service_Interface.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Web Service Interface</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

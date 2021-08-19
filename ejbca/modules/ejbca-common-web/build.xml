@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ejbca-common-web" basedir="../.." default="build-common-web">
+    <property environment="env" />
+    <dirname property="ejbca-common-web.dir" file="${ant.file.ejbca-common-web}"/>
+
+    <import file="${ejbca-common-web.dir}/../build-helpers.xml"/>
+    
+	<property name="ejbca-common-web.build.dir" location="${ejbca-common-web.dir}/build-common-web"/>
+	<property name="ejbca-common-web.src.dir" location="${ejbca-common-web.dir}/src"/>
+	<property name="ejbca-common-web.src-test.dir" location="${ejbca-common-web.dir}/src-test"/>
+	<property name="ejbca-common-web.build-test.dir" location="${ejbca-common-web.dir}/build-test"/>
+
+	<path id="compile-common-web.classpath">
+		<path refid="lib.cert-cvc.classpath"/>
+		<path refid="lib.bouncycastle.classpath"/>
+		<path refid="lib.log4j.classpath"/> 
+		<path refid="lib.commons-lang.classpath"/>
+		<path refid="lib.commons-config.classpath"/>
+		<path refid="lib.commons-collections.classpath"/>
+		<path refid="lib.commons-logging.classpath"/>
+		<path refid="lib.commons-io.classpath"/>		
+		<path refid="lib.jsf.classpath"/>
+		<path refid="lib.servlet.classpath"/>
+		<path refid="lib.jee.classpath"/>
+		<path refid="lib.ldap.classpath"/>
+		<path refid="lib.mail.classpath"/>
+		<path refid="lib.batik.classpath"/>
+		<path refid="lib.jee.classpath"/>
+		<path location="${mod.cesecore-entity.lib}"/>
+		<path location="${mod.cesecore-ejb-interface.lib}"/>
+		<path location="${mod.edition-specific-interface.lib}"/>
+		<path location="${mod.edition-specific-ejb.lib}"/>
+		<path refid="lib.ejbca-common.classpath"/>
+	    <path refid="lib.commons-codec.classpath"/>
+		<path location="${mod.ejbca-ejb-interface.lib}"/>
+	</path>
+		
+	<path id="compile-test.classpath">
+		<path refid="compile-common-web.classpath"/>
+		<path refid="lib.commons-codec.classpath"/>
+		<path location="${mod.ejbca-ejb.lib}"/>
+		<!-- TODO: Refactor so this isn't neccessary for building the tests..? -->
+		<path refid="lib.ejbca-common.classpath"/>
+		<path refid="lib.junit.classpath"/>
+		<path refid="lib.easymock.classpath"/>
+		<path refid="lib.test.powermock.classpath"/>
+		<path location="${mod.ejbca-ejb-interface.lib}"/>
+		<path location="${mod.ejbca-entity.lib}"/>
+        <path location="${mod.cesecore-entity.lib}"/>
+        <path location="${mod.cesecore-common.lib}"/>
+        <path location="${mod.cesecore-ejb-interface.lib}"/>
+        <path location="${mod.cesecore-ejb.lib}"/>
+		<path location="${mod.edition-specific-interface.lib}"/>
+		<path location="${mod.edition-specific-ejb.lib}"/>
+		<path location="${mod.ejbca-common-web.lib}" />
+	</path>
+	
+	<path id="test.classpath">
+		<path location="${ejbca-common-web.build-test.dir}" />
+		<path location="${mod.ejbca-ejb.lib}" />
+		<path refid="compile-test.classpath"/>
+	</path>
+
+	<target name="build-common-web" description="Build the ejbca-common-web JAR" depends="compile-common-web">
+		<dirname file="${mod.ejbca-common-web.lib}" property="mod.ejbca-common-web.lib.dir"/>
+		<mkdir dir="${mod.ejbca-common-web.lib.dir}" />
+		<buildservicemanifest interface="org.ejbca.core.model.ca.publisher.ICustomPublisher;org.cesecore.keys.validation.Validator"
+			file="${ejbca-common-web.build.dir}" classpath="compile-common-web.classpath"/>
+		<jar destfile="${mod.ejbca-common-web.lib}">
+			<manifest>
+				<attribute name="Implementation-Version" value="${app.version}"/>
+			</manifest>
+			<fileset dir="${ejbca-common-web.build.dir}" includes="**/*.class,META-INF/**/*"/>
+		</jar>
+	</target>
+	
+	<target name="compile-common-web" depends="">
+		<mkdir dir="${ejbca-common-web.build.dir}" />
+		<javac srcdir="${ejbca-common-web.src.dir}" destdir="${ejbca-common-web.build.dir}" debug="on" includeantruntime="no" encoding="UTF-8" target="${java.target.version}"
+        	 classpathref="compile-common-web.classpath"/>
+	</target>
+	
+	<target name="test-common-web" depends="build-common-web,compile-tests-web" description="Run tests for this module, use -Dtest.includep11=true to include P11 tests">
+		<antcall target="showtime" inheritall="true" inheritrefs="true"/>
+    	<echo message="pkcs11-exclude=${p11exclude}"/>
+		<echo message=" ** Running unit tests in parallel chunks. Console output will be a bit scrambled.. **"/>
+		<parallel>
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="org/ejbca/core/model/ra/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="" />
+			</antcall>
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="org/ejbca/core/model/**/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="org/ejbca/core/model/ra/*Test.class" />
+			</antcall>
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="org/ejbca/util/**/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="" />
+			</antcall>
+
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="org/ejbca/core/protocol/**/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="" />
+			</antcall>
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="**/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="org/ejbca/core/model/**/*Test.class org/ejbca/util/**/*Test.class org/ejbca/core/protocol/**/*Test.class ${p11exclude}" />
+			</antcall>
+		</parallel>
+		<antcall target="showtime" inheritall="true" inheritrefs="true"/>
+	</target>
+	
+	<target name="test-subprocess">
+		<junit printsummary="yes" haltonfailure="no" showoutput="${test.showoutput}" dir="${ejbca-common-web.dir}">
+			<classpath>
+				<path refid="test.classpath"/>
+			</classpath>
+			<formatter type="xml" />
+			<batchtest fork="yes" todir="${reports.dir}">
+				<fileset dir="${ejbca-common-web.build-test.dir}" includes="${test-subprocess.include-pattern}" excludes="${test-subprocess.exclude-pattern}"/>
+			</batchtest>
+			<jvmarg line="${tests.jvmargs}"/>
+		</junit>
+	</target>
+
+	<target name="runone" depends="build-common-web, compile-tests-web">
+		<fail message="'test.runone' is not set. Example -Dtest.runone=ApprovalExecutorUtilTest . You can also use -Dtest.showoutput=true to send test output to console." unless="test.runone" />
+		<junit printsummary="yes" haltonfailure="no" showoutput="${test.showoutput}">
+			<classpath>
+				<path refid="test.classpath"/>
+			</classpath>
+			<formatter type="xml" />
+			<batchtest fork="yes" todir="${reports.dir}">
+				<fileset dir="${ejbca-common-web.build-test.dir}">
+					<include name="**/${test.runone}.class" />
+				</fileset>
+			</batchtest>
+			<jvmarg line="${tests.jvmargs}"/>
+		</junit>
+	</target>
+	
+	<target name="compile-tests-web" depends="">
+		<mkdir dir="${ejbca-common-web.build-test.dir}" />
+		<javac srcdir="${ejbca-common-web.src-test.dir}" destdir="${ejbca-common-web.build-test.dir}" debug="on" includeantruntime="no"
+        	encoding="UTF-8" target="${java.target.version}" classpathref="compile-test.classpath"/>
+		<copy file="${log4j.test.file}" tofile="${ejbca-common-web.build-test.dir}/log4j.xml" failonerror="true"/>
+		<copy todir="${ejbca-common-web.build-test.dir}" failonerror="true">
+			<fileset dir="${ejbca.home}/src" includes="intresources/**"/>
+			<fileset dir="${ejbca.home}" includes="conf/extendedkeyusage.properties"/>
+		</copy>
+		<!-- systemtests.properties needs to be in the classpath, if it exists for targeting non-default environment-->
+		<copy file="${systemtests.properties.file}" todir="${ejbca-common-web.build-test.dir}" failonerror="false"/>
+	</target>
+        
+    <target name="clean" depends="">
+        <delete dir="${ejbca-common-web.dir}/dist"/>
+		<delete dir="${ejbca-common-web.build.dir}" />
+		<delete dir="${ejbca-common-web.build-test.dir}" />
+		<delete file="${mod.ejbca-common-web.lib}" />
+    </target>
+
+</project>

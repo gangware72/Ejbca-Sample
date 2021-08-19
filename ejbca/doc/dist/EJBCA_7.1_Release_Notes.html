@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>EJBCA 7.1 Release Notes - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=42959809"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Release_Information.html">EJBCA Release Information</a></li>
+                                                                                     <li><a href="EJBCA_Release_Notes.html">EJBCA Release Notes</a></li>
+                                                            </ul>
+</div>            <h1 id="src-42959809"> <span>EJBCA 7.1 Release Notes</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p   
+></p>
+<p   
+>Spring has finally arrived in Stockholm, following the traditional seasons of Winter, False Spring, Second Winter, the Spring of Deceit and the final cold snap of I-Just-Changed-My-Tires. The melting snows bring with them many gifts, besides the beer forgotten on the balcony last November, among them EJBCA 7.1</p>
+<p   
+></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-PartitionedCRLs">Partitioned CRLs</a></p>
+</li><li class=" "><p   
+><a   href="#src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-DeprecationandRemovalofHardTokenSupport">Deprecation and Removal of Hard Token Support</a></p>
+</li><li class=" "><p   
+><a   href="#src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-VAandRASpecificDistributions">VA and RA Specific Distributions</a></p>
+</li><li class=" "><p   
+><a   href="#src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-EJBCA6.15.2CEAvailableonDockerHub">EJBCA 6.15.2 CE Available on Docker Hub</a></p>
+</li><li class=" "><p   
+><a   href="#src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-UpgradeInformation">Upgrade Information</a></p>
+</li><li class=" "><p   
+><a   href="#src-42959809_safe-id-aWQtLkVKQkNBNy4xUmVsZWFzZU5vdGVzdjcuMS4wLUNoYW5nZUxvZzpSZXNvbHZlZElzc3Vlcw">Change Log: Resolved Issues</a></p>
+</li></ul>    <div class="section section-1" id="src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-PartitionedCRLs">
+        <h1 class="heading "><span>Partitioned CRLs</span></h1>
+<p   
+>Long and enduringly requested, EJBCA 7.1 is now capable of producing <a   href="Partitioned_CRLs.html">partitioned CRLs</a>. Activated under the CA configuration, the number of partitions per CRL is dynamically configurable, allowing new partitions to be added as the CRL grows, and assignment to older partitions to be suspended in order to allow for future growth. CDP partition assignment is random in order to allow for even distribution of certificates, and partition definition can be looked up in the CDP extension as defined in RFC5280.</p>
+<p   
+><img  class="confluence-embedded-image"  src="images/download/attachments/42959809/crl_partitions_example.png" alt="images/download/attachments/42959809/crl_partitions_example.png" width="600"  />
+    </p>
+<p   
+>For those of you not wishing to use partitioned CRLs life will mostly move on as usual while for those of you applying partitioned CRLs to existing installations you will retain a legacy CRL for pre-existing certificates (as the CDP can't be changed retroactively) while newly issued certificates will be issued to partitions.</p>
+    </div>
+    <div class="section section-1" id="src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-DeprecationandRemovalofHardTokenSupport">
+        <h1 class="heading "><span>Deprecation and Removal of Hard Token Support</span></h1>
+<p   
+>In an effort to relieve ourselves of maintaining little-used features we have chosen in this release to deprecate and remove support of hard tokens, after analyzing that it has little to no use among PrimeKey customers. Naturally this will have no impact on existing installations, but we have provided scripts for those of you wishing to remove the relevant tables from the database. See the <a   href="EJBCA_7.1_Upgrade_Notes.html">upgrade notes</a> for more details.</p>
+    </div>
+    <div class="section section-1" id="src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-VAandRASpecificDistributions">
+        <h1 class="heading "><span>VA and RA Specific Distributions </span></h1>
+<p   
+>As a response to market interest, we've enhanced our build process and modularization in order to produce VA and RA specific builds of EJBCA, each capable of acting in their specific roles but not as a CA. This allows PrimeKey to offer a more dynamic model for Appliance and Cloud users who would like to add RA and VA instances to their PKIs but find it prohibitive to pay for the full fee for the complete distribution. The standard CA distribution still retains the full VA and RA capabilities as before. If you're interested in finding out more, please contact <a  class="external-link" href="mailto:sales@primekey.com">sales@primekey.com</a></p>
+    </div>
+    <div class="section section-1" id="src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-EJBCA6.15.2CEAvailableonDockerHub">
+        <h1 class="heading "><span>EJBCA 6.15.2 CE Available on Docker Hub</span></h1>
+<p   
+>As some of you already know, as part of our ongoing containerization project we've added <a  class="external-link" href="https://hub.docker.com/r/primekey/ejbca-ce">a docker container to Docker Hub</a>, built on a sneak-peek of the coming release of EJBCA 6.15.2 Community Edition.</p>
+<p   
+><img  class="confluence-embedded-image"  src="images/download/attachments/42959809/dockerhub.png" alt="images/download/attachments/42959809/dockerhub.png" width="600"  />
+    </p>
+<p   
+>If you're interested in moving your PKI towards containerization, please go ahead and have a look, and feel free to give us any feedback!</p>
+    </div>
+    <div class="section section-1" id="src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-UpgradeInformation">
+        <h1 class="heading "><span>Upgrade Information</span></h1>
+<p   
+>Read the <a   href="EJBCA_7.1_Upgrade_Notes.html">EJBCA 7.1 Upgrade Notes</a> for important information about this release. For upgrade instructions and information on upgrade paths, see <a   href="Upgrading_EJBCA.html">Upgrading EJBCA</a>.</p>
+    </div>
+    <div class="section section-1" id="src-42959809_safe-id-aWQtLkVKQkNBNy4xUmVsZWFzZU5vdGVzdjcuMS4wLUNoYW5nZUxvZzpSZXNvbHZlZElzc3Vlcw">
+        <h1 class="heading "><span>Change Log: Resolved Issues</span></h1>
+<p   
+>For full details of fixed bugs and implemented features in EJBCA 7.1.0, refer to our <a  class="external-link" href="https://jira.primekey.se/issues/?jql=project%20%3D%20ECA%20AND%20resolution%20in%20(Fixed%2C%20Done)%20AND%20fixVersion%20%3D%20%22EJBCA%207.1.0%22%20ORDER%20BY%20resolution%20DESC">JIRA Issue Tracker</a>.</p>
+    <div class="section section-2" id="src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-IssuesResolvedin7.1.0">
+        <h2 class="heading "><span>Issues Resolved in 7.1.0</span></h2>
+<p   
+>Released on the 29th of April 2019</p>
+<p   
+></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-NewFeatures">New Features</a></p>
+</li><li class=" "><p   
+><a   href="#src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-Tasks">Tasks</a></p>
+</li><li class=" "><p   
+><a   href="#src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-Improvements">Improvements</a></p>
+</li><li class=" "><p   
+><a   href="#src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-BugFixes">Bug Fixes</a></p>
+</li></ul>    </div>
+    <div class="section section-2" id="src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-NewFeatures">
+        <h2 class="heading "><span>New Features</span></h2>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-961">ECA-961</a> - Partitioning of large CRLs by number of issued certificates</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7384">ECA-7384</a> - Protocol (WS/CMP/REST/CLI) support for issuing with multi-value RDNs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7474">ECA-7474</a> - GUI support to enable/disable multi-value RDNs in End Entity Profiles</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7785">ECA-7785</a> - New validator phase that will run before using the CA private key to sign the tbsCertificate</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7815">ECA-7815</a> - Selenium tests for Domain Blacklist Validator</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7906">ECA-7906</a> - Remove CA related UI parts from RA/UI builds.</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7907">ECA-7907</a> - Rendering conditions for &quot;Certificate Authority&quot; page on different builds</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7909">ECA-7909</a> - Hide unusable commands from EJBCA CLI (ejbca.sh)</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7910">ECA-7910</a> - Create separate module for X509CA</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7911">ECA-7911</a> - Split X509 CA into common and build specific parts</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7912">ECA-7912</a> - Create new ant target for RA/VA ziprelease</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7921">ECA-7921</a> - Configdump support for Domain Blacklist Validator</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7934">ECA-7934</a> - Add CRL partition index column in certificate tables</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7935">ECA-7935</a> - Add crlPartitionIndex column in CRLData</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7936">ECA-7936</a> - Add partition configuration in X509CAInfo</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7937">ECA-7937</a> - User interface for configuration of CA CRL partitioning</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7938">ECA-7938</a> - Add documentation for partitioned CRL configuration</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7939">ECA-7939</a> - Update X509CA.generateCRL function to handle partitioned CRLs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7940">ECA-7940</a> - Assign certificates to CRL partitions upon issuance or import</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7941">ECA-7941</a> - Show available CRL URLs if partitioning is used, in Edit CA page</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7942">ECA-7942</a> - Method generating partitioned CRL CDP URLs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7945">ECA-7945</a> - Perform regression testing for certificate issuance with and without CRL partitioning</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7946">ECA-7946</a> - Add extensive system test of CRL partitioning</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7953">ECA-7953</a> - Allow for the export of single CP/EEPs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7962">ECA-7962</a> - Make &quot;ca republish&quot; CLI command work with partitioned CRL</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7963">ECA-7963</a> - Update CRL Download Service to handle Partitioned CRLs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7964">ECA-7964</a> - Create a separate module for CVC CA</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7966">ECA-7966</a> - RA-API, WS and REST support for Partitioned CRLs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8030">ECA-8030</a> - Add YubiHSM2 P11 library to known P11 libraries</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8048">ECA-8048</a> - Add support for Partitioned CRLs in CertDistServlet, GetCRLServlet and CRLStoreServlet</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8052">ECA-8052</a> - Partitioned CRLs should not be allowed without &quot;Issuing Distribution Point&quot; CRL extension</p>
+    </div>
+    <div class="section section-2" id="src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-Tasks">
+        <h2 class="heading "><span>Tasks</span></h2>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7385">ECA-7385</a> - Document multi value RDN behavior for 'Subset of Subject DN' (not working with multi-value)</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7389">ECA-7389</a> - Document Administrator matching of multi-valued RDNs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7435">ECA-7435</a> - Java 11: ClassNotFoundException: org.apache.geronimo.osgi.locator.ProviderLocator from WS Tests</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7766">ECA-7766</a> - Create a Jenkins job for testing Oracle DB</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7825">ECA-7825</a> - Java 11: ejbca-db-cli uses endorsed.dirs which is not supported in java 11</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7857">ECA-7857</a> - Create a Jenkins job for testing openJdk11</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7892">ECA-7892</a> - Make validationtool tests runnable</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7904">ECA-7904</a> - Investigate what to remove from Admin Web in RA/VA builds</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7913">ECA-7913</a> - Document changes RA / VA / CA builds.</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7944">ECA-7944</a> - Exploratory testing</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7956">ECA-7956</a> - Refactoring ExternalProcessTools.writeTemporaryFileToDisk for readability</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7970">ECA-7970</a> - Update changelog summary</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7987">ECA-7987</a> - Clarify documentation of fixed octet random serial number generator</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7990">ECA-7990</a> - Remove usage of SecureRandom from test cases to avoid copy-paste</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8026">ECA-8026</a> - Create Jenkins jobs for limited RA / VA builds</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8027">ECA-8027</a> - Fix remaining failures for Selenium tests in Jenkins</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8034">ECA-8034</a> - Upgrade testing of Partitioned CRL</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8045">ECA-8045</a> - Exemplify of the Required flag for custom certificate extensions</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8050">ECA-8050</a> - Add to CRL documentation - expired certs not included in new CRL</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8058">ECA-8058</a> - Fix EcaQa198 selenium test fail in Jenkins.</p>
+    </div>
+    <div class="section section-2" id="src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-Improvements">
+        <h2 class="heading "><span>Improvements</span></h2>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7272">ECA-7272</a> - Security verification</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7391">ECA-7391</a> - Only show CA-related approvals in CA Web (and vice versa)</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7418">ECA-7418</a> - Java 11: Xerces throws ClassNotFoundException: org.w3c.dom.ls.DocumentLS</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7521">ECA-7521</a> - User must fix malformed file when making cert request.</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7554">ECA-7554</a> - POC of Jenkins warnings job to analyze the code style/quality/shape</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7593">ECA-7593</a> - Add ClientToolBoxTest in new Jenkins</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7596">ECA-7596</a> - Unification and consolidation of dockers' shell scripts</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7622">ECA-7622</a> - Ability to edit token type in the RA Web</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7722">ECA-7722</a> - Minor usability improvements on Edit CA page</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7797">ECA-7797</a> - Upgrade JAX-RS 2.0 related libraries, correct swagger ACME generation and rely more on app server's JAX-RS implementation</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7798">ECA-7798</a> - Unit tests for the Configuration Checker</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7853">ECA-7853</a> - Change default digest alg of CMP request and response messages to SHA256</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7884">ECA-7884</a> - System test for copying DNSName from CN over WS</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7902">ECA-7902</a> - Add ExtentReport Plugin</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7954">ECA-7954</a> - Replace &quot;Export profiles...&quot;-links from profiles pages with buttons.</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7957">ECA-7957</a> - Improve error message when pinging an unknown peer system</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7965">ECA-7965</a> - Document CertTools.verify behavior for bad params with JUnit test</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7975">ECA-7975</a> - Avoid using two executors for Jenkins jobs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7986">ECA-7986</a> - Better validation message when CAA validator is running on a certificate without dNSNames</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7997">ECA-7997</a> - Translate the RA web to Swedish</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8000">ECA-8000</a> - External Command Validator output not forwarded to EJBCAWS</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8011">ECA-8011</a> - Make crlPartitionIndex nullable instead of DEFAULT 0</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8013">ECA-8013</a> - Upgrade BC to 1.61</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8016">ECA-8016</a> - Database publishing of partitioned CRLs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8029">ECA-8029</a> - Remove Hard Tokens, Hard Token Profiles and Hard Token Issuers from EJBCA</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8097">ECA-8097</a> - Selenium test for CA with incorrect Partitioned CRL settings</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8101">ECA-8101</a> - Upgrade notes for partitioned CRLs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8103">ECA-8103</a> - CRL Update Worker should handle partitioned CRLs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8107">ECA-8107</a> - Change terminology for &quot;retired CRL partitions&quot;</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8109">ECA-8109</a> - CRL partition fields in new CA page appear after changing Crypto Token</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8110">ECA-8110</a> - Document that CRL partition 0 gets URL without partition number</p>
+    </div>
+    <div class="section section-2" id="src-42959809_id-.EJBCA7.1ReleaseNotesv7.1.0-BugFixes">
+        <h2 class="heading "><span>Bug Fixes</span></h2>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7626">ECA-7626</a> - Fix out of memory issues on new Jenkins</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7731">ECA-7731</a> - Subject AltName does not appear in the RA Web when Subject DN is not used</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7733">ECA-7733</a> - Security Fix</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7753">ECA-7753</a> - Selenium Docker Jenkins followup ticket - NoInitialContextException: Need to specify class name in environment or system property</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7841">ECA-7841</a> - Regression: Missing JAXB in JDK11 and lack of bundled API JAR causes complication error for Acme classes</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7868">ECA-7868</a> - Regression: CA names in Edit End Entity Profile page should be sorted</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7915">ECA-7915</a> - Unexpected error while using Create Authenticated Certificate Signing Request in CA page</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7929">ECA-7929</a> - Fingerprints downloaded from the RA Web are scrambled</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7952">ECA-7952</a> - Some rules not applied when creating a role from the RA Web</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7958">ECA-7958</a> - New fields in X509CAInfo should be added to configdump</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7973">ECA-7973</a> - Clicking Test Command twice in External Command Certificate Validator gives exception</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7974">ECA-7974</a> - Community Edition build broken in trunk</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7977">ECA-7977</a> - CRL Downloader can't handle entries with extensions, but no reason code</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7984">ECA-7984</a> - Jenkins not cleaning up temporary fles</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7985">ECA-7985</a> - Unit tests do not respect tests.jvmargs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7989">ECA-7989</a> - Possible race condition in SerialNumberGenerator with different CAs use different octet sizes</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7991">ECA-7991</a> - Make ApprovalSessionTest reliable</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8002">ECA-8002</a> - CRL Partition: CA does not retain CRL Partition settings</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8004">ECA-8004</a> - List of validators in certificate profiles is not sorted</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8005">ECA-8005</a> - NPE when trying to change ca token of a non existing CA</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8010">ECA-8010</a> - JBoss CLI on Jenkins uses too much memory on Jenkins</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8012">ECA-8012</a> - Regression: Delegated key pair generation doesn't work with RA-Gui enrollment</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8014">ECA-8014</a> - Trivial typo in revoke end entity reason codes</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8015">ECA-8015</a> - Exception in Admin UI trying to view a crypto token configured with a non-existing P11 library file</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8018">ECA-8018</a> - For Signed CMP messages, signed error message may not be signed with the expected signature for some errors</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8023">ECA-8023</a> - Update the default key aliases when importing keystores</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8040">ECA-8040</a> - Regression: End Entity Profiles ZIP file with directory cannot be imported</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8042">ECA-8042</a> - Cannot create CA with 'Use CRL partitions' option checked</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8046">ECA-8046</a> - Jenkins jobs use the same name for docker resources</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8047">ECA-8047</a> - Regression: Some End Entity Profiles ZIP files cannot be imported</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8054">ECA-8054</a> - Some classes still try to instantiate EjbcaWebBean</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8055">ECA-8055</a> - Log errors at initialization failure of EjbcaWebBeanImpl</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8061">ECA-8061</a> - Creating a CA using CRL Partition gives EntityExistsException</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8062">ECA-8062</a> - EST reenrollment fails if the DN includes more components than CN</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8063">ECA-8063</a> - ExtRAMessagesTest does not compile</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8072">ECA-8072</a> - CaRenewCACommandTest stops working after 2019-04-15</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8075">ECA-8075</a> - The &quot;Generate&quot; buttons do not include the &quot;&amp;partition=*&quot; if using Partitioned CRLs in a new CA</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8083">ECA-8083</a> - Certification Authorities: Creating new CA with CRL Partitions fails</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8085">ECA-8085</a> - Fix potential race condition in REST initialization found by PMD</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8087">ECA-8087</a> - Unable to create CA with CRL Partitions</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8090">ECA-8090</a> - Certificate created with &quot;use partitions&quot; CA has 0 as crlPartitionindex</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8095">ECA-8095</a>- Null pointer exception when a certificate profile uses CA defined AIA values, but the CA has defined none</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8105">ECA-8105</a>- Regression: Cannot edit approval requests in RA-web</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8111">ECA-8111</a>- SoftHSM directory has wrong owner on Jenkins</p>
+    </div>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="EJBCA_7.2_Release_Notes.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>EJBCA 7.2 Release Notes</span>
+        </a>
+                <a href="EJBCA_7.0.1_Release_Notes.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>EJBCA 7.0.1 Release Notes</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

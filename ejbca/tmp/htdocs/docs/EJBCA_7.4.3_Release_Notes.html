@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>EJBCA 7.4.3 Release Notes - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=100271780"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Release_Information.html">EJBCA Release Information</a></li>
+                                                                                     <li><a href="EJBCA_Release_Notes.html">EJBCA Release Notes</a></li>
+                                                            </ul>
+</div>            <h1 id="src-100271780"> <span>EJBCA 7.4.3 Release Notes</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p   
+>    <span style="color: #000000;">
+The PrimeKey EJBCA team is pleased to announce the release of EJBCA 7.4.3.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+The primary focus of this release has been to work on the EJBCA integration points including further support for Hashicorp Vault, adding end entity management in the EJBCA REST API, and more.    </span>
+</p>
+<p   
+></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-Highlights">Highlights</a></p>
+</li><li class=" "><p   
+><a   href="#src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-UpgradeInformation">Upgrade Information</a></p>
+</li><li class=" "><p   
+><a   href="#src-100271780_safe-id-aWQtLkVKQkNBNy40LjNSZWxlYXNlTm90ZXN2Ny40LjMtQ2hhbmdlTG9nOlJlc29sdmVkSXNzdWVz">Change Log: Resolved Issues</a></p>
+</li></ul><p   
+>    <span style="color: #000000;">
+Deployment options include <a  class="external-link" href="https://doc.primekey.com/ejbca-appliance">EJBCA Hardware Appliance</a>, <a  class="external-link" href="https://doc.primekey.com/x/z4X_/">EJBCA Software Appliance</a>, and <a  class="external-link" href="https://doc.primekey.com/ejbca-cloud">EJBCA Cloud</a>.    </span>
+</p>
+    <div class="section section-1" id="src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-Highlights">
+        <h1 class="heading "><span>Highlights</span></h1>
+    <div class="section section-2" id="src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-RESTEndpointsforEndEntityManagement">
+        <h2 class="heading "><span>REST Endpoints for End Entity Management</span></h2>
+<p   
+>    <span style="color: #000000;">
+We've added new commands for end entity management to our    </span>
+ <a   href="EJBCA_REST_Interface.html">REST API</a>     <span style="color: #000000;">
+with contributions from Roman Cinkais at 3Key Company. If you'd like to try them out, take a look at our <a  class="external-link" href="https://doc.primekey.com/ejbca/ejbca-operations/ejbca-ca-concept-guide/protocols/ejbca-rest-interface#EJBCARESTInterface-SwaggerUIswagger">Swagger UI</a> which is automatically deployed on non-production instances.    </span>
+</p>
+    </div>
+    <div class="section section-2" id="src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-PluginforHashicorpVault">
+        <h2 class="heading "><span>Plugin for Hashicorp Vault </span></h2>
+<p   
+>    <span style="color: #0e101a;">
+As part of a greater effort to extend interoperability and a serve as an integral part of any PKI ecosystem, we've released a plugin for <a  class="external-link" href="https://github.com/primekeydevs/ejbca-vault-plugin">Hashicorp Vault on GitHub</a>. HashiCorp Vault is a product to manage secrets and when using microservices at scale, there are many services and secrets to manage. The plugin allows you to use EJBCA instead of the built-in Vault's CA in order to combine the usability and dynamics of the Vault with the compliance, scalability, and performance of EJBCA.    </span>
+</p>
+    </div>
+    <div class="section section-2" id="src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-CVCEnrollmentinEJBCARA">
+        <h2 class="heading "><span>CVC Enrollment in EJBCA RA</span></h2>
+<p   
+>    <span style="color: #000000;">
+It's now possible to enroll for    </span>
+ <a   href="CVC_CA.html">Card Verifiable Certificates</a>     <span style="color: #000000;">
+in the EJBCA RA UI. This improvement is part of our continued effort to deprecate the old Public Web.    </span>
+</p>
+    </div>
+    <div class="section section-2" id="src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-TridentHSMSupport">
+        <h2 class="heading "><span>Trident HSM Support</span></h2>
+<p   
+>    <span style="color: #000000;">
+We've added some default properties to our configuration files to allow for easy configuration if the HSM driver is installed on the system.    </span>
+</p>
+    </div>
+    <div class="section section-2" id="src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-RootProgramComplianceIssues">
+        <h2 class="heading "><span>Root Program Compliance Issues</span></h2>
+<p   
+>    <span style="color: #000000;">
+Two issues have been reported that may cause incidents with CAs that conform to the Browser Root program and CA/Browser-Forum requirements.    </span>
+</p>
+<ol class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+In previous releases, OCSP responses without extensions were sent with an empty <i class=" ">singleExtensions</i> list, while the proper behavior is to omit the list entirely. The issue is now resolved and we recommend that all root program compliant customers upgrade to EJBCA 7.4.3 or later.    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+It has been found that EJBCA does not calculate the time between <i class=" ">notBefore </i>and <i class=" ">notAfter </i>correctly, adding an extra second to validity of certificates and OCSP responses than intended by the RFC. While we recommend customers to keep well within any required limits, this issue has been solved in EJBCA 7.4.3.    </span>
+</p>
+</li></ol>    </div>
+    <div class="section section-2" id="src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-SecurityIssue-DomainSecurityoverEST">
+        <h2 class="heading "><span>Security Issue - Domain Security over EST</span></h2>
+<p   
+>    <span style="color: #000000;">
+As a part of our penetration testing, a security issue was found when enrolling with EST while proxied through an RA over the Peers protocol. As a part of EJBCA's domain security model, the peer connector allows the restriction of client certificates (for the RA, not the end user) to a limited set of allowed CAs, thus restricting the accessibility of that RA to the rights it has within a specific role. While this works for other protocols such as CMP, it was found that the EJBCA enrollment over EST implementation bypasses this check, allowing enrollment with a valid client certificate through any functioning and authenticated RA connected to the CA. We consider this issue minor as it does not bypass any of the many other security checks in place, but as per our common policy this issue will be submitted as a CVE two weeks from the release of EJBCA 7.4.3.    </span>
+</p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-UpgradeInformation">
+        <h1 class="heading "><span>Upgrade Information</span></h1>
+<p   
+>    <span style="color: #000000;">
+Review the    </span>
+ <a   href="EJBCA_7.4.3_Upgrade_Notes.html">EJBCA 7.4.3 Upgrade Notes</a>     <span style="color: #000000;">
+for important information about this release. For upgrade instructions and information on upgrade paths, see    </span>
+ <a   href="Upgrading_EJBCA.html">Upgrading EJBCA</a>.</p>
+<p   
+>EJBCA 7.4.3 is available on <a  class="external-link" href="https://doc.primekey.com/ejbca-appliance/release-notes">EJBCA Hardware Appliance 3.5.5</a> and <a  class="external-link" href="https://doc.primekey.com/x/gg_K">EJBCA Cloud 2.5</a>     <span style="color: #000000;">
+and can be deployed as    </span>
+ <a  class="external-link" href="https://doc.primekey.com/x/z4X_/">EJBCA Software Appliance</a>.</p>
+    </div>
+    <div class="section section-1" id="src-100271780_safe-id-aWQtLkVKQkNBNy40LjNSZWxlYXNlTm90ZXN2Ny40LjMtQ2hhbmdlTG9nOlJlc29sdmVkSXNzdWVz">
+        <h1 class="heading "><span>Change Log: Resolved Issues</span></h1>
+<p   
+>    <span style="color: #000000;">
+For full details of fixed bugs and implemented features in EJBCA 7.4.3, refer to our    </span>
+ <a  class="external-link" href="https://jira.primekey.se/issues/?jql=project%20%3D%20ECA%20AND%20resolution%20in%20(Fixed%2C%20Done)%20AND%20fixVersion%20%3D%20%22EJBCA%207.4.3%22%20ORDER%20BY%20resolution%20DESC">JIRA Issue Tracker</a>.</p>
+    <div class="section section-2" id="src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-IssuesResolvedin7.4.3">
+        <h2 class="heading "><span>Issues Resolved in 7.4.3</span></h2>
+<p   
+>Released October 2020</p>
+<p   
+></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-NewFeatures">New Features</a></p>
+</li><li class=" "><p   
+><a   href="#src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-Tasks">Tasks</a></p>
+</li><li class=" "><p   
+><a   href="#src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-Improvements">Improvements</a></p>
+</li><li class=" "><p   
+><a   href="#src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-BugFixes">Bug Fixes</a></p>
+</li></ul>    <div class="section section-3" id="src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-NewFeatures">
+        <h3 class="heading "><span>New Features</span></h3>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-5333">ECA-5333</a> - Ability to search for approval requests by part of Subject DN / or e-mail</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7994">ECA-7994</a> - Not possible to request CVC certificates in RA web</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8845">ECA-8845</a> - Planning of grab new installations issue</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9237">ECA-9237</a> - Authentication path for OAuth in CA UI</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9239">ECA-9239</a> - Authentication path for OAuth in RA web</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9240">ECA-9240</a> - Ability to manage OAuth keys via AdminWeb</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9241">ECA-9241</a> - Ability to manage OAuth keys via CLI</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9333">ECA-9333</a> - REST API commands for End Entity Management</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9337">ECA-9337</a> - Landing page for &quot;grab new installation&quot;</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9346">ECA-9346</a> - CLI support to create new CA with AWS/Azure KMS crypto token (ejbca.sh ca init)</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9350">ECA-9350</a> - Authentication path for OAuth in WebService and REST API</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9351">ECA-9351</a> - Ability to configure default OAuth key</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9376">ECA-9376</a> - Add language strings for OAuth in RA Web</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9421">ECA-9421</a> - Add entry for Trident HSM to web.properties defaults</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9431">ECA-9431</a> - System test of URL access with JWT Bearer token</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9450">ECA-9450</a> - Add OAuth support to AuthenticationFilter</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9451">ECA-9451</a> - Add OAuth support to JSP pages</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9453">ECA-9453</a> - Make it possible to ask the healthcheck servlet which VAs are up to date</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9471">ECA-9471</a> - Unit test of OAuth Keys in Configdump</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9481">ECA-9481</a> - Updating preferences in RA Web and CA UI with OAuth authentication</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9509">ECA-9509</a> - Trigger landing page for new installations</p>
+    </div>
+    <div class="section section-3" id="src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-Tasks">
+        <h3 class="heading "><span>Tasks</span></h3>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8905">ECA-8905</a> - Update JWT libraries for EJBCA</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9315">ECA-9315</a> - Document CA rekey recommendations</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9380">ECA-9380</a> - Upgrade jackson-databind to 2.9.10.6</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9381">ECA-9381</a> - Remove jdom jar</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9383">ECA-9383</a> - Upgrade hibernate jars</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9515">ECA-9515</a> - New Swagger version requires json-patch JAR and newer jackson-databind JAR</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9539">ECA-9539</a> - Skip REST related test in CE</p>
+    </div>
+    <div class="section section-3" id="src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-Improvements">
+        <h3 class="heading "><span>Improvements</span></h3>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8750">ECA-8750</a> - KeyGenParams is handled inconsistently for RSA</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8800">ECA-8800</a> - Improve usability when selecting crypto tokens/algorithms on CA</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9023">ECA-9023</a> - Use prepared statements in ApprovalSessionBean and org.ejbca.util.query.Query</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9215">ECA-9215</a> - Configure full Azure Key Vault Name which would include the DNS FQDN</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9238">ECA-9238</a> - Ability to access CA UI via OAuth without allowing unauthenticated usage</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9243">ECA-9243</a> - Change or remove svn.revision property</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9283">ECA-9283</a> - SSH Implementation improvements</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9293">ECA-9293</a> - SSH Implementation remaining TODOs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9309">ECA-9309</a> - CleanUp the code, discovered in SSH implementation/review</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9328">ECA-9328</a> - Improve JackNJI11ProviderTest</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9355">ECA-9355</a> - Prevent admin lock-out when using OAuth</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9368">ECA-9368</a> - Fail over to another node if CRL updater cannot complete work due to crypto token being inaccessible</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9379">ECA-9379</a> - Document how to view number of CRLs for each issuer in housekeeping guide</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9412">ECA-9412</a> - Export\import OAuth keys with configdump</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9415">ECA-9415</a> - Add ACME support for cert-manager</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9428">ECA-9428</a> - Some WS methods swallow AuthorizationDeniedException</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9430">ECA-9430</a> - Avoid using SHA1 for HSM public key dummy certificates</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9457">ECA-9457</a> - Lower logging level in from ERROR to INFO when request key is not allowed</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9458">ECA-9458</a> - Trim external lib</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9462">ECA-9462</a> - Remove unused jar file</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9464">ECA-9464</a> - Upgrade internal library</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9465">ECA-9465</a> - Upgrade internal library</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9467">ECA-9467</a> - Upgrade internal library</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9469">ECA-9469</a> - Upgrade internal library</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9514">ECA-9514</a> - Temporarily remove OAuth configuration from CA Web</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9522">ECA-9522</a> - UI Improvements to installation page</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9523">ECA-9523</a> - EJBCA's validity definition does not align with the one from RFC5280 and baseline requirements</p>
+    </div>
+    <div class="section section-3" id="src-100271780_id-.EJBCA7.4.3ReleaseNotesv7.4.3-BugFixes">
+        <h3 class="heading "><span>Bug Fixes</span></h3>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8681">ECA-8681</a> - CRLData query wrongly assumes unique result</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9031">ECA-9031</a> - Regression: certificate validity option for key validators are not shown</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9170">ECA-9170</a> - SecureXmlDecoder cannot deserialize enums created in Java 6</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9185">ECA-9185</a> - Security Issue</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9213">ECA-9213</a> - Regression: 'Close' button not functioning under Role Members 'View Certificate' page</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9280">ECA-9280</a> - SecureXmlDecoder lacks support for UserDataVO, causing deserialization error</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9291">ECA-9291</a> - Incorrect encoding of critical options for SSH certificates</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9296">ECA-9296</a> - SSH values still show up in end entity profiles even if SSH module is not present</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9301">ECA-9301</a> - EJBCA freezes at startup if cyclic cross-signed root certificates are used in OCSP chain</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9302">ECA-9302</a> - Regression: Unable to Generate Certs from WebService When the Username is Set To Autogenerated in the EEP</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9304">ECA-9304</a> - Missing CA causes NPE when viewing KeyBindings</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9318">ECA-9318</a> - Wrong defaultKey selected from crypto token</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9325">ECA-9325</a> - Add quotation marks to the properties argument in the sample command in the CLI for services</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9335">ECA-9335</a> - Regression: SerialNr Octet size not retained after upgrade</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9343">ECA-9343</a> - Duplicated close on stream in EndEntityProfileSessionBean and CertificateProfileSessionBean</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9349">ECA-9349</a> - CLI does not include plugins-ee on first build</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9364">ECA-9364</a> - EjbcaWS.findCerts(username, isValid=true) should also return certificates with status = 21</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9365">ECA-9365</a> - Not possible to delete publisher, if exists ssh CA</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9370">ECA-9370</a> - CMP's EndEntityCertificateAuthenticationModule does not use BC to verify certificates</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9392">ECA-9392</a> - ACME system test includes invalid altName extension in CSR</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9413">ECA-9413</a> - Fix ACME test failures in main</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9426">ECA-9426</a> - OCSP responses without extensions are sent with an empty &quot;singleExtensions&quot; list</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9432">ECA-9432</a> - Removal of unidfnr/src-test causes Unit tests failure and partial execution of unit tests</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9434">ECA-9434</a> - Multiple CRLs with different CRL partition indexes after upgrade causes NonUniqueResultException</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9436">ECA-9436</a> - ProtocolOcspHttpStandaloneTest failure (false positive)</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9437">ECA-9437</a> - Avoid random StringToolsTest failure</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9440">ECA-9440</a> - Regression: CA UI links do not work with a HTTP proxy running on a different port/hostname/scheme</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9448">ECA-9448</a> - Regression: Changes in EndEntityProfileSessionBean and CertificateProfileSessionBean in try-with-resources produce incomplete xml</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9452">ECA-9452</a> - Test for pkcs10enroll endpoint returns error when user is set to autogenerated in EEP</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9455">ECA-9455</a> - Possible NPE in REST search certificate call</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9456">ECA-9456</a> - Approvals created without cert authenticated admins fail in RA Web</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9482">ECA-9482</a> - Missing icon and name of access rule with misconfigured peer connector</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9485">ECA-9485</a> - Regression: XmlSerializer does not B64 encode non-ASCII strings, causing audit record to fail in some cases</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9498">ECA-9498</a> - Regression: OCSP keybinding certificate import fails when CA fingerprint is missing in database</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9501">ECA-9501</a> - Test Failure: KeyValidatorSession</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9503">ECA-9503</a> - Test Failure: REST System tests</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9506">ECA-9506</a> - Update method invocations to getPendingEntriesCountForPublisherInIntervals</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9517">ECA-9517</a> - ant ziprelease doesn't set git revision properly</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9518">ECA-9518</a> - AdminWeb header/logo URL is sometimes not shown due to incorrect URL</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9520">ECA-9520</a> - Jenkins RA/VA builds using invalid revsion property</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9524">ECA-9524</a> - EJBCA CE doesn't build from main</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9528">ECA-9528</a> - ACME NPE while running same certbot request twice or more</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9529">ECA-9529</a> - Regression: Custom logo does not load</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9535">ECA-9535</a> - Too many CT keys would fill up screen during CA creation</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9538">ECA-9538</a> - AcmeConfiguration is missing configdump setting for getRetryAfter</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9541">ECA-9541</a> - Test failures after inclusive validity range fix</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9547">ECA-9547</a> - &quot;ant ziprelease&quot; produces Community Edition zip release that does not build</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-9548">ECA-9548</a> - Regression: PKI Disclosure Statements are not encoded correctly in audit log</p>
+<p   
+></p>
+    </div>
+    </div>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="EJBCA_7.4.3.2_Release_Notes.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>EJBCA 7.4.3.2 Release Notes</span>
+        </a>
+                <a href="EJBCA_7.4.2_Release_Notes.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>EJBCA 7.4.2 Release Notes</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

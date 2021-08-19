@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="cmp-war" default="build">
+    <description>
+            Build file for the CMP Web component
+    </description>
+
+	<dirname property="cmp-war.dir" file="${ant.file.cmp-war}"/>
+
+    <import file="${cmp-war.dir}/../build-helpers.xml"/>
+	
+	<property name="cmp-war.build.dir" location="${cmp-war.dir}/build"/>
+	<property name="cmp-war.src.dir" location="${cmp-war.dir}/src"/>
+	<property name="cmp-war.resources.dir" location="${cmp-war.dir}/resources"/>
+
+	<path id="compile.classpath">
+		<path refid="lib.ejbca-common-web.classpath"/>
+		<path refid="lib.servlet.classpath"/>
+		<path refid="lib.jee.classpath"/>
+		<path refid="lib.log4j.classpath"/>
+		<path refid="lib.bouncycastle.classpath"/>
+        <path location="${mod.cesecore-entity.lib}"/>
+        <path location="${mod.cesecore-common.lib}"/>
+        <path location="${mod.cesecore-ejb-interface.lib}"/>
+		<path location="${mod.edition-specific-interface.lib}"/>
+		<path location="${mod.edition-specific-ejb.lib}"/>
+	</path>
+	
+    <target name="clean" description="Clean up this module">
+		<delete dir="${cmp-war.build.dir}" />
+    	<delete file="${mod.cmp-war.war}" />
+    </target>
+	
+    <target name="build" description="Build this module" depends="compile">
+        <war destfile="${mod.cmp-war.war}" webxml="${cmp-war.resources.dir}/WEB-INF/web.xml" basedir="${cmp-war.build.dir}">
+        	<fileset dir="${cmp-war.resources.dir}" excludes="WEB-INF/web.xml"/>
+        </war>
+    </target>
+
+    <target name="compile" depends="">
+    	<mkdir dir="${cmp-war.build.dir}/WEB-INF/classes" />
+        <javac srcdir="${cmp-war.src.dir}" destdir="${cmp-war.build.dir}/WEB-INF/classes" debug="on" includeantruntime="no" encoding="UTF-8" target="${java.target.version}"
+        	classpathref="compile.classpath"/>
+    </target>
+
+</project>

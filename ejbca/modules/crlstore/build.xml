@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="crlstore" default="ejbca-build">
+
+	<dirname property="crlstore.dir" file="${ant.file.crlstore}"/>	
+	
+    <import file="${crlstore.dir}/../build-helpers.xml"/>
+	
+	<property name="crlstore.build.dir" location="${crlstore.dir}/build-crlstore"/>
+	<property name="crlstore.resources.dir" location="${crlstore.dir}/resources"/>
+	<property name="crlstore.src.crlstore.dir" location="${crlstore.dir}/src"/>
+
+	<path id="compile-common.classpath">
+		<path refid="lib.servlet.classpath"/>
+		<path refid="lib.log4j.classpath"/>
+		<path refid="lib.commons-lang.classpath"/>
+		<path refid="lib.commons-config.classpath"/>
+		<path refid="lib.jee.classpath"/>
+		<path refid="lib.bouncycastle.classpath"/>
+		<path refid="lib.mail.classpath"/>
+	</path>
+
+	<path id="compile-ejbca.classpath">
+		<path refid="compile-common.classpath"/>
+		<path location="${mod.ejbca-ejb-interface.lib}"/>
+		<path location="${mod.ejbca-common-web.lib}"/>
+		<path refid="lib.ejbca-common.classpath"/>
+        <path location="${mod.cesecore-entity.lib}"/>
+        <path location="${mod.cesecore-common.lib}"/>
+        <path location="${mod.cesecore-ejb-interface.lib}"/>
+	</path>
+
+    <target name="clean" description="Clean up this module">
+    	<delete dir="${crlstore.build.dir}" />
+    </target>
+
+	<target name="ejbca-build" description="Build this module" depends="ejbca-crlstore.war"/>
+	<target name="ejbca-crlstore.war" depends="ejbca-compile">
+		<war destfile="${mod.crlstore.war}" webxml="${crlstore.resources.dir}/WEB-INF/web-crlstore-ejbca.xml" basedir="${crlstore.build.dir}"/>
+	</target>
+
+	<target name="ejbca-compile">
+    	<mkdir dir="${crlstore.build.dir}/WEB-INF/classes" />
+		<javac destdir="${crlstore.build.dir}/WEB-INF/classes" debug="on" includeantruntime="no" encoding="UTF-8" target="${java.target.version}"
+			classpathref="compile-ejbca.classpath">
+        	<include name="org/ejbca/ui/web/protocol/CRLStoreServlet.java" />
+			<src path="${crlstore.src.crlstore.dir}"/>
+		</javac>
+	</target>
+
+</project>

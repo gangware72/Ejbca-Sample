@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Troubleshoot Database Performance - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=96863165"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Documentation.html">EJBCA Documentation</a></li>
+                                                                                     <li><a href="Troubleshooting_Guide.html">Troubleshooting Guide</a></li>
+                                                            </ul>
+</div>            <h1 id="src-96863165"> <span>Troubleshoot Database Performance</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p   
+>    <span style="color: #000000;">
+The following provides information for troubleshooting database performance issues. To view general troubleshooting tips and search for troubleshooting topics, see <a   href="Troubleshooting_Guide.html">EJBCA Troubleshooting</a>.    </span>
+</p>
+<p   
+></p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>Before starting any database performance troubleshooting, ensure that you have (at least) the recommended database indexes applied. See doc/sql-scripts for recommended indexes.</p>
+        </div>
+    </div>
+<p   
+></p>
+    <div class="section section-1" id="src-96863165_id-.TroubleshootDatabasePerformancev7.4.3-EnablePerformanceStatisticsinWildFly">
+        <h1 class="heading "><span>Enable Performance Statistics in WildFly</span></h1>
+<p   
+>    <span style="color: #000000;">
+To troubleshoot database performance in WildFly, follow the steps below.<br/>    </span>
+</p>
+    <div  class="confbox admonition admonition-info">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>    <span style="color: #000000;">
+The following instructions have been tested with WildFly 14.    </span>
+</p>
+        </div>
+    </div>
+<p   
+></p>
+<ol class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+Run the following command to list available data sources.    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">&gt; cd ${WILDFLY_HOME}</code></div>
+<div class="line"><code class="plain">&gt; ./bin/jboss-cli.sh --connect </code><code class="string">'/subsystem=datasources:read-resource()'</code></div>
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"outcome"</code><code class="plain"> =&gt; </code><code class="string">"success"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"result"</code><code class="plain"> =&gt; {</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"data-source"</code><code class="plain"> =&gt; {</code><code class="string">"ejbcads"</code><code class="plain"> =&gt; undefined},</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"xa-data-source"</code><code class="plain"> =&gt; undefined</code></div>
+<div class="line"><code class="plain">    }</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+    </div>
+<p   
+>    <span style="color: #000000;">
+Make a note of the datasource used by EJBCA as this information is used in the next step. In the example above, the name of the datasource is <tt class=" ">ejbcads</tt>, but it can be different on your system.<br/>    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+Run the following commands to enable performance and SQL logging in Hibernate.    </span>
+</p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>Replace the datasource <tt class=" ">ejbcads</tt> with the name of the datasource you noted down in the previous step.</p>
+        </div>
+    </div>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">./bin/jboss-cli.sh --connect </code><code class="string">'/subsystem=datasources/data-source=ejbcads/statistics=pool:write-attribute(name=statistics-enabled,value=true)'</code></div>
+<div class="line"><code class="plain">./bin/jboss-cli.sh --connect </code><code class="string">'/subsystem=datasources/data-source=ejbcads/statistics=jdbc:write-attribute(name=statistics-enabled,value=true)'</code></div>
+<div class="line"><code class="plain">./bin/jboss-cli.sh --connect </code><code class="string">'/system-property=hibernate.generate_statistics:add(value=true)'</code></div>
+<div class="line"><code class="plain">./bin/jboss-cli.sh --connect </code><code class="string">'/system-property=hibernate.show_sql:add(value=true)'</code></div>
+<div class="line"><code class="plain">./bin/jboss-cli.sh --connect </code><code class="string">'/system-property=hibernate.format_sql:add(value=true)'</code></div>
+<div class="line"><code class="plain">./bin/jboss-cli.sh --connect </code><code class="string">'/system-property=hibernate.use_sql_comments:add(value=true)'</code></div>
+<div class="line"><code class="plain">./bin/jboss-cli.sh --connect </code><code class="string">'/subsystem=logging/logger=org.hibernate.stat:add()'</code></div>
+<div class="line"><code class="plain">./bin/jboss-cli.sh --connect </code><code class="string">'/subsystem=logging/logger=org.hibernate.stat:write-attribute(name=level, value=DEBUG)'</code></div>
+</div>
+    </div>
+</li><li class=" "><p  class="auto-cursor-target" 
+>Run the following commands to enable debugging of EJBCA and CeSeCore.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">./bin/jboss-cli.sh --connect </code><code class="string">'/subsystem=logging/logger=org.ejbca:write-attribute(name=level, value=DEBUG)'</code></div>
+<div class="line"><code class="plain">./bin/jboss-cli.sh --connect </code><code class="string">'/subsystem=logging/logger=org.cesecore:write-attribute(name=level, value=DEBUG)'</code></div>
+</div>
+    </div>
+</li><li class=" "><p  class="auto-cursor-target" 
+>Restart WildFly.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">systemctl restart wildfly</code></div>
+</div>
+    </div>
+</li><li class=" "><p  class="auto-cursor-target" 
+>    <span style="color: #000000;">
+Load EJBCA in the browser and tail the log file.    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">tail -f /opt/jboss/standalone/log/server.log</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>It may be good to know the load times reported by the browser for reference. Assuming Chromium is used, you can see how much time it takes to load different resources by pressing <strong class=" ">Ctrl+Shift+I</strong> and opening the <strong class=" ">Network</strong> tab as shown in the screenshot below.</p>
+<img  class="confluence-embedded-image"  src="images/download/attachments/96863165/devtools.png" alt="images/download/attachments/96863165/devtools.png"  height="250" />
+    </li><li class=" "><p   
+>    <span style="color: #000000;">
+Perform some operation known to be slow and capture the output from the log.     </span>
+For example, loading the audit log page would give an output similar to the following:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">2019-11-11 14:15:13,553 INFO  [stdout] (EJB default - 2) Hibernate: select peerdata0_.id as id1_25_, peerdata0_.connectorState as connecto2_25_, peerdata0_.data as data3_25_, peerdata0_.name as name4_25_, peerdata0_.rowProtection as rowProte5_25_, peerdata0_.rowVersion as rowVersi6_25_, peerdata0_.url as url7_25_ from PeerData peerdata0_</code></div>
+<div class="line"><code class="plain">2019-11-11 14:15:13,554 DEBUG [org.hibernate.stat.internal.ConcurrentStatisticsImpl] (EJB default - 2) HHH000117: HQL: SELECT a FROM PeerData a, time: 1ms, rows: 2</code></div>
+<div class="line"><code class="plain">2019-11-11 14:15:13,556 INFO  [org.hibernate.engine.internal.StatisticalLoggingSessionEventListener] (EJB default - 2) Session Metrics {</code></div>
+<div class="line"><code class="plain">    304609 nanoseconds spent acquiring 1 JDBC connections;</code></div>
+<div class="line"><code class="plain">    41073 nanoseconds spent releasing 1 JDBC connections;</code></div>
+<div class="line"><code class="plain">    343180 nanoseconds spent preparing 1 JDBC statements;</code></div>
+<div class="line"><code class="plain">    290351 nanoseconds spent executing 1 JDBC statements;</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent executing 0 JDBC batches;</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent performing 0 L2C puts;</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent performing 0 L2C hits;</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent performing 0 L2C misses;</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent executing 0 flushes (flushing a total of 0 entities and 0 collections);</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)</code></div>
+<div class="line"><code class="plain">}</code></div>
+<div class="line"><code class="plain">2019-11-11 14:15:14,400 INFO  [stdout] (EJB default - 10) Hibernate: select accesstree0_.pK as pK1_11_0_, accesstree0_.authorizationTreeUpdateNumber as authoriz2_11_0_, accesstree0_.rowProtection as rowProte3_11_0_, accesstree0_.rowVersion as rowVersi4_11_0_ from AuthorizationTreeUpdateData accesstree0_ where accesstree0_.pK=?</code></div>
+<div class="line"><code class="plain">2019-11-11 14:15:14,402 INFO  [org.hibernate.engine.internal.StatisticalLoggingSessionEventListener] (EJB default - 10) Session Metrics {</code></div>
+<div class="line"><code class="plain">    454643 nanoseconds spent acquiring 1 JDBC connections;</code></div>
+<div class="line"><code class="plain">    81895 nanoseconds spent releasing 1 JDBC connections;</code></div>
+<div class="line"><code class="plain">    519914 nanoseconds spent preparing 1 JDBC statements;</code></div>
+<div class="line"><code class="plain">    433415 nanoseconds spent executing 1 JDBC statements;</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent executing 0 JDBC batches;</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent performing 0 L2C puts;</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent performing 0 L2C hits;</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent performing 0 L2C misses;</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent executing 0 flushes (flushing a total of 0 entities and 0 collections);</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)</code></div>
+<div class="line"><code class="plain">}</code></div>
+<div class="line"><code class="plain">2019-11-11 14:15:16,861 INFO  [org.cesecore.audit.impl.log4j.Log4jDevice] (default task-17) 2019-11-11 14:15:16+01:00;ACCESS_CONTROL;SUCCESS;ACCESSCONTROL;CORE;CN=SuperAdmin,O=PrimeKey Solutions AB,C=SE;;;;resource0=/administrator;resource1=/secureaudit/auditor/select</code></div>
+<div class="line"><code class="plain">2019-11-11 14:15:16,862 DEBUG [org.cesecore.audit.log.InternalSecurityEventsLoggerSessionBean] (default task-17) LogDevice: Log4jDevice Proc: 1</code></div>
+<div class="line"><code class="plain">2019-11-11 14:15:16,865 INFO  [stdout] (default task-17) Hibernate: insert into AuditRecordData (additionalDetails, authToken, customId, eventStatus, eventType, module, nodeId, rowProtection, rowVersion, searchDetail1, searchDetail2, sequenceNumber, service, timeStamp, pk) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)</code></div>
+<div class="line"><code class="plain">2019-11-11 14:15:16,894 INFO  [org.hibernate.engine.internal.StatisticalLoggingSessionEventListener] (default task-17) Session Metrics {</code></div>
+<div class="line"><code class="plain">    711999 nanoseconds spent acquiring 1 JDBC connections;</code></div>
+<div class="line"><code class="plain">    34333 nanoseconds spent releasing 1 JDBC connections;</code></div>
+<div class="line"><code class="plain">    749310 nanoseconds spent preparing 1 JDBC statements;</code></div>
+<div class="line"><code class="plain">    321017 nanoseconds spent executing 1 JDBC statements;</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent executing 0 JDBC batches;</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent performing 0 L2C puts;</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent performing 0 L2C hits;</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent performing 0 L2C misses;</code></div>
+<div class="line"><code class="plain">    1637963 nanoseconds spent executing 1 flushes (flushing a total of 1 entities and 0 collections);</code></div>
+<div class="line"><code class="plain">    0 nanoseconds spent executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>You can also use the ping utility in Linux to measure the RTT between the EJBCA machine and the DBMS machine.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">&gt; ping &lt;HOST&gt; -c </code><code class="value">10</code></div>
+<div class="line"><code class="plain">PING &lt;HOST&gt; (&lt;IP&gt;) </code><code class="value">56</code><code class="plain">(</code><code class="value">84</code><code class="plain">) bytes of data.</code></div>
+<div class="line"><code class="value">64</code><code class="plain"> bytes from &lt;HOST&gt; (&lt;IP&gt;): icmp_seq=</code><code class="value">1</code><code class="plain"> ttl=</code><code class="value">64</code><code class="plain"> time=</code><code class="value">0.028</code><code class="plain"> ms</code></div>
+<div class="line"><code class="plain">[...]</code></div>
+<div class="line"><code class="plain">--- &lt;HOST&gt; ping statistics ---</code></div>
+<div class="line"><code class="value">10</code><code class="plain"> packets transmitted, </code><code class="value">10</code><code class="plain"> received, </code><code class="value">0</code><code class="plain">% packet loss, time 9193ms</code></div>
+<div class="line"><code class="plain">rtt min/avg/max/mdev = </code><code class="value">0.052</code><code class="plain">/</code><code class="value">0.077</code><code class="plain">/</code><code class="value">0.086</code><code class="plain">/</code><code class="value">0.013</code><code class="plain"> ms</code></div>
+</div>
+    </div>
+<p   
+>This is useful if your database resides on another machine, and you want to determine if the network between the EJBCA machine and the DBMS machine is a bottleneck.</p>
+</li></ol><p   
+>The investigation above shows quite normal values. It took about 350 ms to load the audit log page in Chromium. Of these 350 ms, around 6 ms seconds were spent on doing three queries against the database. Of these 6 ms, about 0.1 ms was incurred by network delays.</p>
+    </div>
+    <div class="section section-1" id="src-96863165_id-.TroubleshootDatabasePerformancev7.4.3-LogDatabaseQueriesUsingMariaDB">
+        <h1 class="heading "><span>Log Database Queries Using MariaDB</span></h1>
+<p   
+>If you are using MariaDB, you can enable logging of slow queries, as well as queries not using an index, by running the following commands:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">mysql -u root -e </code><code class="string">"SET GLOBAL slow_query_log=1;"</code></div>
+<div class="line"><code class="plain">mysql -u root -e </code><code class="string">"SET GLOBAL slow_query_log_file='/tmp/mariadb-slow.log';"</code></div>
+<div class="line"><code class="plain">mysql -u root -e </code><code class="string">"SET GLOBAL long_query_time=1.0;"</code></div>
+<div class="line"><code class="plain">mysql -u root -e </code><code class="string">"SET GLOBAL log_queries_not_using_indexes=ON;"</code></div>
+</div>
+    </div>
+<p   
+>The following displays an example of what the log file <tt class=" ">/tmp/mariadb-slow.log</tt> can look like if slow queries are detected:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain"># Time: 191111 14:32:56</code></div>
+<div class="line"><code class="plain"># User@Host: ejbca[ejbca] @  [127.0.0.1]</code></div>
+<div class="line"><code class="plain"># Thread_id: 83  Schema: ejbca  QC_hit: No</code></div>
+<div class="line"><code class="plain"># Query_time: 0.000387  Lock_time: 0.000143  Rows_sent: 2  Rows_examined: 2</code></div>
+<div class="line"><code class="plain"># Rows_affected: 0</code></div>
+<div class="line"><code class="plain">SET timestamp=1573479176;</code></div>
+<div class="line"><code class="plain">select peerdata0_.id as id1_25_, peerdata0_.connectorState as connecto2_25_, peerdata0_.data as data3_25_, peerdata0_.name as name4_25_, peerdata0_.rowProtection as rowProte5_25_, peerdata0_.rowVersion as rowVersi6_25_, peerdata0_.url as url7_25_ from PeerData peerdata0_;</code></div>
+</div>
+    </div>
+<p   
+>For more information, refer to the MariaDB Knowledge Base article <a  class="external-link" href="https://mariadb.com/kb/en/library/slow-query-log-overview/">Slow Query Log Overview</a>.</p>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="Validation_Authority.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Validation Authority</span>
+        </a>
+                <a href="PKI_Management.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>PKI Management</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

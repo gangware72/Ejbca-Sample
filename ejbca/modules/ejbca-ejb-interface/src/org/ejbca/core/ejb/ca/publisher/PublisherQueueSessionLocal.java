@@ -1,0 +1,178 @@
+/*************************************************************************
+ *                                                                       *
+ *  EJBCA Community: The OpenSource Certificate Authority                *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
+package org.ejbca.core.ejb.ca.publisher;
+
+import java.util.Collection;
+import java.util.List;
+
+import javax.ejb.CreateException;
+import javax.ejb.Local;
+
+import org.cesecore.authentication.tokens.AuthenticationToken;
+import org.cesecore.certificates.certificate.CertificateDataWrapper;
+import org.cesecore.certificates.endentity.ExtendedInformation;
+import org.cesecore.oscp.OcspResponseData;
+import org.ejbca.core.model.ca.publisher.BasePublisher;
+import org.ejbca.core.model.ca.publisher.CustomPublisherContainer;
+import org.ejbca.core.model.ca.publisher.PublisherException;
+import org.ejbca.core.model.ca.publisher.PublisherQueueData;
+import org.ejbca.core.model.ca.publisher.PublisherQueueVolatileInformation;
+
+/**
+ * Local interface for PublisherQueueSession.
+ * @version $Id$
+ */
+@Local
+public interface PublisherQueueSessionLocal {
+
+    /**
+     * 
+     * @param publisherId the publisher that this should be published to
+     * @param publishType the type of entry it is, {@link PublisherQueueData#PUBLISH_TYPE_CERT} or CRL
+     * @param fingerprint unique id for the data to be added to the queue
+     * @param queueData actual queue data to be added
+     * @param publishStatus status of the publisher 
+     * @throws CreateException if the entry can not be created
+     */
+    void addQueueData(int publisherId, int publishType, String fingerprint,
+            PublisherQueueVolatileInformation queueData, int publishStatus) throws CreateException;
+
+    /** Removes an entry from the publisher queue. */
+    void removeQueueData(String pk);
+
+    /**
+     * Finds all entries with status PublisherQueueData.STATUS_PENDING for a
+     * specific publisherId.
+     * 
+     * @return Collection of PublisherQueueData, never null
+     */
+    Collection<PublisherQueueData> getPendingEntriesForPublisher(int publisherId);
+
+    /**
+     * Gets the number of pending entries for a publisher.
+     * @param publisherId The publisher to count the number of pending entries for.
+     * @return The number of pending entries.
+     */
+    int getPendingEntriesCountForPublisher(int publisherId);
+
+    /**
+     * Gets an array with the number of new pending entries for a publisher in each interval specified by
+     * <i>lowerBounds</i> and <i>upperBounds</i>. 
+     * 
+     * The interval is defined as from lowerBounds[i] to upperBounds[i] and the unit is seconds from now. 
+     * A negative or 0 value results in no boundary.
+     * 
+     * @param publisherId The publisher to count the number of pending entries for.
+     * @return Array with the number of pending entries corresponding to each element in <i>interval</i>.
+     */
+    int[] getPendingEntriesCountForPublisherInIntervals(int publisherId, int[] lowerBounds, int[] upperBounds);
+
+    /**
+     * Finds all entries with status PublisherQueueData.STATUS_PENDING for a
+     * specific publisherId.
+     * 
+     * @return Collection of PublisherQueueData, never null
+     */
+    Collection<PublisherQueueData> getPendingEntriesForPublisherWithLimit(int publisherId, int limit);
+
+    /**
+     * Finds all entries with status {@link PublisherQueueData.STATUS_PENDING} for a
+     * specific <code>publisherId</code>. The results are ordered in descending order
+     * by time created.
+     * 
+     * @param publisherId the id of a publisher to fetch pending entries for.
+     * @param limit if <offset>limit > 0</offset>, limits the number of results.
+     * @param offset skips the first <code>offset</offset> items, <code>offset = 0</code> disables this behavior.
+     * @return Collection of PublisherQueueData, never null
+     */
+    Collection<PublisherQueueData> getPendingEntriesForPublisherWithLimitAndOffset(int publisherId, int limit, int offset);
+
+    /**
+     * Finds all entries for a specific fingerprint.
+     * 
+     * @return Collection of PublisherQueueData, never null
+     */
+    Collection<PublisherQueueData> getEntriesByFingerprint(String fingerprint);
+
+    /**
+     * Updates a record with new status
+     * 
+     * @param pk primary key of data entry
+     * @param status status from PublisherQueueData.STATUS_SUCCESS etc, or -1 to not update status
+     * @param tryCounter an updated try counter, or -1 to not update counter
+     */
+    void updateData(String pk, int status, int tryCounter);
+
+    /**
+     * Intended for use from PublishQueueProcessWorker.
+     * 
+     * Publishing algorithm that is a plain fifo queue, but limited to selecting entries to republish at 100 records at a time. It will select from the database for this particular publisher id, and process 
+     * the record that is returned one by one. The records are ordered by date, descending so the oldest record is returned first. 
+     * Publishing is tried every time for every record returned, with no limit.
+     * Repeat this process as long as we actually manage to publish something this is because when publishing starts to work we want to publish everything in one go, if possible.
+     * However we don't want to publish more than 20000 certificates each time, because we want to commit to the database some time as well.
+     * Now, the OCSP publisher uses a non-transactional data source so it commits every time so...
+     * 
+     * @param admin the administrator that must be authorized for publishing
+     * @param publisher the publisher to publish to
+     * @return how many publishing operations that succeeded and failed 
+     */
+    PublishingResult plainFifoTryAlwaysLimit100EntriesOrderByTimeCreated(AuthenticationToken admin, BasePublisher publisher);
+
+    
+    /** Publishers do not run a part of regular transactions and expect to run in auto-commit mode. */
+	boolean publishCertificateNonTransactional(BasePublisher publisher, AuthenticationToken admin, CertificateDataWrapper cert,
+	        String password, String userDN, ExtendedInformation extendedinformation) throws PublisherException;
+
+    /** Publishers do not run as part of regular transactions and expect to run in auto-commit mode. 
+	 * 
+	 * @param publisher the publisher to store the CRL to
+	 * @param admin the administrator publishing the CRL, it's up to the publisher to decide if authorization is needed or not
+     * @param incrl The DER coded CRL to be stored.
+     * @param cafp Fingerprint (hex) of the CAs certificate.
+     * @param number CRL number.
+     * @param userDN if an DN object is not found in the certificate use object from user data instead, can be null.
+     * @return true if storage (to publisher or queue) was successful.
+     * @throws PublisherException if a communication or other error occurs (storing in the queue due to publisher downtime is not an error).
+	 */
+	boolean publishCRLNonTransactional(BasePublisher publisher, AuthenticationToken admin, byte[] incrl, String cafp, int number, String userDN) throws PublisherException;
+
+	
+	/**
+	 * 
+	 * @param publisher the publisher to store the OCSP response to
+	 * @param admin the administrator publishing the response, it's up to the publisher to decide if authorization is needed or not
+	 * @param ocspResponseData data to be published
+	 * @return true if storage (to publisher or queue) is successful
+	 * @throws PublisherException if a communication or other error occurs (storing in the queue due to publisher downtime is not an error).
+	 */
+	boolean publishOcspResponsesNonTransactional(final CustomPublisherContainer publisher, final AuthenticationToken admin, final OcspResponseData ocspResponseData) throws PublisherException;
+	
+	
+    /**
+     * Publishers do not run as part of regular transactions and expect to run in auto-commit mode.
+     * This method is invoked locally to publish to multiple publishers in parallel.
+     * 
+     * The implementing method returns the result in the same order as the publishers are provided.
+     * Each result Object is either a PublisherException (if the publishing failed) or a Boolean.TRUE (if the publishing succeeded).
+     */
+    List<Object> publishCertificateNonTransactionalInternal(List<BasePublisher> publishers, AuthenticationToken admin, CertificateDataWrapper certWrapper,
+            String password, String userDN, ExtendedInformation extendedinformation);
+	
+    /** Publishers digest queues in transaction-based "chunks". 
+     * @param admin the administrator that must be authorized for publishing
+     * @param publisher the publisher to publish to
+     * @return how many publishing operations that succeeded and failed 
+     */
+    PublishingResult doChunk(AuthenticationToken admin, BasePublisher publisher);
+}

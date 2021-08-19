@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Part 5b: Configure Microsoft Auto Enrollment Servlet on Linux - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=85924722"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Documentation.html">EJBCA Documentation</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_Integration.html">EJBCA Integration</a></li>
+                                                                                                         <li class="shortcut"><a href="Integrating_with_Third-Party_Applications.html">Integrating with Third-Party Applications</a></li>
+                                                                                     <li><a href="Auto_Enrollment_Configuration_Guide.html">Auto Enrollment Configuration Guide</a></li>
+                                                            </ul>
+</div>            <h1 id="src-85924722"> <span>Part 5b: Configure Microsoft Auto Enrollment Servlet on Linux</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p   
+>The following outlines how to install the PrimeKey Auto Enrollment Servlet on a Linux host.</p>
+    <div  class="confbox admonition admonition-info">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>Note that it is recommended to install the servlet on the same host running the Microsoft Certificate Services, following the instructions in <a   href="Part_5a__Configure_Microsoft_Auto_Enrollment_Servlet_on_Windows.html">Configure Microsoft Auto Enrollment Servlet on Windows</a>.</p>
+        </div>
+    </div>
+<p   
+>Configuring the Microsoft Auto Enrollment Servlet on Linux is performed in the following steps:</p>
+<ul class=" "><li class=" "><p   
+><a   href="#src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLVN0ZXAxLUluc3RhbGxBcGFjaGVUb21jYXRhbmRBdXRvZW5yb2xsbWVudFNlcnZsZXQ">Step 1 - Install Apache Tomcat and Autoenrollment Servlet</a></p>
+</li><li class=" "><p   
+><a   href="#src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLVN0ZXAyLUNvbmZpZ3VyZUF1dG9FbnJvbGxtZW50U2VydmxldA">Step 2 - Configure Auto Enrollment Servlet</a></p>
+</li><li class=" "><p   
+><a   href="#src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLVN0ZXAzLVRlc3RBdXRvRW5yb2xsbWVudHdpdGhFSkJDQQ">Step 3 - Test Auto Enrollment with EJBCA</a></p>
+</li></ul><p   
+>The examples below use the following denotations:</p>
+<ul class=" "><li class=" "><p   
+>The domain used is <strong class=" ">yourcompany.com</strong>.</p>
+</li><li class=" "><p   
+>The domain realm is <strong class=" ">YOURCOMPANY.COM</strong>.</p>
+</li><li class=" "><p   
+>The EJBCA server hostname is <strong class=" ">ejbcaserver.yourcompany.com</strong>.</p>
+</li><li class=" "><p   
+>The Tomcat server hostname is <strong class=" ">tomcatserver.yourcompany.com</strong>.</p>
+</li></ul><p   
+>Labels indicated in bold should be replaced with names in your environment and in the examples below, the the text enclosed in angle brackets should be replaced with names in your environment. Note the following instructions assumes that the path to the Tomcat server is <tt class=" ">/opt/tomcat</tt>.</p>
+    <div class="section section-1" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLVN0ZXAxLUluc3RhbGxBcGFjaGVUb21jYXRhbmRBdXRvZW5yb2xsbWVudFNlcnZsZXQ">
+        <h1 class="heading "><span>Step 1 - Install Apache Tomcat and Autoenrollment Servlet </span></h1>
+<p   
+>    <span style="color: #000000;">
+To install Apache Tomcat and Autoenrollment Servlet on the Tomcat Server, do the following:    </span>
+</p>
+<ol class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+Unpack Apache Tomcat:    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="functions">sudo</code><code class="plain"> </code><code class="functions">tar</code><code class="plain"> -xvzf ~</code><code class="plain">/apache-tomcat-</code><code class="plain">*.</code><code class="functions">tar</code><code class="plain">.gz -C </code><code class="plain">/opt</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>Set symbolic link:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="functions">sudo</code><code class="plain"> </code><code class="functions">ln</code><code class="plain"> -s </code><code class="plain">/opt/apache-tomcat-</code><code class="plain">* </code><code class="plain">/opt/tomcat</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>    <span style="color: #003366;">
+    <span style="color: #000000;">
+Download the Auto Enrollment Servlet war file (<tt class=" ">autoenroll.war</tt>    </span>
+):    </span>
+</p>
+</li><li class=" "><p   
+>Copy the war file (<tt class=" ">autoenroll.war</tt>) to the Tomcat webapps directory (    <span style="color: #000000;">
+<tt class=" ">/opt/tomcat/webapps</tt>    </span>
+):</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="functions">sudo</code><code class="plain"> </code><code class="functions">cp</code><code class="plain"> ~</code><code class="plain">/autoenroll</code><code class="plain">.war </code><code class="plain">/opt/tomcat/webapps</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>Start Tomcat:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">/opt/tomcat/bin/catalina</code><code class="plain">.sh start</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+A new directory will appear in the Tomcat webapps directory named <tt class=" ">autoenroll</tt>.    </span>
+</p>
+</li></ol>    </div>
+    <div class="section section-1" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLVN0ZXAyLUNvbmZpZ3VyZUF1dG9FbnJvbGxtZW50U2VydmxldA">
+        <h1 class="heading "><span>Step 2 - Configure Auto Enrollment Servlet</span></h1>
+<p   
+>    <span style="color: #000000;">
+The Servlet is composed of multiple parts to configure the security, flexibility, and support of enrollment with EJBCA. The following sections cover configuring the Auto Enrollment Servlet on the Tomcat Server.    </span>
+</p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLUtlcmJlcm9zQXV0aGVudGljYXRpb24">Kerberos Authentication</a></p>
+</li><li class=" "><p   
+><a   href="#src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLXNlcnZlci54bWw">server.xml</a></p>
+</li><li class=" "><p   
+><a   href="#src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLXdlYi54bWw">web.xml</a></p>
+</li><li class=" "><p   
+><a   href="#src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLWF1dG9lbnJvbGxfY29uZmlnX2RpcmVjdG9yeS5wcm9wZXJ0aWVz">autoenroll_config_directory.properties</a></p>
+</li><li class=" "><p   
+><a   href="#src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLW1zYWVzLnByb3BlcnRpZXM">msaes.properties</a></p>
+</li><li class=" "><p   
+><a   href="#src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLU1TRW5yb2xsbWVudFNlcnZsZXQucHJvcGVydGllcw">MSEnrollmentServlet.properties</a></p>
+</li><li class=" "><p   
+><a   href="#src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLU1TVGVtcGxhdGVUb1NldHRpbmdzLnByb3BlcnRpZXM">MSTemplateToSettings.properties</a></p>
+</li><li class=" "><p   
+><a   href="#src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLWxvZzRqLnByb3BlcnRpZXM">log4j.properties</a></p>
+</li><li class=" "><p   
+><a   href="#src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLVJlc3RhcnRUb21jYXQ">Restart Tomcat</a></p>
+</li></ul>    <div class="section section-2" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLUtlcmJlcm9zQXV0aGVudGljYXRpb24">
+        <h2 class="heading "><span>Kerberos Authentication</span></h2>
+<p   
+>    <span style="color: #000000;">
+Spnego is a mechanism to extend Kerberos authentication to HTTP servers such as Tomcat. Users authenticate to the Tomcat servlet using Windows Integrated Authentication (Kerberos) the same way they would authenticate to an internal Windows resource. When the Kerberos authentication protocol is used, the identity of the user, including the SAMAccountName is also passed to the Tomcat servlet as part of the Kerberos ticket.    </span>
+</p>
+    <div class="section section-3" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLWxvZ2luLmNvbmY">
+        <h3 class="heading "><span>login.conf</span></h3>
+<p   
+>    <span style="color: #000000;">
+The login.conf file provides authentication technologies to Java applications. The Krb5LoginModule is used to configure Kerberos protocol settings for Tomcat.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+To create the login.conf file, do the following:    </span>
+</p>
+<ol class=" "><li class=" "><p   
+>Create a file named <tt class=" ">login.conf</tt> in your Tomcat directory (    <span style="color: #000000;">
+<tt class=" ">/opt/tomcat</tt>    </span>
+):</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="functions">vi</code><code class="plain"> </code><code class="plain">/opt/tomcat/login</code><code class="plain">.conf</code></div>
+</div>
+    </div>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">spnego-client {</code></div>
+<div class="line"><code class="plain">  com.sun.security.auth.module.Krb5LoginModule required;</code></div>
+<div class="line"><code class="plain">};</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">spnego-server {</code></div>
+<div class="line"><code class="plain">  com.sun.security.auth.module.Krb5LoginModule required</code></div>
+<div class="line"><code class="plain">  storeKey=true</code></div>
+<div class="line"><code class="plain">  isInitiator=false;</code></div>
+<div class="line"><code class="plain">};</code></div>
+</div>
+    </div>
+</li></ol><p   
+>The Krb5LoginModule configures Kerberos protocol settings for Tomcat.</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Setting</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Description</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>storeKey</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Specifies if the principal&rsquo;s key is to be stored in the Subject&rsquo;s private credentials.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>isInitiator</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Specifies if to act as acceptor or initiator. If configured to true (initiator) the credentials are acquired via AS exchange, if configured to false (acceptor) the credentials are not acquired via AS exchange.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>principal</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The name of the principal that should be used. The principal can be a simple username or a service name.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>useKeyTab</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Specifies if the module gets the principal&rsquo;s key from the keytab.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>keyTab</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The location of the keytab file to obtain the principal&rsquo;s secret key.</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+<p   
+>For more information about JAAS authentication, refer to the <a  class="external-link" href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jaas/tutorials/LoginConfigFile.html">Oracle Documentation</a>.</p>
+    </div>
+    <div class="section section-3" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLWtyYjUuY29uZg">
+        <h3 class="heading "><span>krb5.conf</span></h3>
+<p   
+>    <span style="color: #000000;">
+The krb5.conf file contains Kerberos configuration information, including defaults for the current realm and Kerberos applications, the location of the KDC, and mappings of hostnames to Kerberos realms.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+Create the krb5.conf file according to the following and ensure to update references in the file to your own domain.    </span>
+</p>
+<ol class=" "><li class=" "><p   
+>Create a file named krb5.conf in your Tomcat directory (    <span style="color: #000000;">
+<tt class=" ">/opt/tomcat</tt>    </span>
+):</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">vi /opt/tomcat/krb5.conf</code></div>
+</div>
+    </div>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">[libdefaults]</code></div>
+<div class="line"><code class="plain">  default_realm = YOURCOMPANY.COM</code></div>
+<div class="line"><code class="plain">  default_tkt_enctypes = aes128-cts rc4-hmac des3-cbc-sha1 des-cbc-md5 des-cbc-crc</code></div>
+<div class="line"><code class="plain">  default_tgs_enctypes = aes128-cts rc4-hmac des3-cbc-sha1 des-cbc-md5 des-cbc-crc</code></div>
+<div class="line"><code class="plain">  permitted_enctypes = aes128-cts rc4-hmac des3-cbc-sha1 des-cbc-md5 des-cbc-crc</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">[realms]</code></div>
+<div class="line"><code class="plain">  YOURCOMPANY.COM = {</code></div>
+<div class="line"><code class="plain">  kdc = YOURCOMPANY.COM</code></div>
+<div class="line"><code class="plain">  default_domain = YOURCOMPANY.COM</code></div>
+<div class="line"><code class="plain">}</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">[domain_realm]</code></div>
+<div class="line"><code class="plain">.yourcompany.com = YOURCOMPANY.COM</code></div>
+</div>
+    </div>
+</li></ol><p   
+>The following sections and settings are available.</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Settings</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Description</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><strong class=" ">[libdefaults]</strong></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Section for settings used by the Kerberos V5 library and the realms section specifies properties for each realm.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>default_realm</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Identities the default Kerberos realm for the client.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>permitted_enctypes</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Specifies the list of encryption types that are permitted for use in session key encryption.<br/>It is recommended to use aes256-cts as the only option to limit the support of weaker encryption types.<br/>Visit MIT Kerberos documentation for all supported encryption types</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><strong class=" ">[realms]</strong></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Section specifying properties for each realm.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>kdc</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>specifies the name or address of a host running a KDC for that realm.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>default_domain</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>specifies the domain used to expand hostnames when translating Kerberos 4 service principals to Kerberos 5 principals.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><strong class=" ">[domain_realm]</strong></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Section providing a translation from a domain name or hostname to a Kerberos realm name. The tag name can be a hostname or domain name, where domain names are indicated by a prefix of a period.</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLXNlcnZlci54bWw">
+        <h2 class="heading "><span>server.xml</span></h2>
+<p   
+>    <span style="color: #000000;">
+The server.xml file is responsible for specifying the Tomcat&rsquo;s configuration on startup such as server, services, connectors, containers, and nested components. A Java Key Store (JKS) and password are necessary to enable HTTPS connections on Tomcat. Java Key Stores contains SSL certificates, however, obtaining the server&rsquo;s JKS is out of the scope of this document.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+Edit the server.xml file according to the following and ensure to update the SSL server certificate and the keystore password with your own in the file:    </span>
+</p>
+<ol class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+Copy the <tt class=" ">tomcat_server.jks</tt> and <tt class=" ">aewsclient.jks</tt> keystores issued earlier to <tt class=" ">/opt/tomcat</tt>:    </span>
+</p>
+</li><li class=" "><p   
+>To edit the server.xml:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="functions">vi</code><code class="plain"> </code><code class="plain">/opt/tomcat/conf/server</code><code class="plain">.xml</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>Add the following section to enable SSL, below the already commented 8443 section:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">&lt;Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true" </code></div>
+<div class="line"><code class="plain"> maxThreads="150" scheme="https" secure="true" </code></div>
+<div class="line"><code class="plain"> clientAuth="false" sslProtocol="TLS" </code></div>
+<div class="line"><code class="plain"> keystoreFile="/opt/tomcat/tomcat_server.jks" </code></div>
+<div class="line"><code class="plain"> keystorePass="PASSWORD" </code></div>
+<div class="line"><code class="plain"> /&gt;</code></div>
+</div>
+    </div>
+</li></ol><p   
+>Connectors allow the Tomcat service to accept certificate requests through HTTPS on the port specified using an SSL certificate and the corresponding password.</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Setting</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Description</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>port</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The TCP port number on which this connector will create a server socket and await incoming connections.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>keystoreFile</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The pathname of the keystore file where the server certificate and private key is to be loaded from.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>keystorePass</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The password used to access the server certificate and private key from the specified keystore file.</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+<p   
+>For more information about connectors, refer to the <a  class="external-link" href="https://tomcat.apache.org/tomcat-8.5-doc/config/http.html">Tomcat documentation</a>.</p>
+    </div>
+    <div class="section section-2" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLXdlYi54bWw">
+        <h2 class="heading "><span>web.xml</span></h2>
+<p   
+>The web.xml file contains servlet deployment configurations that describe settings for the web application such as the servlet name, servlet mappings, and filters.</p>
+<p   
+>Edit the web.xml file according to the following:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="functions">vi</code><code class="plain"> web.xml</code></div>
+</div>
+    </div>
+<ul class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+Update the <tt class=" ">spnego.preauth.username</tt> and <tt class=" ">spnego.preauth.password</tt> values with your service account     </span>
+(<strong class=" ">servlet-service</strong>)    <span style="color: #000000;">
+ credentials    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+Update the <tt class=" ">spnego.krb5.conf</tt> path to <tt class=" ">${catalina.home}/krb5.conf</tt>    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+Update the <tt class=" ">spnego.login.conf</tt> path to <tt class=" ">${catalina.home}/login.conf</tt>    </span>
+</p>
+</li></ul>    </div>
+    <div class="section section-2" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLWF1dG9lbnJvbGxfY29uZmlnX2RpcmVjdG9yeS5wcm9wZXJ0aWVz">
+        <h2 class="heading "><span>autoenroll_config_directory.properties</span></h2>
+<p   
+>The autoenroll_config_directory.properties file configures the servlet to look for the files msaes.properties, MSEnrollmentServlet.properties, and MSTemplateToSettings.properties in the specified directory. These three files are important because they configure settings for the LDAP connection to Active Directory, the connection to EJBCA, and attributes of the certificate request.</p>
+<p   
+>If the properties files are contained in a subtree of the servlet home directory, each redeployment of the servlet will overwrite the properties files. This file allows you to move the properties files to a directory outside of the servlet subtree to prevent being overwritten and still being locatable by the servlet code.</p>
+<p   
+>Edit the autoenroll_config_directory.properties file according to the following:</p>
+<ol class=" "><li class=" "><p   
+>Navigate to the WEB-INF directory:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="functions">cd</code><code class="plain"> </code><code class="plain">/opt/tomcat/webapps/autoenroll/WEB-INF/</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+Update the <tt class=" ">autoenroll_config_directory.properties</tt> file with the path where the configuration files will be stored.    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+Create the Auto Enroll configuration directory (for example, <tt class=" ">/opt/tomcat/autoenroll_conf):</tt>    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="functions">mkdir</code><code class="plain"> </code><code class="plain">/opt/tomcat/autoenroll_conf</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>Move <tt class=" ">msaes.properties, MSEnrollmentServlet.properties,</tt> and <tt class=" ">MSTemplateToSettings.properties</tt> to <tt class=" ">/opt/tomcat/autoenroll_conf:</tt></p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="functions">mv</code><code class="plain"> msaes.properties </code><code class="plain">/opt/tomcat/autoenroll_conf</code></div>
+<div class="line"><code class="functions">mv</code><code class="plain"> MSEnrollmentServlet.properties </code><code class="plain">/opt/tomcat/autoenroll_conf</code></div>
+<div class="line"><code class="functions">mv</code><code class="plain"> MSTemplateToSettings.properties </code><code class="plain">/opt/tomcat/autoenroll_conf</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+Back up the <tt class=" ">web.xml</tt> and <tt class=" ">autoenroll_config_directory.properties</tt> files in case of the files being overwritten by redeployment:    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">cp autoenroll_config_directory.properties autoenroll_config_directory.properties.bak</code></div>
+<div class="line"><code class="plain">cp web.xml web.xml.bak</code></div>
+</div>
+    </div>
+</li></ol><ul class=" "><li class=" "><p   
+><strong class=" ">Config_Directory</strong>: Full path to the config directory containing msaes.properties, MSEnrollmentServlet.properties, and MSTemplateToSettings.properties.</p>
+</li><li class=" "><p   
+>If no directory is specified, the servlet will search for the properties files in the WEB-INF directory in the servlet home directory.</p>
+</li></ul>    </div>
+    <div class="section section-2" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLW1zYWVzLnByb3BlcnRpZXM">
+        <h2 class="heading "><span>msaes.properties</span></h2>
+<p   
+>Certificate requests do not supply subject information during enrollment. In order for the servlet to query for the subject details, an LDAP connection to Active Directory is required. The msaes.properties file configures the LDAP connection details to Active Directory. Note that the Active Directory BIND account must have privileges to read AD objects.</p>
+<p   
+>Edit the msaes.properties file according to the following:</p>
+<ol class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+Navigate to <tt class=" ">/opt/tomcat/autoenroll_conf:</tt>    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="functions">cd</code><code class="plain"> </code><code class="plain">/opt/tomcat/autoenroll_conf</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>Edit the msaes.properties file, update the login information for the Active Directory Bind account and ensure to update references to your own domain:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="functions">vi</code><code class="plain"> msaes.properties</code></div>
+</div>
+    </div>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain"># This file is used to specify the connection details for Active Directory:</code></div>
+<div class="line"><code class="plain"># set up your bind Certificate Publisher account here </code></div>
+<div class="line"><code class="plain"># Set to true if the connection should use SSL. This setting is currently unsupported and will have no effect. </code></div>
+<div class="line"><code class="plain">#usessl=false</code></div>
+<div class="line"><code class="plain"># Provide the port number for the Active Directory connection. </code></div>
+<div class="line"><code class="plain">#port=389</code></div>
+<div class="line"><code class="plain"># Provide login for a user with access to read objects in Active Directory.</code></div>
+<div class="line"><code class="plain"># It can be in the form of a fully distinguished name or user principal name.</code></div>
+<div class="line"><code class="plain"># This user should also be in the Cert Publishers group in order to publish certificates.</code></div>
+<div class="line"><code class="plain">logindn=CN=autoenrollmentbind,CN=Users,DC=yourcompany,DC=com </code></div>
+<div class="line"><code class="plain">#Provide the password for the logindn user </code></div>
+<div class="line"><code class="plain">loginpassword=&lt;PASSWORD&gt;</code></div>
+</div>
+    </div>
+</li></ol><p   
+></p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Setting</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Description</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>usessl</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Specifies if the connection to Active Directory should be using LDAP over SSL (true) or just LDAP (false).</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>port</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The port number of the connection to Active Directory. Available options: 389 (standard LDAP), 636 (standard LDAPS), or the custom LDAP port to connect to Active Directory.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>logindn</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The fully distinguished name or the user principal name of the BIND account with read permissions in Active Directory. The BIND account must be in the Cert Publishers group in Active Directory to publish certificates.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>loginpassword</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The password for the BIND account.</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-2" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLU1TRW5yb2xsbWVudFNlcnZsZXQucHJvcGVydGllcw">
+        <h2 class="heading "><span>MSEnrollmentServlet.properties</span></h2>
+<p   
+>The MSEnrollmentServlet.properties file contains authentication and connection details to the Certificate Authority issuing certificates for enrollment requests.</p>
+<p   
+>Edit the MSEnrollmentServlet.properties file according to the following:</p>
+<ol class=" "><li class=" "><p   
+>To edit the MSEnrollmentServlet.properties file:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="functions">vi</code><code class="plain"> MSEnrollmentServlet.properties</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>Update the location of the keystore with permissions to access Web Services API, Web Services URL, and the name of the CA for Auto Enrollment:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">EJBCA_KeyStorePassword=&lt;PASSWORD&gt;</code></div>
+<div class="line"><code class="plain">EJBCA_TrustedKeyStore=/opt/tomcat/aewsclient.jks</code></div>
+<div class="line"><code class="plain">EJBCA_KeyStore=/opt/tomcat/aewsclient.jks</code></div>
+<div class="line"><code class="plain">EJBCA_TrustedKeyStorePassword=&lt;PASSWORD&gt;</code></div>
+<div class="line"><code class="plain">EJBCA_WebServiceUrl=https://ejbcaserver.yourcompany.com:8443/ejbca/ejbcaws/ejbcaws?wsdl</code></div>
+<div class="line"><code class="plain">EJBCA_CAName=Issuing CA</code></div>
+</div>
+    </div>
+</li></ol><p   
+>The following settings specify the keystore containing the EJBCA Web Service API client certificate, the truststore containing the EJBCA certificate chain, the EJBCA Web Services API URL, and the certificate authority that will be signing the certificate requests.</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Setting</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Description</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>EJBCA_TrustedKeyStore</p>
+<p   
+>EJBCA_TrustedKeyStorePassword</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The path and password to the EJBCA server&rsquo;s keystore.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>EJBCA_KeyStore and EJBCA_KeyStorePassword</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The path and password to the Web Services client&rsquo;s keystore.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>EJBCA_WebServiceUrl</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The API endpoint for the servlet to send SOAP requests.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>EJBCA_CAName</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The certificate authority issuing out the certificates.</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-2" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLU1TVGVtcGxhdGVUb1NldHRpbmdzLnByb3BlcnRpZXM">
+        <h2 class="heading "><span>MSTemplateToSettings.properties</span></h2>
+<p   
+>    <span style="color: #000000;">
+After the servlet queries Active Directory for the requester&rsquo;s object, the servlet must know which attributes should be included in the certificate request. The MSTemplateToSettings.properties file configures 5 core functionalities for each certificate template enrollment.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+1) The first functionality enables an entry and maps the certificate template object identifier (OID) to it. An OID is a unique string of numbers that is created for each certificate template.    </span>
+</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Setting    </span>
+</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Description    </span>
+</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+used    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Enables the entry to be used. &ldquo;X&rdquo; is a number of increasing sequential order identifying the entry.    </span>
+</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+oid    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+The certificate template OID that maps the following settings to the certificate template.    </span>
+</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+<p   
+>    <span style="color: #000000;">
+2) The second functionality specifies the certificate profile and the end entity profile from EJBCA to use. The certificate profile and end entity profile must be enabled to use the certificate authority configured in MSEnrollmentServlet.properties.    </span>
+</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Setting    </span>
+</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Description    </span>
+</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+certprofile    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+The certificate profile the enrollment will use.    </span>
+</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+eeprofile    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+The end entity profile the enrollment will use.    </span>
+</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+<p   
+>    <span style="color: #000000;">
+3) The third functionality constructs the Subject of the certificate request. The administrator can specify which attributes of the requester&rsquo;s object from Active Directory should be placed in the Subject Distinguished Name (Subject DN). Options include the requester&rsquo;s common name, distinguished name, DNS name, principal name, and email. Also, the administrator can specify additional Subject DN attributes for all certificate requests using that template.oid.    </span>
+</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Setting    </span>
+</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Description</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+subject_name_format    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Specifies the values to take from the requester&rsquo;s Active Directory object for the Subject DN.     </span>
+<br/>    <span style="color: #000000;">
+Available options are common_name, fully_distinguished_name, dnsName, and userPrincipalName.    </span>
+</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+include_email_in_subjectdn    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Specifies if the email of the requester should be included in the Subject DN.    </span>
+</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+additional_subjectdn_attributes    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Specifies any other attributes that is to be included in the Subject DN.    </span>
+</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+<p   
+>    <span style="color: #000000;">
+4) The fourth functionality constructs the Subject Alternative Name (SAN) of the certificate request. The administrator can specify which attributes of the requester&rsquo;s object from Active Directory should be placed in the SAN. Options include the requester&rsquo;s DNS name, principal name, service principal name, NetBIOS name, domain name, and object GUID.    </span>
+</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Setting    </span>
+</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Description    </span>
+</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+include_dns_name_in_san    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Specifies if the DNS Name of the requester should be included in the Subject Alternative Name.    </span>
+</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+include_upn_in_san    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Specifies if the User Principal Name of the requester should be included in the Subject Alternative Name.    </span>
+</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+include_spn_in_san    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Specifies if the Service Principal Name of the requester should be included in the Subject Alternative Name.    </span>
+</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+include_netbios_in_san    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Specifies if the NetBIOS name of the requester should be included in the Subject Alternative Name.    </span>
+</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+include_domain_in_san    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Specifies if the Domain name of the requester should be included in the Subject Alternative Name.    </span>
+</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+include_objectguid_in_san    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Specifies if the object GUID of the requester should be included in the Subject Alternative Name.    </span>
+</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+<p   
+>    <span style="color: #000000;">
+5) The fifth functionality toggles if the certificate is to be published to the requester&rsquo;s object in Active Directory. The servlet uses the BIND account configured in msaes.properties to publish the certificate.    </span>
+</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Setting    </span>
+</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Description    </span>
+</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+publish_to_active_directory    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Specifies if the certificate received from EJBCA should also be published to the requester&rsquo;s Active Directory object.    </span>
+</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+<p   
+>    <span style="color: #000000;">
+There is a maximum of 100 entries that can be configured in this file. The end entity profiles must accommodate for the Subject DN and SAN attributes.    </span>
+</p>
+<p   
+>Edit the MSTemplateToSettings.properties file according to the following:</p>
+<ol class=" "><li class=" "><p   
+>To edit MSTemplateToSettings.properties:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="functions">vi</code><code class="plain"> MSTemplateToSettings.properties</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>Update/add your <strong class=" ">User_Auto_Enrollment</strong> template OID and set the EJBCA Certificate Profile and End Entity Profile that should map to the OID. Update other attributes as desired.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">#User</code></div>
+<div class="line"><code class="plain">id1.used=true</code></div>
+<div class="line"><code class="plain">id1.oid=1.3.6.1.4.1.311.21.8.10623644.2526593.8537745.534905.15291053.121.10044518.13424184</code></div>
+<div class="line"><code class="plain">id1.certprofile=User_Certificate_Profile</code></div>
+<div class="line"><code class="plain">id1.eeprofile=User_End_Entity_Profile</code></div>
+<div class="line"><code class="plain">id1.subject_name_format=common_name</code></div>
+<div class="line"><code class="plain">id1.include_email_in_subjectdn=false</code></div>
+<div class="line"><code class="plain">id1.include_email_in_san=false</code></div>
+<div class="line"><code class="plain">id1.include_dns_name_in_san=false</code></div>
+<div class="line"><code class="plain">id1.include_upn_in_san=true</code></div>
+<div class="line"><code class="plain">id1.include_spn_in_san=false</code></div>
+<div class="line"><code class="plain">id1.include_netbios_in_san=false</code></div>
+<div class="line"><code class="plain">id1.include_domain_in_san=false</code></div>
+<div class="line"><code class="plain">id1.include_objectguid_in_san=false</code></div>
+<div class="line"><code class="plain">id1.additional_subjectdn_attributes=</code></div>
+<div class="line"><code class="plain">id1.publish_to_active_directory=false</code></div>
+</div>
+    </div>
+<p  class="auto-cursor-target" 
+><img  class="emoticon emoticon-warning"  src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ If the requirement is to publish the User certificates in Active Directory, and if Credential Roaming is enabled in the Auto-Enroll GPO, do the following:</p>
+<ul class=" "><li class=" "><p   
+>Set <strong class=" ">publish_to_active_directory</strong> to <strong class=" ">true</strong> (<tt class=" ">publish_to_active_directory=true</tt>)</p>
+</li><li class=" "><p   
+>Ensure that the <strong class=" ">autoenrollmentbind</strong> Active Directory account is made a member of the <strong class=" ">Cert Publishers</strong> security group in the domain.</p>
+</li></ul><p   
+></p>
+</li><li class=" "><p   
+>Update/add your <strong class=" ">Computer_Auto_Enrollment</strong> template OID and set the EJBCA Certificate Profile and End Entity Profile that should map to the OID. Update other attributes as desired.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">#Computer</code></div>
+<div class="line"><code class="plain">id2.used=true</code></div>
+<div class="line"><code class="plain">id2.oid=1.3.6.1.4.1.311.21.8.10623644.2526593.8537745.534905.15291053.121.4337766.12547917</code></div>
+<div class="line"><code class="plain">id2.certprofile=Computer_Certificate_Profile</code></div>
+<div class="line"><code class="plain">id2.eeprofile=Computer_End_Entity_Profile</code></div>
+<div class="line"><code class="plain">id2.subject_name_format=dns_name</code></div>
+<div class="line"><code class="plain">id2.include_email_in_subjectdn=false</code></div>
+<div class="line"><code class="plain">id2.include_email_in_san=false</code></div>
+<div class="line"><code class="plain">id2.include_dns_name_in_san=true</code></div>
+<div class="line"><code class="plain">id2.include_upn_in_san=false</code></div>
+<div class="line"><code class="plain">id2.include_spn_in_san=false</code></div>
+<div class="line"><code class="plain">id2.include_netbios_in_san=false</code></div>
+<div class="line"><code class="plain">id2.include_domain_in_san=false</code></div>
+<div class="line"><code class="plain">id2.include_objectguid_in_san=false</code></div>
+<div class="line"><code class="plain">id2.additional_subjectdn_attributes=</code></div>
+<div class="line"><code class="plain">id2.publish_to_active_directory=false</code></div>
+</div>
+    </div>
+</li></ol>    </div>
+    <div class="section section-2" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLWxvZzRqLnByb3BlcnRpZXM">
+        <h2 class="heading "><span>log4j.properties</span></h2>
+<p   
+>    <span style="color: #000000;">
+The log4j.properties file contains settings for the Tomcat log file that is created by the servlet using Apache&rsquo;s log4j libraries.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+The file must be in the classpath of Java and can be placed in the <tt class=" ">lib</tt> directory of Tomcat or the servlet <tt class=" ">(/opt/tomcat/lib</tt> or /&lt;<strong class=" ">SERVLETHOME</strong>&gt;/WEB-INF/lib).    </span>
+</p>
+<ul class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+<strong class=" ">rootLogger</strong>: specifies the level and appender name for the root Logger    </span>
+</p>
+<ul class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+Available options for log level: TRACE, DEBUG, INFO, WARN, ERROR, and FATAL    </span>
+</p>
+</li></ul></li></ul><p   
+>    <span style="color: #000000;">
+Create the logging file log4j.properties according to the following example:    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="functions">vi</code><code class="plain"> </code><code class="plain">/opt/tomcat/lib/log4j</code><code class="plain">.properties</code></div>
+</div>
+    </div>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">log4j.rootLogger = INFO, file</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Define all the appenders</code></div>
+<div class="line"><code class="plain">log4j.appender.file = org.apache.log4j.DailyRollingFileAppender</code></div>
+<div class="line"><code class="plain">log4j.appender.file.File = ${catalina.base}/logs/msae.log</code></div>
+<div class="line"><code class="plain">log4j.appender.file.Append = true</code></div>
+<div class="line"><code class="plain">log4j.appender.file.Encoding = UTF-8</code></div>
+<div class="line"><code class="plain"># Roll-over the log once per day</code></div>
+<div class="line"><code class="plain">log4j.appender.file.DatePattern = '.'yyyy-MM-dd</code></div>
+<div class="line"><code class="plain">log4j.appender.file.layout = org.apache.log4j.PatternLayout</code></div>
+<div class="line"><code class="plain">log4j.appender.file.layout.ConversionPattern = %d %-5p - %m%n</code></div>
+</div>
+    </div>
+<p   
+>    <span style="color: #000000;">
+The<strong class=" "> rootLogger</strong> setting specifies the level and appender name for the root Logger.     </span>
+    <span style="color: #000000;">
+Available options for log level: TRACE, DEBUG, INFO, WARN, ERROR, and FATAL.    </span>
+</p>
+    </div>
+    <div class="section section-2" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLVJlc3RhcnRUb21jYXQ">
+        <h2 class="heading "><span>Restart Tomcat</span></h2>
+<p   
+>    <span style="color: #003366;">
+To restart the Tomcat service to reload the configurations, run the following:    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">/opt/tomcat/bin/catalina</code><code class="plain">.sh stop</code></div>
+<div class="line"><code class="plain">/opt/tomcat/bin/catalina</code><code class="plain">.sh start</code></div>
+</div>
+    </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLVN0ZXAzLVRlc3RBdXRvRW5yb2xsbWVudHdpdGhFSkJDQQ">
+        <h1 class="heading "><span>Step 3 - Test Auto Enrollment with EJBCA</span></h1>
+<p   
+>    <span style="color: #000000;">
+The following describes testing the auto enrollment set up.<br/>    </span>
+</p>
+    <div class="section section-2" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLURlbGV0ZUNhc2hlZFBvbGljeUluZm9ybWF0aW9u">
+        <h2 class="heading "><span>Delete Cashed Policy Information</span></h2>
+<p   
+>    <span style="color: #000000;">
+For any user logged in previously, you may need to delete the cached policy information in the local user account directory.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+Locations of cashed policies:    </span>
+</p>
+<ul class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+The location of the cached user policy is <tt class=" ">C:\Users\&lt;username&gt;\AppData\Local\Microsoft\Windows\X509Enrollment.</tt>    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+The location of the cached machine policy is <tt class=" ">C:\ProgramData\Microsoft\Windows\X509Enrollment.</tt>    </span>
+</p>
+</li></ul>    </div>
+    <div class="section section-2" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLVRlc3RBdXRvRW5yb2xsbWVudA">
+        <h2 class="heading "><span>Test Auto Enrollment</span></h2>
+<p   
+>    <span style="color: #000000;">
+To test auto enrollment for users and/or computers, do the following:    </span>
+</p>
+<ul class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+To test auto enrollment for users, log in to any Windows PC on the domain.    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+To test auto enrollment for computers, reboot the machine on the domain.    </span>
+</p>
+</li></ul>    </div>
+    <div class="section section-2" id="src-85924722_safe-id-aWQtLlBhcnQ1YjpDb25maWd1cmVNaWNyb3NvZnRBdXRvRW5yb2xsbWVudFNlcnZsZXRvbkxpbnV4djcuNC4wLUNvbmZpcm1DZXJ0aWZpY2F0ZUdlbmVyYXRpb24">
+        <h2 class="heading "><span>Confirm Certificate Generation</span></h2>
+<p   
+>    <span style="color: #000000;">
+To confirm that the user and computer certificate were generated, do the following:    </span>
+</p>
+<ul class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+Verify that the user certificate was generated by opening the Certificate Manager <tt class=" ">certmgr.msc</tt> (select <strong class=" ">Current User </strong>&gt; <strong class=" ">Personal </strong>&gt; <strong class=" ">Certificates).</strong>    </span>
+</p>
+<ul class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+Ensure the user certificate in the personal store is generated by EJBCA.    </span>
+</p>
+</li></ul></li><li class=" "><p   
+>    <span style="color: #000000;">
+Verify that the computer certificate was generated by opening mmc.exe as Administrator (enter an account that belongs to the Domain/Enterprise Admin group), and add the Certificates snap-in (select <strong class=" ">Local Computer</strong> &gt; <strong class=" ">Personal</strong> &gt; <strong class=" ">Certificates).</strong>    </span>
+</p>
+<ul class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+Ensure that the computer certificate in the personal store is generated by EJBCA.    </span>
+</p>
+</li></ul></li></ul>    </div>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="Part_5a__Configure_Microsoft_Auto_Enrollment_Servlet_on_Windows.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Part 5a: Configure Microsoft Auto Enrollment Servlet on Windows</span>
+        </a>
+                <a href="Part_6__Prevent_Duplicate_Certificates.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Part 6: Prevent Duplicate Certificates</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

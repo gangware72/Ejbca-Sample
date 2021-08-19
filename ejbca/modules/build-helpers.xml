@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="build-helpers">
+	<description>
+            This file contains common helper targets and is included from build.xml
+    </description>
+
+	<target name="showtime">
+		<tstamp>
+			<format property="currenttime" pattern="yyyy-MM-dd HH:mm:ss Z" />
+		</tstamp>
+		<echo message="Current time is ${currenttime}." />
+	</target>
+	
+	<!-- The buildservicemanifest needs ${ejbca-home}/src/java/defaultvalues.properties in order to run. 
+	     This is included in ejbca-common, so if that or ${ejbca-home}/src/java is not on the classpath passed to this macro, this will fail. -->
+	<macrodef name="buildservicemanifest">
+		<attribute name="classpath" />
+		<attribute name="file" />
+		<attribute name="interface" />
+		<element name="buildservicemanifest" implicit="yes" />
+		<sequential>
+			<!-- Enable to see full classpath provided to this call
+			<pathconvert property="buildservicemanifestbuilder.debug.class.path" refid="@{classpath}"/>
+			<echo message="buildservicemanifestbuilder classpath: @{classpath} = ${buildservicemanifestbuilder.debug.class.path}"/>
+			-->
+			<java classname="com.primekey.anttools.ServiceManifestBuilder" fork="true" failonerror="true" >
+				<classpath>
+					<path refid="@{classpath}" />
+					<path refid="lib.jee.classpath"/>
+					<path refid="lib.servicemanifestbuilder.classpath"/>
+				</classpath>
+				<arg value="@{file}" />
+				<arg value="@{interface}" />
+			</java>
+		</sequential>
+	</macrodef>
+</project>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>EJBCA 7.2 Release Notes - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=75861629"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Release_Information.html">EJBCA Release Information</a></li>
+                                                                                     <li><a href="EJBCA_Release_Notes.html">EJBCA Release Notes</a></li>
+                                                            </ul>
+</div>            <h1 id="src-75861629"> <span>EJBCA 7.2 Release Notes</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p   
+>The PrimeKey EJBCA team is proud to announce the feature release EJBCA 7.2.0.</p>
+<p   
+></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-Highlights">Highlights</a></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-PersistentStorageofCertificateTransparencySCTResponses">Persistent Storage of Certificate Transparency SCT Responses</a></p>
+</li><li class=" "><p   
+><a   href="#src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-CryptoTokenandCAManagementRESTAPI">Crypto Token and CA Management REST API</a></p>
+</li></ul></li><li class=" "><p   
+><a   href="#src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-UpgradeInformation">Upgrade Information</a></p>
+</li><li class=" "><p   
+><a   href="#src-75861629_safe-id-aWQtLkVKQkNBNy4yUmVsZWFzZU5vdGVzdjcuMi4xLUNoYW5nZUxvZzpSZXNvbHZlZElzc3Vlcw">Change Log: Resolved Issues</a></p>
+</li></ul>    <div class="section section-1" id="src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-Highlights">
+        <h1 class="heading "><span>Highlights</span></h1>
+    <div class="section section-2" id="src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-PersistentStorageofCertificateTransparencySCTResponses">
+        <h2 class="heading "><span>Persistent Storage of Certificate Transparency SCT Responses</span></h2>
+<p   
+>Persistent caching of Certificate Transparency SCTs (Signed Certificate Timestamps), in the form of a database-backed storage, has been added in addition to the existing in-memory caching. This reduces the number of requests to the CT log server and increases the performance in the following ways:</p>
+<ul class=" "><li class=" "><p   
+>The database-backed storage will be used after a restart when the in-memory cache is empty.</p>
+</li><li class=" "><p   
+>The in-memory storage has a limit of 100 000 certificates by default, and will only keep the SCTs for the most recently requested certificates. The database-backed storage has no such limit and will be used for SCTs for less frequently requested certificates.</p>
+</li><li class=" "><p   
+>The database-backed storage will store partial results for a certificate, allowing EJBCA to retry a submission efficiently at a later point.</p>
+</li></ul><p   
+>Additionally, the default configuration was changed to rate-limit connections to logs that are down or return error codes. This reduces the load on both log servers and EJBCA. For example, if a CT log rate-limits EJBCA, then EJBCA will back off for 1 second by default.</p>
+<p   
+>For more information, see <a   href="Certificate_Transparency.html">Certificate Transparency</a>.</p>
+    </div>
+    <div class="section section-2" id="src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-CryptoTokenandCAManagementRESTAPI">
+        <h2 class="heading "><span>Crypto Token and CA Management REST API</span></h2>
+<p   
+>The EJBCA REST API has so far been limited to Certificate Management operations. We've now extended the REST API, adding resources for CA administration as well. This allows simpler remote integration and management as an option to the GUI. New endpoints support crypto token- and CA Management including:</p>
+<ul class=" "><li class=" "><p   
+>CA activation and deactivation.</p>
+</li><li class=" "><p   
+>Crypto Token activation and deactivation.</p>
+</li><li class=" "><p   
+>Key generation and removal.</p>
+</li></ul><p   
+><img  class="confluence-embedded-image"  src="images/download/attachments/75861629/swagger.png" alt="images/download/attachments/75861629/swagger.png"  height="400" />
+        <br/><span class="caption">Swagger UI</span>
+    <br/><i class=" ">New REST resources in Swagger-UI</i></p>
+<p   
+>The new endpoints will naturally be disabled by default, requiring activation via Protocol Configuration before use. For more details and endpoint documentation, see <a   href="EJBCA_REST_Interface.html">EJBCA REST Interface</a>.</p>
+<p   
+></p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-UpgradeInformation">
+        <h1 class="heading "><span>Upgrade Information</span></h1>
+<p   
+>Read the <a   href="EJBCA_7.2_Upgrade_Notes.html">EJBCA 7.2 Upgrade Notes</a> for important information about this release. For upgrade instructions and information on upgrade paths, see <a   href="Upgrading_EJBCA.html">Upgrading EJBCA</a>.</p>
+    </div>
+    <div class="section section-1" id="src-75861629_safe-id-aWQtLkVKQkNBNy4yUmVsZWFzZU5vdGVzdjcuMi4xLUNoYW5nZUxvZzpSZXNvbHZlZElzc3Vlcw">
+        <h1 class="heading "><span>Change Log: Resolved Issues</span></h1>
+<p   
+>For full details of fixed bugs and implemented features in EJBCA 7.2.0, refer to our <a  class="external-link" href="https://jira.primekey.se/issues/?jql=project%20%3D%20ECA%20AND%20resolution%20in%20(Fixed%2C%20Done)%20AND%20fixVersion%20%3D%20%22EJBCA%207.2.0%22%20ORDER%20BY%20issuetype%20DESC">JIRA Issue Tracker</a>.</p>
+    <div class="section section-2" id="src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-IssuesResolvedin7.2.0">
+        <h2 class="heading "><span>Issues Resolved in 7.2.0</span></h2>
+<p   
+>Released on 20th of June 2019</p>
+<p   
+></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-NewFeatures">New Features</a></p>
+</li><li class=" "><p   
+><a   href="#src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-Tasks">Tasks</a></p>
+</li><li class=" "><p   
+><a   href="#src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-Improvements">Improvements</a></p>
+</li><li class=" "><p   
+><a   href="#src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-BugFixes">Bug Fixes</a></p>
+</li></ul>    </div>
+    <div class="section section-2" id="src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-NewFeatures">
+        <h2 class="heading "><span>New Features</span></h2>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7943">ECA-7943</a> - Add selenium test for creating a CA with partitioned CRLs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8092">ECA-8092</a> - Remove Hard Tokens - a followup ticket</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8113">ECA-8113</a> - Add REST endpoint for cryptotoken management</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8114">ECA-8114</a> - Write systemtests for crypto token REST resource</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8115">ECA-8115</a> - Update static swagger file for documentation</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8116">ECA-8116</a> - Create REST endpoint for cryptotoken activation</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8117">ECA-8117</a> - Create REST endpoint for cryptotoken deactivation</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8118">ECA-8118</a> - Create REST endpoint for cryptotoken key creation</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8127">ECA-8127</a> - Create REST endpoint for CA Activation</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8151">ECA-8151</a> - Update CLI to allow viewing/generating partitioned CRLs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8249">ECA-8249</a> - Import CVC CA CLI command should be able to import DVCA</p>
+    </div>
+    <div class="section section-2" id="src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-Tasks">
+        <h2 class="heading "><span>Tasks</span></h2>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8125">ECA-8125</a> - As a tester, I would like to call Rest endpoints for both testing and utilities that will work internally and externally of a docker image.</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8137">ECA-8137</a> - POC: Remote access for REST using GIT</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8141">ECA-8141</a> - Testing: Integration / Verification Testing</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8176">ECA-8176</a> - Exploratory testing using Swagger-UI</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8182">ECA-8182</a> - Document new REST resources</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8194">ECA-8194</a> - Add example script for ejbca-rest-api/v1/certificate/pkcs10enroll to the REST documentation</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8209">ECA-8209</a> - -Ddoc.update=true does not work anymore</p>
+    </div>
+    <div class="section section-2" id="src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-Improvements">
+        <h2 class="heading "><span>Improvements</span></h2>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7059">ECA-7059</a> - Remove properties files for CRLstore and CertStore</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7272">ECA-7272</a> - Security verification</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7418">ECA-7418</a> - Java 11: Xerces throws ClassNotFoundException: org.w3c.dom.ls.DocumentLS</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8053">ECA-8053</a> - Return correct version from REST status endpoint</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8129">ECA-8129</a> - Enable CT fastfail caching / backoff by default</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8130">ECA-8130</a> - Set up CT log test server and document it</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8131">ECA-8131</a> - Create DB update scripts and ORM files for new SCT table</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8132">ECA-8132</a> - Entity Bean for SCT disk cache</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8134">ECA-8134</a> - Saving SCT data to persistent table</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8135">ECA-8135</a> - Save and Read SCTs from persistent SCT table</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8136">ECA-8136</a> - Upgrade notes for persistent SCTs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8138">ECA-8138</a> - Unit test of OcspCtSctListExtension</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8149">ECA-8149</a> - Code cleanup April 2019</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8152">ECA-8152</a> - Prevent broken certificate chain from being imported in the CLI using the 'ca importca' command</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8156">ECA-8156</a> - Generate URLs for URL rewrite with Client Toolbox</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8158">ECA-8158</a> - Documentation: Update CertSafePublisher description</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8159">ECA-8159</a> - Improve HealthCheck to also perform test signatures on the audit log</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8165">ECA-8165</a> - Create REST endpoint for CA Deactivation</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8167">ECA-8167</a> - Possibility to issue a final CRL with unlimited end date 99991231235959Z</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8170">ECA-8170</a> - Improve reliability of service workers in a cluster</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8173">ECA-8173</a> - Service workers always log success if the service ran, no matter the result</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8181">ECA-8181</a> - Warn when slot does not contain a key with the alias 'testKey' and relax the naming convention for these keys</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8192">ECA-8192</a> - Move REST resources into separate modules</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8203">ECA-8203</a> - CA token sign test should not sign with the same key twice</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8206">ECA-8206</a> - Use SHA256 with creating signed PKCS7 messages from X509 CAs</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8208">ECA-8208</a> - Refactor SCT caching to cache partial results also</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8211">ECA-8211</a> - Create a return type for publishers in order to track numbers of successes and failures</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8229">ECA-8229</a> - Debug log all steps in StartupSingletonBean</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8230">ECA-8230</a> - Base archiveCutoff on actual producedAt time instead of currentTimeMillis</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8231">ECA-8231</a> - Use the default CA of the SCEP alias, if no CA is specified in the message</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8239">ECA-8239</a> - Remove jsessionid from URLs on first session visit</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8250">ECA-8250</a> - Protocol Configuration for new REST resources</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8264">ECA-8264</a> - Update version in CT user agent to 1.1</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8280">ECA-8280</a> - Seconds in certificate's &quot;valid from&quot; and &quot;valid to&quot; fields (EJBCA API)</p>
+    </div>
+    <div class="section section-2" id="src-75861629_id-.EJBCA7.2ReleaseNotesv7.2.1-BugFixes">
+        <h2 class="heading "><span>Bug Fixes</span></h2>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7739">ECA-7739</a> - Using a certificate profile template does not select the correct fields</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7828">ECA-7828</a> - Drop down menu for 'Select Worker' under 'Services' is not responsive</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-7841">ECA-7841</a> - Regression: Missing JAXB in JDK11 and lack of bundled API JAR causes complication error for Acme classes</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8025">ECA-8025</a> - Regression: Wrong CA-certificate is downloaded in the CA web</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8079">ECA-8079</a> - Edit CA page problems when creating CA from statedump</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8099">ECA-8099</a> - CA created with &quot;Signed By External CA&quot; has Serial Number Octet Size -1</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8144">ECA-8144</a> - Unable to change publisher type during edit</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8147">ECA-8147</a> - Regression: Cannot enter LDAP protocol CDP URL</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8148">ECA-8148</a> - Unable to edit and save access rules in basic mode</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8153">ECA-8153</a> - CertSafe Publisher throws NPE</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8155">ECA-8155</a> - Return not found on unhandled EST operations</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8160">ECA-8160</a> - ejbca.sh does not detect current working directory correctly</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8161">ECA-8161</a> - Ticket #215 VIECA?</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8168">ECA-8168</a> - NPE in RA web when rendering view enrollwithusername.xhtml</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8191">ECA-8191</a> - Change the ocsp.nonexistingisbad.uri pattern</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8215">ECA-8215</a> - Converter missing in selectManyListbox</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8216">ECA-8216</a> - Installation: Ejbca.ear does not deploy on Wildfly 10</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8234">ECA-8234</a> - OCSP requests with missing issuerKeyHash causes exception</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8240">ECA-8240</a> - Typos in create database postgresql script</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8243">ECA-8243</a> - Regression: NPE when a service is not scheduled to run</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8253">ECA-8253</a> - Integer converter missing in selectManyListbox on LDAP Publisher page</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8254">ECA-8254</a> - Check and possibly fix public key AlgorithmIdentifier parameters when issuing certificates</p>
+<p   
+><a  class="external-link" href="https://jira.primekey.se/browse/ECA-8308">ECA-8308</a> - OcspKeyBinding CSR is not compatible with Microsoft CA</p>
+    </div>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="EJBCA_7.2.1_Release_Notes.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>EJBCA 7.2.1 Release Notes</span>
+        </a>
+                <a href="EJBCA_7.1_Release_Notes.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>EJBCA 7.1 Release Notes</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Post Processing Validators - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=85928228"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Documentation.html">EJBCA Documentation</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_Operations.html">EJBCA Operations</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_CA_Concept_Guide.html">EJBCA CA Concept Guide</a></li>
+                                                                                     <li><a href="Validators_Overview.html">Validators Overview</a></li>
+                                                            </ul>
+</div>            <h1 id="src-85928228"> <span>Post Processing Validators</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p   style="text-align:left;"
+>The External Command Certificate Validator allows validating issuance based on other certificate values after the certificate (or eventual pre-certificate) has been generated but not issued, stored and published.</p>
+    <div class="section section-1" id="src-85928228_id-.PostProcessingValidatorsv7.4.0-ValidatorTypes">
+        <h1 class="heading "><span>Validator Types </span></h1>
+    <div class="section section-2" id="src-85928228_id-.PostProcessingValidatorsv7.4.0-ExternalCommandCertificateValidator">
+        <h2 class="heading "><span>External Command Certificate Validator</span></h2>
+<p   style="text-align:left;"
+>The External Command Certificate Validator allows calling an external script for the generated certificate. The exit code of the external call determines if the validation has failed. This can be used not only to validate certificate criteria, but also to call other external commands or scripts. The user running EJBCA's application server requires the OS file system permissions to do so.</p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>To be able to view and edit the External Script Validator, access to external scripts must be enabled by activating <strong class=" ">Enable External Script Access</strong> under <strong class=" ">System Configuration&gt;External Scripts</strong>.</p>
+        </div>
+    </div>
+<p   style="text-align:left;"
+>The first token of the <strong class=" ">External command</strong> field must be the external command or script called, followed by its arguments, all separated by spaces. The certificate is stored as a temporary file on the EJBCA server, and its full path is used as first argument. All subsequent arguments are shifted to the right. If the placeholder <strong class=" ">%cert%</strong> is used as an argument at any position, the certificate is not stored on the EJBCA server file system. Instead the placeholder is removed, and the PEM encoded certificate is fed to the external command or script via STDIN.</p>
+    <div  class="confbox admonition admonition-info">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>    <span style="color: #000000;">
+The platform for MS Windows and Unix/Linux is auto-detected and the default shell command and shell options are set:    </span>
+</p>
+<ul class=" "><li class=" "><p   
+>MS Windows: <tt class=" ">cmd.exe /C</tt></p>
+</li><li class=" "><p   
+>Unix/Linux: <tt class=" ">/bin/sh -c</tt></p>
+</li></ul>        </div>
+    </div>
+<p   
+>The following displays examples of external commands for Unix/Linux platforms:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="plain">/usr/local/opt/script</code><code class="plain">.sh -param1 -param2</code></div>
+<div class="line"><code class="plain">$ </code><code class="plain">/usr/local/opt/script</code><code class="plain">.sh -param1 -param2 %cert%</code></div>
+<div class="line"><code class="plain">$ openssl x509 -text -noout -</code><code class="keyword">in</code><code class="plain"> %cert%    </code></div>
+</div>
+    </div>
+    <div class="section section-3" id="src-85928228_id-.PostProcessingValidatorsv7.4.0-ScriptWhitelisting">
+        <h3 class="heading "><span>Script Whitelisting</span></h3>
+<p   style="text-align:left;"
+>An administrator can restrict which scrips can be executed for security reasons, by configuring a whitelist on the System Configuration <strong class=" ">External scripts</strong> tab. The whitelist should contain a list of paths to all scripts allowed to be executed by the External Command Certificate Validator. If the whitelist is enabled by an administrator, any execution of scripts not explicitly listed on the whitelist is prevented by EJBCA.</p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   style="text-align:left;"
+>If the External Scripts Whitelist has been enabled by an administrator and a Validator tries to execute a command which is not on the whitelist, the &quot;Validator was not applicable&quot; action is carried out.</p>
+        </div>
+    </div>
+<p   style="text-align:left;"
+>The whitelist is formatted according to the following: Each line contains the full path of the whitelisted script. Lines beginning with the character <strong class=" ">#</strong> are treated as comments. The whitelist can contain any number of scripts. An empty (enabled) whitelist will effectively block execution of all external scripts.</p>
+<p   style="text-align:left;"
+>The following displays an example of a syntactically valid whitelist:</p>
+    <div  class="confbox programlisting">
+                <div class="content">
+        <pre><code># -----------------------------------------------------------------------
+# This is an example, this configuration does not necessarily make sense
+# -----------------------------------------------------------------------
+/bin/echo
+# X.509 Certificate Linter by Amazon 
+# https://github.com/awslabs/certlint
+/opt/certlint/certlint
+/opt/certlint/cablint
+# X.509 Certificate Linter based on CA/B Forum Baseline Requirements and RFC 5280 
+# https://github.com/zmap/zlint
+/opt/scripts/zLint.sh
+#/opt/scripts/IAmDisabled.sh</code></pre>
+        </div>
+    </div>
+<p   style="text-align:left;"
+>This whitelist allows the three scripts <tt class=" ">/opt/certlint/certlint</tt>, <tt class=" ">/opt/certlint/cablint</tt>, and <tt class=" ">/opt/scripts/zLint.sh</tt> to be executed. There is no restriction on the parameters which can be given as input to these scripts. Any input validation should be done in the script itself.</p>
+    </div>
+    <div class="section section-3" id="src-85928228_id-.PostProcessingValidatorsv7.4.0-ExampleCertificateLint">
+        <h3 class="heading "><span>Example Certificate Lint</span></h3>
+<p   
+>You can use the External Command Certificate Validator to run a lint check on issued certificates, and abort issuance if certificates don't pass the tests.</p>
+<p   
+>Preparations:</p>
+<ol class=" "><li class=" "><p   
+>First, to enable external scripts, select <strong class=" ">Admin Web&gt;System Configuration&gt;External Scripts</strong>:</p>
+<ul class=" "><li class=" "><p   
+>For <strong class=" ">Enable External Script Access,</strong> select <strong class=" ">Activate</strong></p>
+</li><li class=" "><p   
+>In <strong class=" ">Configure Scripts Whitelist,</strong> select <strong class=" ">Use the whitelist below</strong> and specify a full path. For example <tt class=" ">/opt/bin/zlint.sh</tt>.</p>
+</li></ul></li><li class=" "><p   
+>To add an External Command Certificate Validator, go to <strong class=" ">Navigators</strong>:</p>
+<ul class=" "><li class=" "><p   
+>In <strong class=" ">Validator Type,</strong> select <strong class=" ">External Command Certificate Validator</strong>.</p>
+</li><li class=" "><p   
+>In <strong class=" ">Full pathname of script</strong>, add the full path to the script ending with <tt class=" ">%cert%</tt>. For example <tt class=" ">/opt/bin/zlint.sh %cert%.</tt></p>
+</li><li class=" "><p   
+>Ensure that at least the options <strong class=" ">Fail on script error code </strong>and <strong class=" ">Log error out</strong> are selected.</p>
+</li></ul></li><li class=" "><p   
+>To enable the validator for the CA, go to <strong class=" ">Certificate Authorities,</strong> click <strong class=" ">Edit</strong> and select the Validator for the CA.</p>
+</li></ol><p   
+>Issue a certificate using a server certificate Certificate Profile. You can see the Validator being triggered in the server.log. To test failures, set <strong class=" ">Key Usage</strong> to <strong class=" ">Key certificate sign</strong> in the Certificate Profile used to issue the end entity certificate. This option is not allowed in the CAB Forum Baseline Requirements. For more information, see <strong class=" ">Key Usage</strong> in <a   href="Certificate_Profile_Fields.html">Certificate Profile Fields</a>.</p>
+    <div class="section section-4" id="src-85928228_id-.PostProcessingValidatorsv7.4.0-ZLint">
+        <h4 class="heading "><span>ZLint</span></h4>
+<p   
+>ZLint is a X.509 certificate linter that can be downloaded and built from the <a  class="external-link" href="https://github.com/zmap/zlint">ZLint homepage</a>.</p>
+<p   
+>You must wrap zlint in a <tt class=" ">zlint.sh</tt> script to allow the script to return a <tt class=" ">0</tt> exit code on success, and <tt class=" ">1</tt> as exit code on failure.</p>
+<p   
+>Place the <tt class=" ">zlint.sh</tt> script in the same location as ZLint:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">#!/bin/sh</code></div>
+<div class="line"><code class="plain">mydir=</code><code class="string">"$(dirname "</code><code class="plain">$(realpath </code><code class="string">"$0"</code><code class="plain">)</code><code class="string">")"</code></div>
+<div class="line"><code class="plain">OUTPUT=`$mydir/zlint -pretty &lt;&amp;</code><code class="value">0</code><code class="plain">|grep -</code><code class="value">1</code><code class="plain"> </code><code class="string">'"error"'</code><code class="plain">`</code></div>
+<div class="line"><code class="plain">#echo Output:\"$OUTPUT\"</code></div>
+<div class="line"><code class="keyword">if</code><code class="plain"> [ -z </code><code class="string">"$OUTPUT"</code><code class="plain"> ]; then</code></div>
+<div class="line"><code class="plain">  echo </code><code class="string">"No error in zlint"</code></div>
+<div class="line"><code class="plain">  exit </code><code class="value">0</code></div>
+<div class="line"><code class="keyword">else</code></div>
+<div class="line"><code class="plain">  echo </code><code class="string">"Error in zlint"</code></div>
+<div class="line"><code class="plain">  echo $OUTPUT &gt;&amp;</code><code class="value">2</code></div>
+<div class="line"><code class="plain">  exit </code><code class="value">1</code></div>
+<div class="line"><code class="plain">fi</code></div>
+</div>
+    </div>
+<p   
+>Test by issuing certificate both with and without the <strong class=" ">Key Usage</strong> option set to <strong class=" ">Key certificate sign</strong> and view the log output in the server.log and the security audit log.</p>
+    </div>
+    <div class="section section-4" id="src-85928228_id-.PostProcessingValidatorsv7.4.0-X509Lint">
+        <h4 class="heading "><span>X509Lint</span></h4>
+<p   
+>X509Lint is a certificate linter written in C, available for <a  class="external-link" href="https://github.com/kroeckx/x509lint">download on GitHub</a>.</p>
+<p   
+>X509Lint expects the path to a PEM encoded certificate to be passed as first argument. Since EJBCA writes a DER-encoded certificate to disk, you need to parse the certificate to PEM before invoking the linter. We also need to parse the output to ensure EJBCA fails issuance if there is an error. The wrapper script below uses OpenSSL to convert the certificate to PEM and redirects any error messages to standard error.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                    <div class="title">Wrapper script for x509lint</div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Wrapper script for x509lint" data-linenumbers="true" data-firstline="1">
+<div class="line"><code class="comments">#!/bin/sh</code></div>
+<div class="line"><code class="comments"># ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</code></div>
+<div class="line"><code class="comments"># x509lint wrapper script for EJBCA.</code></div>
+<div class="line"><code class="comments"># ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</code></div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line"><code class="comments"># INSTRUCTIONS: Put this script (x509lint.sh) together</code></div>
+<div class="line"><code class="comments"># with the x509lint binary in the directory ${BIN} and</code></div>
+<div class="line"><code class="comments"># create a new External Command Certificate Validator</code></div>
+<div class="line"><code class="comments"># in EJBCA with the following settings:</code></div>
+<div class="line"> </div>
+<div class="line"><code class="comments"># Full pathname of script: ${BIN}/x509lint.sh</code></div>
+<div class="line"><code class="comments"># Fail on script error code: true</code></div>
+<div class="line"><code class="comments"># Fail on output to error out: true</code></div>
+<div class="line"> </div>
+<div class="line"><code class="comments"># Issuance phase should be "Pre-certificate Validation"</code></div>
+<div class="line"><code class="comments"># if CT is being used, and "Certificate Validation"</code></div>
+<div class="line"><code class="comments"># otherwise.</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">mydir=$(</code><code class="functions">dirname</code><code class="plain"> </code><code class="string">"$(realpath "</code><code class="plain">$0</code><code class="string">")"</code><code class="plain">)</code></div>
+<div class="line"><code class="plain">pem=</code><code class="string">"/dev/shm/OpenSSL-$(date +%s%N).pem"</code></div>
+<div class="line"><code class="plain">openssl x509 -</code><code class="keyword">in</code><code class="plain"> </code><code class="string">"$1"</code><code class="plain"> -inform DER -out </code><code class="string">"$pem"</code><code class="plain"> -outform PEM</code></div>
+<div class="line"> </div>
+<div class="line"><code class="keyword">if</code><code class="plain"> ! output=`$mydir</code><code class="plain">/x509lint</code><code class="plain"> </code><code class="string">"$pem"</code><code class="plain">`; </code><code class="keyword">then</code></div>
+<div class="line"><code class="plain">  </code><code class="functions">rm</code><code class="plain"> -f </code><code class="string">"$pem"</code></div>
+<div class="line"><code class="plain">  </code><code class="functions">exit</code><code class="plain"> 1</code></div>
+<div class="line"><code class="keyword">fi</code></div>
+<div class="line"> </div>
+<div class="line"><code class="functions">rm</code><code class="plain"> -f </code><code class="string">"$pem"</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">fatals=$(   </code><code class="functions">echo</code><code class="plain"> </code><code class="string">"$output"</code><code class="plain"> | </code><code class="functions">grep</code><code class="plain"> </code><code class="string">'F: '</code><code class="plain">)</code></div>
+<div class="line"><code class="plain">errors=$(   </code><code class="functions">echo</code><code class="plain"> </code><code class="string">"$output"</code><code class="plain"> | </code><code class="functions">grep</code><code class="plain"> </code><code class="string">'E: '</code><code class="plain">)</code></div>
+<div class="line"><code class="plain">warnings=$( </code><code class="functions">echo</code><code class="plain"> </code><code class="string">"$output"</code><code class="plain"> | </code><code class="functions">grep</code><code class="plain"> </code><code class="string">'W: '</code><code class="plain">)</code></div>
+<div class="line"><code class="plain">notices=$(  </code><code class="functions">echo</code><code class="plain"> </code><code class="string">"$output"</code><code class="plain"> | </code><code class="functions">grep</code><code class="plain"> </code><code class="string">'N: '</code><code class="plain">)</code></div>
+<div class="line"><code class="plain">infos=$(    </code><code class="functions">echo</code><code class="plain"> </code><code class="string">"$output"</code><code class="plain"> | </code><code class="functions">grep</code><code class="plain"> </code><code class="string">'I: '</code><code class="plain">)</code></div>
+<div class="line"><code class="plain">bugs=$(     </code><code class="functions">echo</code><code class="plain"> </code><code class="string">"$output"</code><code class="plain"> | </code><code class="functions">grep</code><code class="plain"> </code><code class="string">'B: '</code><code class="plain">)</code></div>
+<div class="line"> </div>
+<div class="line"><code class="keyword">if</code><code class="plain"> [ ! -z </code><code class="string">"$fatals"</code><code class="plain"> ]; </code><code class="keyword">then</code></div>
+<div class="line"><code class="plain">  &gt;&amp;2 </code><code class="functions">echo</code><code class="plain"> </code><code class="string">"$fatals"</code></div>
+<div class="line"><code class="keyword">fi</code></div>
+<div class="line"><code class="keyword">if</code><code class="plain"> [ ! -z </code><code class="string">"$errors"</code><code class="plain"> ]; </code><code class="keyword">then</code></div>
+<div class="line"><code class="plain">  &gt;&amp;2 </code><code class="functions">echo</code><code class="plain"> </code><code class="string">"$errors"</code></div>
+<div class="line"><code class="keyword">fi</code></div>
+<div class="line"><code class="keyword">if</code><code class="plain"> [ ! -z </code><code class="string">"$warnings"</code><code class="plain"> ]; </code><code class="keyword">then</code></div>
+<div class="line"><code class="plain">  </code><code class="functions">echo</code><code class="plain"> </code><code class="string">"$warnings"</code></div>
+<div class="line"><code class="keyword">fi</code></div>
+<div class="line"><code class="keyword">if</code><code class="plain"> [ ! -z </code><code class="string">"$notices"</code><code class="plain"> ]; </code><code class="keyword">then</code></div>
+<div class="line"><code class="plain">  </code><code class="functions">echo</code><code class="plain"> </code><code class="string">"$notices"</code></div>
+<div class="line"><code class="keyword">fi</code></div>
+<div class="line"><code class="keyword">if</code><code class="plain"> [ ! -z </code><code class="string">"$infos"</code><code class="plain"> ]; </code><code class="keyword">then</code><code class="plain"> </code></div>
+<div class="line"><code class="plain">  </code><code class="functions">echo</code><code class="plain"> </code><code class="string">"$infos"</code></div>
+<div class="line"><code class="keyword">fi</code></div>
+<div class="line"><code class="keyword">if</code><code class="plain"> [ ! -z </code><code class="string">"$bugs"</code><code class="plain"> ]; </code><code class="keyword">then</code></div>
+<div class="line"><code class="plain">  </code><code class="functions">echo</code><code class="plain"> </code><code class="string">"$bugs"</code></div>
+<div class="line"><code class="keyword">fi</code></div>
+</div>
+    </div>
+    </div>
+    </div>
+    <div class="section section-3" id="src-85928228_id-.PostProcessingValidatorsv7.4.0-DebianWeakKeyChecks">
+        <h3 class="heading "><span>Debian Weak Key Checks</span></h3>
+<p   
+>    <span style="color: #000000;">
+Due to an issue (<a  class="external-link" href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-0166">CVE-2008-0166</a>) from 2006 in OpenSSL, whereby a vulnerable version of the library only used the PID as seed when generating RSA or DSA keys, an attacker can find the private key from the corresponding public without much effort. The buggy version of OpenSSL was distributed in two Debian packages between the 17th of September 2006 and the 13th of May 2008.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+The Debian project created blacklists, which can be downloaded from:    </span>
+</p>
+<ul class=" "><li class=" "><p   
+><a  class="external-link" href="https://packages.debian.org/jessie/openssl-blacklist">https://packages.debian.org/jessie/openssl-blacklist</a> (    <span style="color: #222222;">
+RSA-1024, RSA-2048)    </span>
+</p>
+</li><li class=" "><p   
+><a  class="external-link" href="https://packages.debian.org/jessie/openssl-blacklist-extra">https://packages.debian.org/jessie/openssl-blacklist-extra</a> (    <span style="color: #222222;">
+RSA-512, RSA-4096)    </span>
+</p>
+</li><li class=" "><p   
+><a  class="external-link" href="https://packages.debian.org/jessie/openssh-blacklist">https://packages.debian.org/jessie/openssh-blacklist</a> (    <span style="color: #222222;">
+DSA-1024, RSA-2048)    </span>
+</p>
+</li><li class=" "><p   
+><a  class="external-link" href="https://packages.debian.org/jessie/openssh-blacklist-extra">https://packages.debian.org/jessie/openssh-blacklist-extra</a> (    <span style="color: #222222;">
+DSA-2048, RSA-1024, RSA-4096)    </span>
+</p>
+</li><li class=" "><p   
+><a  class="external-link" href="https://packages.debian.org/jessie/openvpn-blacklist">https://packages.debian.org/jessie/openvpn-blacklist</a> (    <span style="color: #222222;">
+OpenVPN RSA shared keys)    </span>
+</p>
+</li></ul><p   
+>    <span style="color: #000000;">
+You can check certificates against these blacklists before issuance by extracting all the blacklists and use a simple script to check for the presence of the key in one of them.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+To check the certificates against the blacklists, do the following:    </span>
+</p>
+<ol class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+    <span style="color: #000000;">
+Extract the fingerprint blacklists into a single directory, and rename the files from the packages in order to keep them all in a single directory on the CA server (the directory <tt class=" ">/opt/weak-keys</tt> in the following example script):<br/>    </span>
+    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">blacklist-openssh.DSA-</code><code class="value">1024</code></div>
+<div class="line"><code class="plain">blacklist-openssh.DSA-</code><code class="value">2048</code></div>
+<div class="line"><code class="plain">blacklist-openssh.RSA-</code><code class="value">1024</code></div>
+<div class="line"><code class="plain">blacklist-openssh.RSA-</code><code class="value">2048</code></div>
+<div class="line"><code class="plain">blacklist-openssh.RSA-</code><code class="value">4096</code></div>
+<div class="line"><code class="plain">blacklist-openssl.RSA-</code><code class="value">512</code></div>
+<div class="line"><code class="plain">blacklist-openssl.RSA-</code><code class="value">1024</code></div>
+<div class="line"><code class="plain">blacklist-openssl.RSA-</code><code class="value">2048</code></div>
+<div class="line"><code class="plain">blacklist-openssl.RSA-</code><code class="value">4096</code></div>
+<div class="line"><code class="plain">blacklist-openvpn.RSA-</code><code class="value">2048</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>Add the following script to the directory as <tt class=" ">/opt/weak-keys/weak-key-check.sh</tt> (name and patch can be changed by editing the script to suit your environment).</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">#!/bin/sh</code></div>
+<div class="line"><code class="plain">#echo $</code><code class="value">1</code></div>
+<div class="line"><code class="plain">OUTPUT=`grep $(openssl x509 -noout -pubkey -inform DER -in $</code><code class="value">1</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">    | openssl rsa -pubin -noout -modulus \</code></div>
+<div class="line"><code class="plain">    | sha1sum | cut -d </code><code class="string">' '</code><code class="plain"> -f </code><code class="value">1</code><code class="plain"> | cut -c </code><code class="value">21</code><code class="plain">-) \</code></div>
+<div class="line"><code class="plain">    /opt/weak-keys/all-lists/blacklist*`</code></div>
+<div class="line"> </div>
+<div class="line"><code class="keyword">if</code><code class="plain"> [ -z </code><code class="string">"$OUTPUT"</code><code class="plain"> ]; then</code></div>
+<div class="line"><code class="plain">  echo </code><code class="string">"Key is not in blacklist"</code></div>
+<div class="line"><code class="plain">  exit </code><code class="value">0</code></div>
+<div class="line"><code class="keyword">else</code></div>
+<div class="line"><code class="plain">  echo </code><code class="string">"Key is in blacklist"</code></div>
+<div class="line"><code class="plain">  echo $OUTPUT &gt;&amp;</code><code class="value">2</code></div>
+<div class="line"><code class="plain">  exit </code><code class="value">1</code></div>
+<div class="line"><code class="plain">fi</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>In the External Command Validator, specify the following:</p>
+<ol class=" "><li class=" "><p   
+><strong class=" ">Full pathname of script</strong>: /opt/weak-keys/weak-key-check.sh.</p>
+</li><li class=" "><p   
+><strong class=" ">Fail on script error code</strong>: true.</p>
+</li><li class=" "><p   
+><strong class=" ">Fail on output to error out</strong>: true.</p>
+</li><li class=" "><p   
+><strong class=" ">Issuance phase</strong> should be <strong class=" ">Pre-sign Certificate Validation</strong> to ensure that checks are done before the CAs private key is used.</p>
+</li><li class=" "><p   
+>Save the Validator.</p>
+</li></ol></li><li class=" "><p   
+>It is not easy to find examples of weak keys, without generating them yourself. You can test the script by editing the validator again, uploading the following certificate downloaded from <a  class="external-link" href="https://crt.sh/?id=2531502044">https://crt.sh/?id=2531502044</a> to <strong class=" ">Test Certificate Path</strong> and clicking <strong class=" ">Test Command</strong>.<strong class=" "><strong class=" "><br/></strong></strong></p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">-----BEGIN CERTIFICATE-----</code></div>
+<div class="line"><code class="plain">MIIFzDCCA7SgAwIBAgIQB66bp3FYMWG3OiIbZKgNPzANBgkqhkiG9w0BAQsFADBp</code></div>
+<div class="line"><code class="plain">MQswCQYDVQQGEwJVUzEOMAwGA1UECAwFVGV4YXMxEDAOBgNVBAcMB0hvdXN0b24x</code></div>
+<div class="line"><code class="plain">GDAWBgNVBAoMD1NTTCBDb3Jwb3JhdGlvbjEeMBwGA1UEAwwVU1NMLmNvbSBSU0Eg</code></div>
+<div class="line"><code class="plain">U1NMIHN1YkNBMB4XDTIwMDMwNDAwMjczNVoXDTIwMDYwMjAwMjczNVowFzEVMBMG</code></div>
+<div class="line"><code class="plain">A1UEAwwMbGViZXJnZXIuYml6MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC</code></div>
+<div class="line"><code class="plain">AQEA+TYH57WzTTfARNmo/Vx8/TGHD774iWbQoglRH+RGeFjgjoDGongoYr9jDwwX</code></div>
+<div class="line"><code class="plain">c1QxK36fojJ5zmDxIsvn/CsIRBj1aWCWvJons4LGfvEEmnZWuyhWleLKxmTvgbFb</code></div>
+<div class="line"><code class="plain">VMyLe+3fsuKjrktntuhpK75GXkpcErKS/3aGFY3UbMDp5qmGTZfZbXUAOTBq6Uvj</code></div>
+<div class="line"><code class="plain">6SyyeGrxrR+xRFAYCrB80ilLL2XlZ9hjqXge7qhhSxP5JYcVG4Fr8BvwhzoQ9zV1</code></div>
+<div class="line"><code class="plain">tdEuU6E+nZlvA6m4Qm4pQByCMMRH2BoqBL4n1aR1fNu+WdWHMC3uVmq2P5WZNsYK</code></div>
+<div class="line"><code class="plain">gdccVMmlHGVfRbhC1wuCty4QUwIDAQABo4IBwDCCAbwwHwYDVR0jBBgwFoAUJhR+</code></div>
+<div class="line"><code class="plain">4NzXpvfi1AQn32HxwuznMsowfAYIKwYBBQUHAQEEcDBuMEoGCCsGAQUFBzAChj5o</code></div>
+<div class="line"><code class="plain">dHRwOi8vd3d3LnNzbC5jb20vcmVwb3NpdG9yeS9TU0xjb20tU3ViQ0EtU1NMLVJT</code></div>
+<div class="line"><code class="plain">QS00MDk2LVIxLmNydDAgBggrBgEFBQcwAYYUaHR0cDovL29jc3BzLnNzbC5jb20w</code></div>
+<div class="line"><code class="plain">KQYDVR0RBCIwIIIMbGViZXJnZXIuYml6ghB3d3cubGViZXJnZXIuYml6MFEGA1Ud</code></div>
+<div class="line"><code class="plain">IARKMEgwCAYGZ4EMAQIBMDwGDCsGAQQBgqkwAQMBATAsMCoGCCsGAQUFBwIBFh5o</code></div>
+<div class="line"><code class="plain">dHRwczovL3d3dy5zc2wuY29tL3JlcG9zaXRvcnkwHQYDVR0lBBYwFAYIKwYBBQUH</code></div>
+<div class="line"><code class="plain">AwIGCCsGAQUFBwMBMDoGA1UdHwQzMDEwL6AtoCuGKWh0dHA6Ly9jcmxzLnNzbC5j</code></div>
+<div class="line"><code class="plain">b20vU1NMY29tUlNBU1NMc3ViQ0EuY3JsMB0GA1UdDgQWBBTCxWii5RK9474UxOJB</code></div>
+<div class="line"><code class="plain">wLerjO2QbTAOBgNVHQ8BAf8EBAMCBaAwEwYKKwYBBAHWeQIEAwEB/wQCBQAwDQYJ</code></div>
+<div class="line"><code class="plain">KoZIhvcNAQELBQADggIBAA+2tsRNgQIQMs93Q+NNCQgzj+9avNUbT8s1hZHBkoyf</code></div>
+<div class="line"><code class="plain">3zGgMRJgZkJ/xSEG/www/0SXKhhg8Bnp6r4PfpGn5t+T1XkZz8PhMvQlCT/zPBqC</code></div>
+<div class="line"><code class="plain">8W7voCSMdG0klWqz2hBJ3lNzEmHLKrkp63SM17xE8rGDd0oMfjKwxZKwb7z40jrA</code></div>
+<div class="line"><code class="plain">isEUWNq6FzSPiNllNJq7IbOffEuR0/oz21a3vruPJGB0opWYPBqQcLzemnEXDPEZ</code></div>
+<div class="line"><code class="plain">R2NzfSZB5UzZfAtGLbjxYoMXK+7JLoQjsPpQWlJqGjVaHd9K+Lthg1THwYtdMekK</code></div>
+<div class="line"><code class="plain">Flobw8WirkmuKBZEmo8x6nobfFh2VaBOjA8AXRr6jEO3EjwKvCHDm32td9SkDXe7</code></div>
+<div class="line"><code class="plain">tP4IO/gJma4dxWKV1Hyu/</code><code class="value">1</code><code class="plain">/6qPUVn55XCCAiuyZcDo3A0t0nSIR8iGbyBtQb0OJH</code></div>
+<div class="line"><code class="plain">SzOyGFJ2SLM8lmyl3eJzXc5YLcJso4S2ZVgZQ9KVApitjvlBvgL7BPskNZxI/c0T</code></div>
+<div class="line"><code class="plain">ISPlOeYtD0O/rxQuQakWOqal9hk+l4Rrd7O+UguXijB92h/40AfLsaLUCRxBZgXA</code></div>
+<div class="line"><code class="plain">tSMLQNleqFMpxIwA93Ybm+iT3FmBqqDNZ2cJ77NTVL3sKeF77b0Xdppn+93Rz51z</code></div>
+<div class="line"><code class="plain">K9UmDRX973f9qi9p/1PbofcOBKZnMaFp7O7kXfdBRaXzslhSLDE2/X+Kx7SVe0GV</code></div>
+<div class="line"><code class="plain">-----END CERTIFICATE-----</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>The output should say <strong class=" ">Test Out</strong>: &quot;Exit code: 1STDOUT: Key is in blacklistERROUT:(name of blacklist and fingerprint that matches)&quot;.<br/>When uploading another certificate, not on the blacklist, the Exit code should be 0.<br/>The following displays an example configuration.</p>
+</li></ol><p   
+><img  class="confluence-embedded-image"  src="images/download/attachments/85928228/weak-keys.png" alt="images/download/attachments/85928228/weak-keys.png"  height="250" />
+        <br/><span class="caption">External Command Validator for checking for weak keys</span>
+    </p>
+    </div>
+    </div>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="Certificate_Field_Validators.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Certificate Field Validators</span>
+        </a>
+                <a href="Certificate_Profiles_Overview.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Certificate Profiles Overview</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

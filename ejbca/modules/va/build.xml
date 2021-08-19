@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="va" default="ejbca-build">
+
+	<dirname property="va.dir" file="${ant.file.va}"/>
+
+	<import file="${va.dir}/../build-helpers.xml"/>
+	
+	<property name="va.build-status.dir" location="${va.dir}/build-status"/>
+	<property name="va.build-test.dir" location="${va.dir}/build-test"/>
+	<property name="va.src.war.dir" location="${va.dir}/src-war"/>
+	<property name="va.resources.dir" location="${va.dir}/resources"/>
+
+	<path id="compile-common.classpath">
+		<path refid="lib.servlet.classpath"/>
+		<path refid="lib.log4j.classpath"/>
+		<path refid="lib.commons-config.classpath"/>
+		<path refid="lib.commons-lang.classpath"/><!-- Dependency of commons-config -->
+		<path refid="lib.commons-logging.classpath"/><!-- Dependency of commons-config -->
+		<path refid="lib.commons-collections.classpath"/><!-- Dependency of commons-config -->
+		<path refid="lib.jee.classpath"/>
+		<path refid="lib.bouncycastle.classpath"/>
+		<path refid="lib.mail.classpath"/>
+		<path refid="lib.ldap.classpath"/>
+	</path>
+
+	<path id="compile-ejbca.classpath">
+		<path refid="compile-common.classpath"/>
+		<path location="${mod.ejbca-ejb-interface.lib}"/>
+		<path location="${mod.ejbca-common-web.lib}"/>
+		<path location="${mod.ejbca-common.lib}"/>
+        <path location="${mod.cesecore-entity.lib}"/>
+        <path location="${mod.cesecore-common.lib}"/>
+        <path location="${mod.cesecore-ejb-interface.lib}"/>
+	</path>
+	
+	<path id="test.classpath">
+		<path refid="compile-ejbca.classpath"/>
+		<path refid="lib.junit.classpath"/>
+		<path refid="lib.jee-client.classpath"/>
+		<path location="${build-va-publisher.dir}"/>
+		<path location="${va.build-test.dir}"/>
+		<path location="${mod.ejbca-ejb-interface.lib}"/>
+		<path location="${mod.systemtest-common.lib}"/>
+		<path location="${mod.systemtest-interface.lib}"/>
+		<path location="${mod.systemtest-ejb.lib}"/>
+		<path refid="lib.cert-cvc.classpath" />
+		<path location="${mod.ejbca-entity.lib}"/>
+	</path>
+	
+    <target name="clean" description="Clean up this module">
+		<delete dir="${va.build-status.dir}" />
+		<delete dir="${va.build-test.dir}" />
+    	<delete file="${mod.va.war}" />
+    </target>
+	
+	<condition property="ocsp.enabled.if.defined"><istrue value="${ocsp.enabled}"/></condition>
+    
+	<target name="ejbca-build" description="Build this module" depends="ejbca-status.war"/>
+	<target name="ejbca-status.war" depends="ejbca-status-compile" if="${status.war.enabled}">
+		<war destfile="${mod.status.war}" webxml="${va.resources.dir}/WEB-INF/web-status-ejbca.xml" basedir="${va.build-status.dir}"/>
+	</target>
+	
+	<condition property="use.ocsp.extensionclass">
+			<not>
+				<equals arg1="${ocsp.extensionclass}" arg2=""/>
+			</not>
+	</condition>
+	<target name="use-ocsp-extensionclass" if="use.ocsp.extensionclass">
+		<echo>Compiling ocsp.extensionclass ${ocsp.extensionclass}, if it exists.</echo>
+	</target>
+	
+	<target name="extensions-build">
+		<buildservicemanifest interface="org.cesecore.certificates.ocsp.extension.OCSPExtension" file="${va.build-status.dir}/WEB-INF/classes" classpath="compile-ejbca.classpath"/>
+		<jar basedir="${va.build-status.dir}/WEB-INF/classes" jarfile="${mod.ejbca-extensions.lib}">
+			<include name="org/ejbca/core/protocol/ocsp/*.class"/>
+			<include name="org/ejbca/core/protocol/ocsp/extension/**/*.class"/>
+			<include name="META-INF/**/*"/>
+		</jar>
+	</target>
+			
+	<target name="ejbca-status-compile" depends="use-ocsp-extensionclass" if="ocsp.enabled.if.defined">
+    	<mkdir dir="${va.build-status.dir}/WEB-INF/classes" />
+        <javac destdir="${va.build-status.dir}/WEB-INF/classes" debug="on" includeantruntime="no" encoding="UTF-8" target="${java.target.version}"
+			classpathref="compile-ejbca.classpath">
+        	<include name="org/ejbca/ui/web/protocol/OCSPServlet.java" if="${mod.va.exists}"/>
+        	<include name="org/ejbca/core/protocol/ocsp/*.java"/>
+        	<include name="org/ejbca/core/protocol/ocsp/extension/**/*.java"/>
+			<src path="${va.src.war.dir}"/>
+        </javac>
+		<antcall target="extensions-build" inheritall="true" inheritrefs="true"/>
+	</target>
+</project>

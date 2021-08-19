@@ -1,0 +1,3 @@
+org.cesecore.keys.validation.RsaKeyValidator
+org.cesecore.keys.validation.EccKeyValidator
+org.cesecore.keys.validation.ExternalCommandCertificateValidator

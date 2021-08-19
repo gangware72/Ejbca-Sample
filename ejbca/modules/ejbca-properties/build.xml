@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ejbca-properties" default="build-jar">
+    <description>
+            The EJBCA properties files
+    	
+    		This module contains the .properties files used by ejbca-ejb and
+    		ejbca-ws-ejb
+    </description>
+
+	<dirname property="ejbca-properties.dir" file="${ant.file.ejbca-properties}"/>
+
+    <import file="${ejbca-properties.dir}/../build-helpers.xml"/>
+	
+	<property name="ejbca-properties.build.dir" location="${ejbca-properties.dir}/build"/>
+
+    <target name="build-jar" description="Build this module">
+    	<copy todir="${ejbca-properties.build.dir}" file="${ejbca.home}/src/internal.properties">
+    		<filterchain>
+    			<replacestring from="#datasource.jndi-name-prefix=" to="datasource.jndi-name-prefix=${datasource.jndi-name-prefix}"/>
+    		</filterchain>
+    	</copy>
+		<!-- We deliberately do not include defaultvalues.properties in ejbca-properties.jar because it is included in cesecore-common.jar -->    	
+    	<dirname file="${mod.ejbca-properties.lib}" property="mod.ejbca-properties.lib.dir"/>
+    	<mkdir dir="${mod.ejbca-properties.lib.dir}" />
+        <jar destfile="${mod.ejbca-properties.lib}">
+        	<fileset dir="${ejbca-properties.build.dir}"/>
+            <fileset dir="${ejbca.home}" includes="conf/**/*.properties" excludes="conf/install.properties conf/externalra.properties conf/plugins/* conf/batchtool.properties"/>
+            <fileset dir="${ejbca.home}/src/upgrade"/>
+        </jar>
+    </target>
+    
+    <target name="clean" description="Clean up this module">
+		<delete dir="${ejbca-properties.build.dir}" />
+		<delete file="${mod.ejbca-properties.lib}" />
+    </target>
+</project>
+

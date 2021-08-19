@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Monitoring of VAs - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=100270513"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Documentation.html">EJBCA Documentation</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_Operations.html">EJBCA Operations</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_Operations_Guide.html">EJBCA Operations Guide</a></li>
+                                                                                                         <li class="shortcut"><a href="CA_Operations_Guide.html">CA Operations Guide</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_Maintenance.html">EJBCA Maintenance</a></li>
+                                                                                     <li><a href="Monitoring_and_Healthcheck.html">Monitoring and Healthcheck</a></li>
+                                                            </ul>
+</div>            <h1 id="src-100270513"> <span>Monitoring of VAs</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p   
+></p>
+<p   
+><span class="status blue " >ENTERPRISE</span>
+ This is an EJBCA Enterprise feature.</p>
+<p   
+>    <span style="color: #000000;">
+A common requirement is to keep the OCSP responder in sync with the CA. For example, the Baseline Requirements 1.7.2 stipulates the following requirement on how often the CA must update the OCSP responder:    </span>
+</p>
+    <blockquote>
+<p   
+>For OCSP responses with validity intervals less than sixteen hours, then the CA SHALL update the information provided via an Online Certificate Status Protocol prior to one-half of the validity period before the nextUpdate.</p>
+<p   
+>For OCSP responses with validity intervals greater than or equal to sixteen hours, then the CA SHALL update the information provided via an Online Certificate Status Protocol at least eight hours prior to the nextUpdate, and no later than four days after the thisUpdate.</p>
+        </blockquote>
+<p   
+>    <span style="color: #000000;">
+Furthermore, if publishing revocation information to one or more OCSP responders is delayed for some reason, the user may get inconsistent results, depending on the OCSP responder receiving the request. While it is inevitable that there will be a certain delay in updating the OCSP responders, it may be of interest to evict traffic from the OCSP responders which are not updated with the latest information.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+To achieve this, EJBCA offers a separate servlet that can be queried by a monitoring system (e.g. a load balancer). The servlet responds with a list of the VAs that are out of sync. A VA is considered out of sync if the peer publisher publishing to the VA has at least one item in its queue older than <tt class=" ">X</tt> seconds, where <tt class=" ">X</tt> is known as the <i class=" ">VA status time constraint</i>.    </span>
+</p>
+    <div class="section section-1" id="src-100270513_id-.MonitoringofVAsv7.4.3-RequirementsfortheMonitoringSystem">
+        <h1 class="heading "><span>Requirements for the Monitoring System</span></h1>
+<p   
+>    <span style="color: #000000;">
+The following requirements apply for the Monitoring System:    </span>
+</p>
+<ul class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+The monitoring system should preferably be able to parse JSON since this is the output produced by the servlet.    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+The monitoring system must be able to query the servlet on the CA directly since only the CA can be aware of which VAs are out of sync.    </span>
+</p>
+</li></ul>    </div>
+    <div class="section section-1" id="src-100270513_id-.MonitoringofVAsv7.4.3-ConfiguretheVAStatusTimeConstraint">
+        <h1 class="heading "><span>Configure the VA Status Time Constraint</span></h1>
+<p   
+>    <span style="color: #000000;">
+The VA status time constraint is configured in the <strong class=" ">System Configuration</strong>, under the <strong class=" ">Basic Configurations</strong> tab.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+The default <strong class=" ">Monitoring and healthcheck</strong> servlet value is 14400 seconds (4 hours).    </span>
+</p>
+<p   
+><img  class="confluence-embedded-image"  src="images/download/attachments/100270513/va_status_time_constraint.png" alt="images/download/attachments/100270513/va_status_time_constraint.png"  height="250" />
+    </p>
+    </div>
+    <div class="section section-1" id="src-100270513_id-.MonitoringofVAsv7.4.3-QuerytheVAStatusServlet">
+        <h1 class="heading "><span>Query the VA Status Servlet</span></h1>
+    <div class="section section-2" id="src-100270513_id-.MonitoringofVAsv7.4.3-QueryFortheStatusOfAllVAs">
+        <h2 class="heading "><span>Query For the Status Of All VAs</span></h2>
+<p   
+>    <span style="color: #000000;">
+Make an HTTP GET request without any parameters. For example:    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">&gt; curl -s http:</code><code class="comments">//localhost:8080/ejbca/publicweb/healthcheck/vastatus | jq .</code></div>
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"error"</code><code class="plain">: </code><code class="keyword">false</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"outOfSync"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">    {</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"name"</code><code class="plain">: </code><code class="string">"VA Peer Publisher 2"</code></div>
+<div class="line"><code class="plain">    },</code></div>
+<div class="line"><code class="plain">    {</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"name"</code><code class="plain">: </code><code class="string">"VA Peer Publisher 3"</code></div>
+<div class="line"><code class="plain">    }</code></div>
+<div class="line"><code class="plain">  ]</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-100270513_id-.MonitoringofVAsv7.4.3-QueryFortheStatusOfaSingleVA">
+        <h2 class="heading "><span>Query For the Status Of a Single VA</span></h2>
+<p   
+>    <span style="color: #000000;">
+Make an HTTP GET request with a parameter <tt class=" ">name</tt> set to the name of the publisher publishing to the VA being monitored. For example:    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">&gt; curl -s http:</code><code class="comments">//localhost:8080/ejbca/publicweb/healthcheck/vastatus?name=VA+Peer+Publisher+2 | jq .</code></div>
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"error"</code><code class="plain">: </code><code class="keyword">false</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"outOfSync"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">    {</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"name"</code><code class="plain">: </code><code class="string">"VA Peer Publisher 2"</code></div>
+<div class="line"><code class="plain">    }</code></div>
+<div class="line"><code class="plain">  ]</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-100270513_id-.MonitoringofVAsv7.4.3-ResponseContent">
+        <h2 class="heading "><span>Response Content</span></h2>
+<p   
+>    <span style="color: #000000;">
+The servlet returns a JSON response with the following schema:    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"$schema"</code><code class="plain">: </code><code class="string">"http://json-schema.org/draft-04/schema#"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"type"</code><code class="plain">: </code><code class="string">"object"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"properties"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"error"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"type"</code><code class="plain">: </code><code class="string">"boolean"</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"description"</code><code class="plain">, </code><code class="string">"Indicates if the servlet could fulfill the request."</code></div>
+<div class="line"><code class="plain">    },</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"message"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"type"</code><code class="plain">: </code><code class="string">"string"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"description"</code><code class="plain">: </code><code class="string">"A description of the error (if any)."</code></div>
+<div class="line"><code class="plain">    }</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"outOfSync"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"type"</code><code class="plain">: </code><code class="string">"array"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"items"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">        {</code></div>
+<div class="line"><code class="plain">          </code><code class="string">"type"</code><code class="plain">: </code><code class="string">"object"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">          </code><code class="string">"properties"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"name"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">              </code><code class="string">"type"</code><code class="plain">: </code><code class="string">"string"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">              </code><code class="string">"description"</code><code class="plain">: </code><code class="string">"The name of a publisher publishing to a VA being out of sync."</code></div>
+<div class="line"><code class="plain">            }</code></div>
+<div class="line"><code class="plain">          },</code></div>
+<div class="line"><code class="plain">          </code><code class="string">"required"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"name"</code></div>
+<div class="line"><code class="plain">          ]</code></div>
+<div class="line"><code class="plain">        }</code></div>
+<div class="line"><code class="plain">      ]</code></div>
+<div class="line"><code class="plain">    }</code></div>
+<div class="line"><code class="plain">  },</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"required"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"error"</code></div>
+<div class="line"><code class="plain">  ]</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+    </div>
+<p   
+>    <span style="color: #000000;">
+The JSON response always contains an <tt class=" ">error</tt> key set to <tt class=" ">true</tt> if the servlet can not fulfill the request. If error is <tt class=" ">true</tt>, there is a <tt class=" ">message</tt> string containing a description of the error. The monitoring system may then proceed to query the next CA in the cluster (if a cluster is used) or create an alarm.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+If <tt class=" ">error</tt> is <tt class=" ">false</tt>, the request succeeded. The <tt class=" ">outOfSync</tt> array contains a list of publisher names corresponding to the VAs out of sync on the system. A load balancer can then be instructed to evict traffic from these VAs.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+If all VAs are out of sync, an HTTP status code of 200 is returned to prevent a load balancer from taking all OCSP responders out of operation at the same time.    </span>
+</p>
+    </div>
+    <div class="section section-2" id="src-100270513_id-.MonitoringofVAsv7.4.3-HTTPStatusCodes">
+        <h2 class="heading "><span>HTTP Status Codes</span></h2>
+    <div  class="tablewrap">
+        <table class="wrapped fixed-table confluenceTable">
+                    <colgroup>
+                                    <col  width="72"/>
+                                    <col  width="568"/>
+                                    <col  width="348"/>
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Status Code</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Meaning</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Example response</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+200    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Either all VA(s), whose status is requested, are in sync with the CA, or <i class=" ">all VA(s) are out of sync</i>.    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+{ &quot;error&quot;: false, &quot;outOfSync&quot;: [] }    </span>
+</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+401    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+The monitoring system is not authorized to access the VA status servlet.    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+{ &quot;error&quot;: true, &quot;message&quot;: &quot;Requests from &lt;IP here&gt; are not authorized.&quot; }    </span>
+</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+500    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+An error occurred when querying the servlet.    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+{ &quot;error&quot;: true, &quot;message&quot;: &quot;&lt;Error description here&gt;&quot; }    </span>
+</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+503    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+One or more VAs, whose status are requested, are out of sync. The monitoring system should proceed to instruct the load balancer from evicting traffic from these VAs.    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+{ &quot;error&quot;: false, &quot;outOfSync&quot;: [ { &quot;name&quot;: &quot;VA Peer Publisher 2&quot; } ] }    </span>
+</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-100270513_id-.MonitoringofVAsv7.4.3-ConfigureAccesstotheVAStatusServlet">
+        <h1 class="heading "><span>Configure Access to the VA Status Servlet</span></h1>
+<p   
+>    <span style="color: #000000;">
+It is possible to restrict or allow access to the servlet by whitelisting IP addresses. This is done using the <tt class=" ">healthcheck.authorizedips </tt>property in <tt class=" ">ejbca.properties</tt>. The default is to only allow requests originating from localhost (127.0.0.1).    </span>
+</p>
+    </div>
+    <div class="section section-1" id="src-100270513_id-.MonitoringofVAsv7.4.3-SupportedPublishers">
+        <h1 class="heading "><span>Supported Publishers</span></h1>
+<p   
+>    <span style="color: #000000;">
+The VA status servlet monitors the EJBCA Enterprise <a   href="Validation_Authority_Peer_Publisher.html">Validation Authority Peer Publisher</a>. The legacy Peer Publisher <a   href="Validation_Authority_Publisher_%28Legacy%29.html">Validation Authority Publisher (Legacy)</a> is <i class=" ">not</i> supported.    </span>
+</p>
+    </div>
+    <div class="section section-1" id="src-100270513_id-.MonitoringofVAsv7.4.3-PublisherSettings">
+        <h1 class="heading "><span>Publisher Settings</span></h1>
+<p   
+>    <span style="color: #000000;">
+The queue must be used by the publisher, i.e. depending on what you want to publish to the VA, you must select at least one of the options <strong class=" ">Use queue for CRLs</strong>, <strong class=" ">Use queue for certificates</strong>, and <strong class=" ">Use queue for OCSP responses</strong>.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+The setting <strong class=" ">Keep successfully published items in database</strong> should not be used. For more information on publisher settings, see the <a   href="Publishers_Overview.html">Publishers Overview</a>.    </span>
+</p>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="Monitoring_and_Healthcheck.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Monitoring and Healthcheck</span>
+        </a>
+                <a href="Web_UI_Sessions.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Web UI Sessions</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

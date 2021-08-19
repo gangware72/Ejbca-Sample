@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Utimaco CryptoServer CP5 - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=85917863"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Documentation.html">EJBCA Documentation</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_Integration.html">EJBCA Integration</a></li>
+                                                                                     <li><a href="Hardware_Security_Modules_%28HSM%29.html">Hardware Security Modules (HSM)</a></li>
+                                                            </ul>
+</div>            <h1 id="src-85917863"> <span>Utimaco CryptoServer CP5</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p   
+><span class="status blue " >EIDAS</span>
+ This is an EJBCA eIDAS feature.</p>
+<p   
+>The Utimaco CryptoServer CP5 is Common Criteria-certified according to the eIDAS Protection Profile (PP) EN 419 221-5 &ldquo;Cryptographic Module for Trust Services&rdquo;.</p>
+    <div class="section section-1" id="src-85917863_id-.UtimacoCryptoServerCP5v7.4.0-Configuration">
+        <h1 class="heading "><span>Configuration</span></h1>
+<p   
+>The following sections cover information on configuring the Utimaco CryptoServer CP5.</p>
+    <div class="section section-2" id="src-85917863_id-.UtimacoCryptoServerCP5v7.4.0-HSMAuthenticationKey">
+        <h2 class="heading "><span>HSM Authentication Key</span></h2>
+<p   
+>The HSM Authentication Key, short HSMAuthKey, is used by the CryptoServer CP5 to authenticate itself to a user in the initialization phase of a Secure Messaging session (secure channel). You need to retrieve the public part of the HSM authentication key using the command csadm GetHSMAuthKey and export the key into a text file named &lt;serial number&gt;.key. The environment variable CS_AUTH_KEYS must be set up to point to the serial number key file. This file may contain multiple entries separated by a blank line, for example if a CryptoServer CP5 cluster is deployed.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">csadm GetHSMAuthKey &gt; /opt/utimaco/auth/cs0000.key</code></div>
+<div class="line"><code class="plain">echo </code><code class="string">'export CS_AUTH_KEYS=/opt/utimaco/auth/cs0000.key'</code><code class="plain"> &gt;&gt; ~/.bashrc</code></div>
+<div class="line"><code class="plain">source ~/.bashrc</code></div>
+</div>
+    </div>
+    <div  class="confbox admonition admonition-info">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>Make sure to export the environment &quot;    <span style="color: #003366;">
+CS_AUTH_KEYS    </span>
+&quot; to web application systemd service.</p>
+        </div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-85917863_id-.UtimacoCryptoServerCP5v7.4.0-ConfigurationFile">
+        <h2 class="heading "><span>Configuration File</span></h2>
+<p   
+>The CryptoServer PKCS#11 configuration file cs_pkcs11_R2.cfg should be copied to <tt class=" ">/etc/utimaco/cs_pkcs11_R2.cfg</tt>.</p>
+<p   
+>Open the configuration file <tt class=" ">/etc/utimaco/cs_pkcs11_R2.cfg</tt> with a text editor and update the &quot;SlotMultiSession&quot; parameter according to the following example. Optionally logging level, log output path and timeouts may be modified as well.</p>
+    <div  class="confbox programlisting">
+                <div class="content">
+        <pre><code>[Global]
+Logpath = /tmp
+Logging = 0
+Logsize = 10mb
+RandomizeKeyHandles = false
+SlotMultiSession = false
+SlotCount = 10
+KeepLeadZeros = false
+FallbackInterval = 0
+KeepAlive = false
+ConnectionTimeout = 5000
+CommandTimeout = 60000
+
+[CryptoServer]
+Device = TCP:3001@172.16.175.128</code></pre>
+        </div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-85917863_id-.UtimacoCryptoServerCP5v7.4.0-GeneratingKeys">
+        <h2 class="heading "><span>Generating Keys</span></h2>
+<p   
+>When using a PKCS#11 CP5 token, first create keys using the following <a   href="P11NG-CLI.html">P11NG-CLI</a> command:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$EJBCA_HOME/dist/p11ng-cli/p11ng-cli.sh generatekeypair</code></div>
+</div>
+    </div>
+<p   
+>Note that each CA should have its own slot and each slot must be initialized before keys can be generated. The initialization includes setting a user PIN for the slot, which also must require login. Tools for slot initialization should be provided by the HSM vendor and are not provided by PrimeKey.</p>
+<p   
+>The following displays an example for generating keys, generating and associating a &quot;Key Authorization Key&quot; with each HSM key and authorizing usage.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">.</code><code class="plain">/p11tool2</code><code class="plain"> Slot=0 Label=RootCA Login=ADMIN,</code><code class="plain">/opt/utimaco/ADMIN</code><code class="plain">.key InitToken=officer1</code></div>
+<div class="line"><code class="plain">.</code><code class="plain">/p11tool2</code><code class="plain"> Slot=0 LoginSO=officer1 InitPin=user1</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">$EJBCA_HOME</code><code class="plain">/dist/p11ng-cli/p11ng-cli</code><code class="plain">.sh generatekeypair --lib-</code><code class="functions">file</code><code class="plain"> .</code><code class="plain">/libcs_pkcs11_R2</code><code class="plain">.so --slot-ref SLOT_INDEX --slot 0 --</code><code class="functions">alias</code><code class="plain"> signKey --key-spec RSA2048 --key-usage SIGN</code></div>
+<div class="line"><code class="plain">Enter slot login password:</code></div>
+<div class="line"><code class="plain">Generated key pair with </code><code class="functions">alias</code><code class="plain"> signKey</code></div>
+<div class="line"><code class="plain">$EJBCA_HOME</code><code class="plain">/dist/p11ng-cli/p11ng-cli</code><code class="plain">.sh initializekey --lib-</code><code class="functions">file</code><code class="plain"> .</code><code class="plain">/libcs_pkcs11_R2</code><code class="plain">.so --slot-ref SLOT_INDEX --slot 0 --</code><code class="functions">alias</code><code class="plain"> signKey --user USR_0000 --padding-scheme PKCS1 --kak-size 2048 --kak-</code><code class="functions">file</code><code class="plain">-path ~</code><code class="plain">/kak</code></div>
+<div class="line"><code class="plain">Enter slot login password:</code></div>
+<div class="line"><code class="plain">Successfully initialized the key on the HSM!</code></div>
+<div class="line"><code class="plain">$EJBCA_HOME</code><code class="plain">/dist/p11ng-cli/p11ng-cli</code><code class="plain">.sh authorizekey --lib-</code><code class="functions">file</code><code class="plain"> .</code><code class="plain">/libcs_pkcs11_R2</code><code class="plain">.so --slot-ref SLOT_INDEX --slot 0 --</code><code class="functions">alias</code><code class="plain"> signKey --user USR_0000 --padding-scheme PKCS1 --kak-</code><code class="functions">file</code><code class="plain">-path ~</code><code class="plain">/kak</code></div>
+<div class="line"><code class="plain">Enter slot login password:</code></div>
+<div class="line"><code class="plain">Successfully authorized the key on the HSM!</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">$EJBCA_HOME</code><code class="plain">/dist/p11ng-cli/p11ng-cli</code><code class="plain">.sh generatekeypair --lib-</code><code class="functions">file</code><code class="plain"> .</code><code class="plain">/libcs_pkcs11_R2</code><code class="plain">.so --slot-ref SLOT_INDEX --slot 0 --</code><code class="functions">alias</code><code class="plain"> defaultKey --key-spec RSA2048 --key-usage SIGN </code></div>
+<div class="line"><code class="plain">Enter slot login password: </code></div>
+<div class="line"><code class="plain">Generated key pair with </code><code class="functions">alias</code><code class="plain"> defaultKey</code></div>
+<div class="line"><code class="plain">$EJBCA_HOME</code><code class="plain">/dist/p11ng-cli/p11ng-cli</code><code class="plain">.sh initializekey --lib-</code><code class="functions">file</code><code class="plain"> .</code><code class="plain">/libcs_pkcs11_R2</code><code class="plain">.so --slot-ref SLOT_INDEX --slot 0 --</code><code class="functions">alias</code><code class="plain"> defaultKey --user USR_0000 --padding-scheme PKCS1 --kak-size 2048 --kak-</code><code class="functions">file</code><code class="plain">-path ~</code><code class="plain">/kak</code></div>
+<div class="line"><code class="plain">Enter slot login password:</code></div>
+<div class="line"><code class="plain">Successfully initialized the key on the HSM!</code></div>
+<div class="line"><code class="plain">$EJBCA_HOME</code><code class="plain">/dist/p11ng-cli/p11ng-cli</code><code class="plain">.sh authorizekey --lib-</code><code class="functions">file</code><code class="plain"> .</code><code class="plain">/libcs_pkcs11_R2</code><code class="plain">.so --slot-ref SLOT_INDEX --slot 0 --</code><code class="functions">alias</code><code class="plain"> defaultKey --user USR_0000 --padding-scheme PKCS1 --kak-</code><code class="functions">file</code><code class="plain">-path ~</code><code class="plain">/kak</code></div>
+<div class="line"><code class="plain">Enter slot login password:</code></div>
+<div class="line"><code class="plain">Successfully authorized the key on the HSM!</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">$EJBCA_HOME</code><code class="plain">/dist/p11ng-cli/p11ng-cli</code><code class="plain">.sh generatekeypair --lib-</code><code class="functions">file</code><code class="plain"> .</code><code class="plain">/libcs_pkcs11_R2</code><code class="plain">.so --slot-ref SLOT_INDEX --slot 0 --</code><code class="functions">alias</code><code class="plain"> testKey --key-spec RSA2048 --key-usage SIGN</code></div>
+<div class="line"><code class="plain">Enter slot login password:</code></div>
+<div class="line"><code class="plain">Generated key pair with </code><code class="functions">alias</code><code class="plain"> testKey</code></div>
+<div class="line"><code class="plain">$EJBCA_HOME</code><code class="plain">/dist/p11ng-cli/p11ng-cli</code><code class="plain">.sh initializekey --lib-</code><code class="functions">file</code><code class="plain"> .</code><code class="plain">/libcs_pkcs11_R2</code><code class="plain">.so --slot-ref SLOT_INDEX --slot 0 --</code><code class="functions">alias</code><code class="plain"> testKey --user USR_0000 --padding-scheme PKCS1 --kak-size 2048 --kak-</code><code class="functions">file</code><code class="plain">-path ~</code><code class="plain">/kak</code></div>
+<div class="line"><code class="plain">Enter slot login password:</code></div>
+<div class="line"><code class="plain">Successfully initialized the key on the HSM!</code></div>
+<div class="line"><code class="plain">$EJBCA_HOME</code><code class="plain">/dist/p11ng-cli/p11ng-cli</code><code class="plain">.sh authorizekey --lib-</code><code class="functions">file</code><code class="plain"> .</code><code class="plain">/libcs_pkcs11_R2</code><code class="plain">.so --slot-ref SLOT_INDEX --slot 0 --</code><code class="functions">alias</code><code class="plain"> testKey --user USR_0000 --padding-scheme PKCS1 --kak-</code><code class="functions">file</code><code class="plain">-path ~</code><code class="plain">/kak</code></div>
+<div class="line"><code class="plain">Enter slot login password:</code></div>
+<div class="line"><code class="plain">Successfully authorized the key on the HSM!</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-85917863_id-.UtimacoCryptoServerCP5v7.4.0-ListObjects">
+        <h2 class="heading "><span>List Objects</span></h2>
+<p   
+>To view the PKCS#11 objects created, run the following:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$EJBCA_HOME</code><code class="plain">/dist/p11ng-cli/p11ng-cli</code><code class="plain">.sh listobjects --lib-</code><code class="functions">file</code><code class="plain"> .</code><code class="plain">/libcs_pkcs11_R2</code><code class="plain">.so --slot-ref SLOT_INDEX --slot 0</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-85917863_id-.UtimacoCryptoServerCP5v7.4.0-ExampleProperties">
+        <h2 class="heading "><span>Example Properties</span></h2>
+<p   
+>The following displays an example of the properties (catoken.properties) for the PKCS#11 token when creating a new CA:</p>
+    <div  class="confbox programlisting">
+                <div class="content">
+        <pre><code>sharedLibrary /opt/utimaco/p11/libcs2_pkcs11.so
+slotLabelType=SLOT_NUMBER
+slotLabelValue=0
+pin user1
+
+defaultKey defaultKey
+certSignKey signKey
+crlSignKey signKey
+testKey testKey</code></pre>
+        </div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-85917863_id-.UtimacoCryptoServerCP5v7.4.0-CryptoServerLANEmulator">
+        <h2 class="heading "><span>CryptoServer LAN Emulator</span></h2>
+<p   
+>The Utimaco emulator for their CryptoServer LAN HSM can be used for test and development. If you have the emulation kit, refer to information in <tt class=" ">doc/howto/cryptoserver-lan-emulator.txt</tt> with instructions on using the emulator kit with EJBCA.</p>
+<p   
+>To check the status of a CryptoServer LAN device, run the emulator with a command according to the following example:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">.</code><code class="plain">/csadm</code><code class="plain"> Device=TCP:3001@172.16.175.128 GetState</code></div>
+</div>
+    </div>
+    </div>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="Utimaco_CryptoServer.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Utimaco CryptoServer</span>
+        </a>
+                <a href="YubiHSM_2.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>YubiHSM 2</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

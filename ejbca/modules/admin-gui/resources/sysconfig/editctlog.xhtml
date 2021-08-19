@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk">
+<ui:remove>
+	<!--
+    /*************************************************************************
+     *                                                                       *
+     *  EJBCA: The OpenSource Certificate Authority                          *
+     *                                                                       *
+     *  This software is free software; you can redistribute it and/or       *
+     *  modify it under the terms of the GNU Lesser General Public           *
+     *  License as published by the Free Software Foundation; either         *
+     *  version 2.1 of the License, or any later version.                    *
+     *                                                                       *
+     *  See terms of license at gnu.org.                                     *
+     *                                                                       *
+     *************************************************************************/
+     
+     $Id$
+     -->
+</ui:remove>
+
+<ui:composition template="/WEB-INF/include/template.xhtml">
+    <ui:param name="resourceBean" value="#{systemConfigMBean}" />
+	<ui:define name="content">
+	
+	<h1>
+        <h:outputText value="#{web.text.CTLOGCONFIGURATION_EDITLOG}: #{systemConfigMBean.ctLogManager.ctLogEditor.ctLogBeingEdited.url}"/>
+   		<h:outputText value="#{web.ejbcaWebBean.getHelpReference('/Certificate_Transparency.html')}" escape="false"/>
+    </h1>
+    <h:form id="editCtLogForm" enctype="multipart/form-data">
+        <h:panelGrid columns="2">
+            <h:outputLink value="systemconfiguration.xhtml">
+                <h:outputText value="#{web.text.BACK}"/>
+            </h:outputLink>
+            <h:panelGroup id="placeholder1"/>
+
+            <h:outputText value="#{web.text.CTLOGCONFIGURATION_URL}"/>
+            <h:inputText value="#{systemConfigMBean.ctLogManager.ctLogEditor.ctLogUrl}" size="46" id="logUrl">
+                <f:converter converterId="trimConverter"/>
+            </h:inputText>
+            
+            <h:outputText value="#{web.text.CTLOGCONFIGURATION_CURRENT_PUBLICKEY}"/>
+            <h:outputText value="#{systemConfigMBean.ctLogManager.ctLogEditor.ctLogBeingEdited.logKeyIdString}" styleClass="monospace"/>
+            
+            <h:outputText value="#{web.text.CTLOGCONFIGURATION_REPLACE_PUBLICKEY} "/>
+            <t:inputFileUpload id="editedCTLogKeyFile" 
+                value="#{systemConfigMBean.ctLogManager.ctLogEditor.publicKeyFile}" 
+                title="#{web.text.CTLOGCONFIGURATION_NEW_PUBLICKEYFILE}"/>
+            
+            <h:outputText value="#{web.text.CTLOGCONFIGURATION_TIMEOUT}"/>
+            <h:inputText id="editedCTLogTimeout" 
+                required="true"
+                value="#{systemConfigMBean.ctLogManager.ctLogEditor.ctLogTimeout}"
+                title="#{web.text.FORMAT_MILLISECONDS}"
+                size="10"/>
+            <h:outputText value="#{web.text.LABEL}"/>
+            <h:inputText id="editedCtLogLabel"
+                required="true"
+                value="#{systemConfigMBean.ctLogManager.ctLogEditor.ctLogLabel}"
+                size="46">
+                <f:converter converterId="trimConverter"/>
+            </h:inputText>
+        </h:panelGrid>
+        
+        <h3><h:outputLabel value="#{web.text.CTLOGTAB_SHARDED_LOG}"/></h3>
+        <h:panelGroup>
+	         <h:selectBooleanCheckbox id="enableExpirationYearAcceptanceRule"
+	             styleClass="checkbox"
+	             value="#{systemConfigMBean.ctLogManager.ctLogEditor.isAcceptingByExpirationYear}" >
+                 <f:ajax render="@form"/>
+             </h:selectBooleanCheckbox>
+	         <h:outputLabel for="enableExpirationYearAcceptanceRule" 
+	             value="#{web.text.CTLOGTAB_USE_SHARDING}" />
+	    </h:panelGroup>
+	    <br/>
+
+
+        <h:panelGroup id="shardingProperties" rendered="#{systemConfigMBean.ctLogManager.ctLogEditor.isAcceptingByExpirationYear}">
+            <h:panelGroup>
+                <h:inputText id="expirationYearRequired" maxLength="4" size="4"
+                             disabled="#{not systemConfigMBean.ctLogManager.ctLogEditor.isAcceptingByExpirationYear or
+                             systemConfigMBean.ctLogManager.ctLogEditor.useIntervalAcception}"
+                             value="#{systemConfigMBean.ctLogManager.ctLogEditor.expirationYearRequired}" />
+                <h:outputText value="#{web.text.CTLOGTAB_SHARDING_YEAR}"/>
+            </h:panelGroup>
+            <br/><br/>
+            <h:panelGroup>
+                <h:selectBooleanCheckbox id="enableExpirationIntervalRule"
+                                         styleClass="checkbox"
+                                         value="#{systemConfigMBean.ctLogManager.ctLogEditor.useIntervalAcception}">
+                    <f:ajax render="@form"/>
+                </h:selectBooleanCheckbox>
+                <h:outputLabel for="enableExpirationYearAcceptanceRule"
+                               value="#{web.text.CTLOGCONFIGURATION_PERIOD}"/>
+            </h:panelGroup>
+            <br/>
+
+            <h:panelGrid columns="2" rendered="#{systemConfigMBean.ctLogManager.ctLogEditor.useIntervalAcception}">
+                <h:outputText value="#{web.text.CTLOGCONFIGURATION_NOT_BEFORE}"/>
+                <t:inputDate type="date" popupCalendar="true"
+                             value="#{systemConfigMBean.ctLogManager.ctLogEditor.intervalStart}"/>
+
+                <h:outputText value="#{web.text.CTLOGCONFIGURATION_NOT_AFTER}"/>
+                <t:inputDate type="date" popupCalendar="true"
+                             value="#{systemConfigMBean.ctLogManager.ctLogEditor.intervalEnd}"/>
+
+            </h:panelGrid>
+        </h:panelGroup>
+        <br/>
+        <br/>
+
+        <h:commandButton id="saveCtLogEdit" action="#{systemConfigMBean.ctLogManager.saveCtLogBeingEdited}" value="#{web.text.SAVE}" />
+    </h:form>
+	</ui:define>
+	</ui:composition>
+</html>

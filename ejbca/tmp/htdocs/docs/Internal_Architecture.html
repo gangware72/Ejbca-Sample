@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Internal Architecture - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=75858644"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Documentation.html">EJBCA Documentation</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_Introduction.html">EJBCA Introduction</a></li>
+                                                                                     <li><a href="EJBCA_Architecture.html">EJBCA Architecture</a></li>
+                                                            </ul>
+</div>            <h1 id="src-75858644"> <span>Internal Architecture</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p   
+>For developers and other interested parties, the following diagrams show an outline of the internal architecture of EJBCA, and dependencies between different modules.</p>
+<p   
+></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-75858644_id-.InternalArchitecturev7.2.0-ModelViewControllerDesign">Model View Controller Design</a></p>
+</li><li class=" "><p   
+><a   href="#src-75858644_id-.InternalArchitecturev7.2.0-SampleFlow">Sample Flow</a></p>
+</li><li class=" "><p   
+><a   href="#src-75858644_id-.InternalArchitecturev7.2.0-EJBCAModuleDescriptions">EJBCA Module Descriptions</a></p>
+</li><li class=" "><p   
+><a   href="#src-75858644_id-.InternalArchitecturev7.2.0-EJBStatelessSessionBeansDependencies">EJB Stateless Session Beans Dependencies</a></p>
+</li><li class=" "><p   
+><a   href="#src-75858644_id-.InternalArchitecturev7.2.0-DatabaseDiagram">Database Diagram</a></p>
+</li></ul>    <div class="section section-1" id="src-75858644_id-.InternalArchitecturev7.2.0-ModelViewControllerDesign">
+        <h1 class="heading "><span>Model View Controller Design</span></h1>
+<p   
+>All the web modules are packaged as Web Archives (WAR) and packaged inside an Enterprise Archive (EAR) together with EJB modules for business logic, code for mapping Java objects to database rows and additional libraries need by the application that isn't provided by the application server.</p>
+<p   
+></p>
+<p   
+><img  class="confluence-embedded-image"  src="images/download/attachments/75858644/EJBCA_architecture_v001.png" alt="images/download/attachments/75858644/EJBCA_architecture_v001.png" width="600"  />
+    </p>
+<p   
+>The latest version of the Dia file is attached to <a  class="external-link" href="https://jira.primekey.se/browse/ECA-8193">ECA-8193.</a></p>
+    </div>
+    <div class="section section-1" id="src-75858644_id-.InternalArchitecturev7.2.0-SampleFlow">
+        <h1 class="heading "><span>Sample Flow</span></h1>
+<p   
+>Let's say you run the pkcs10 ClientToolBox command, on a system with an RA and a CA, where the RA responds to WebService (SOAP) requests.</p>
+<p   
+>The flow would then start from PKCS10ReqCommand in ClientToolBox and finally reach X509CAImpl.generateCertificate, where the certificate is actually generated. The following displays an overview of how the call would flow between classes:</p>
+<p   
+><img  class="confluence-embedded-image"  src="images/download/attachments/75858644/ejbca_flow.png" alt="images/download/attachments/75858644/ejbca_flow.png" width="600"  />
+    </p>
+    </div>
+    <div class="section section-1" id="src-75858644_id-.InternalArchitecturev7.2.0-EJBCAModuleDescriptions">
+        <h1 class="heading "><span>EJBCA Module Descriptions</span></h1>
+<p   
+>This is a list of all modules in the <tt class=" ">modules</tt> directory. Unit tests directories (<tt class=" ">src-test</tt>) are excluded from this list.</p>
+<p   
+>Color key: WAR/RAR files in     <span style="color: #99ccff;">
+<strong class=" ">█</strong>    </span>
+ blue, EJB Stateless Session Beans in     <span style="color: #ffff99;">
+█    </span>
+ yellow, Entity beans in     <span style="color: #ffcc99;">
+█    </span>
+ red, Standalone application in     <span style="color: #ccffcc;">
+█    </span>
+ green.</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col  width="182"/>
+                                    <col  width="371"/>
+                                    <col  width="94"/>
+                                    <col  width="1073"/>
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Module</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Build artifacts, by source directory</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Edition</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Description</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>acme</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR file with implementation</p>
+            </td>
+                <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>ACME protocol (RFC 8555) service.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-common: WAR file</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>admin-gui</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Admin Web interface.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>appserver-ext</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: Two JAR files with log classes</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>App server &quot;extensions&quot;. Currently, it contains classes that extend log4j.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>batchenrollment-gui</p>
+            </td>
+                <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: Standalone application</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>A GUI application to mass enroll certificates.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>caa</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR file with implementation</p>
+            </td>
+                <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>Certification Authority Authorization (RFC 6844) validation.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-cli: Standalone application</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>certificatestore</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The certificate store servlet, allowing certificates to be downloaded.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>cesecore-common</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: Common classes JAR</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Common classes for the CESeCore framework.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>cesecore-cvca</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR file with implementation</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Implementation of CVC CA. Excluded in RA-only and VA-only builds.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>cesecore-ejb</p>
+            </td>
+                <td  class="highlight-yellow confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: EJB SSBs</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Implementations of CESeCore Statless Session Beans.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>cesecore-ejb-interface</p>
+            </td>
+                <td  class="highlight-yellow confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: EJB SSB interfaces</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Interfaces for cesecore-ejb</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>cesecore-entity</p>
+            </td>
+                <td  class="highlight-red confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR file with entity classes</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Entity classes for the CESeCore framework. These correspond to tables in the database.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>cesecore-p11</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Security fix for old versions of the SunPKCS11 implementation.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>cesecore-x509ca</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR file with implementation</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Implementation of X509CA. Excluded in RA-only and VA-only builds.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>clearcache-war</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>WAR file that allows clearing caches by an HTTP request from localhost.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>clientToolBox</p>
+            </td>
+                <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: Standalone application</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Command line utility to manage HSM keys, send Web Service requests, run stress test, etc.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>cli-util</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR file with common classes</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Common classes shared by the command line utilities in EJBCA.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>cmpclient</p>
+            </td>
+                <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: Standalone application</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Command line CMP client.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>cmpProxy</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: Standalone WAR file (HTTP or TCP)</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Standaone WAR file.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>common</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>No build artifact</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Default log4j configuration for CLI utilities and tests.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="3" colspan="1">
+    <p   
+>configdump</p>
+            </td>
+                <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-cli: Standalone application</p>
+            </td>
+                <td  class="confluenceTd" rowspan="3" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="3" colspan="1">
+    <p   
+>Configdump lets you export a YAML file of your EJBCA configuration. Certificates or keys are not exported.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-common: JAR file with interfaces</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="highlight-yellow confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-ejb: EJB SSBs</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>crlstore</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The CRL store servlet. It allows CRLs to be downloaded.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ct</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR with implementation and OCSP extension</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Certificate Transparency (RFC 6962) submission.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>editition-specific</p>
+            </td>
+                <td  class="highlight-yellow confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-ejb: EJB SSBs (placeholders for CE)</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>Interfaces and placeholders for Enterprise Edition specific functionality.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="highlight-yellow confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-interface: EJB SSB interfaces</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>editition-specific-ee</p>
+            </td>
+                <td  class="highlight-yellow confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-ejb: EJB SSBs (actual implementations)</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Enterprise Edition only EJBs.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-cmp-tcp</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>CMP TCP server. Runs inside the app server if configured.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-cmp-war</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>CMP HTTP interface. Contains a servlet.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-common</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR file with utility classes</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Utility classes specific to EJBCA, and not used in other products that use CESeCore.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-common-web</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR file with utility classes</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Utility classes that are specific to the EJBCA web interfaces.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-ejb</p>
+            </td>
+                <td  class="highlight-yellow confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: EJB SSBs</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Implementations of EJBCA specific Stateless Session Beans.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-ejb-cli</p>
+            </td>
+                <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: Standalone application</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Command line utility to operate EJBCA via the Remote EJB interface.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-ejb-interface</p>
+            </td>
+                <td  class="highlight-yellow confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: EJB SSB interfaces</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Interfaces for ejbca-ejb.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>ejbca-entity</p>
+            </td>
+                <td  class="highlight-red confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR file with entity classes</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Entity classes specific to EJBCA. These correspond to tables in the database.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-cli: Standalone application (ejbca-db-cli.jar)</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Database CLI tool for migrating between databases and for handling database protection.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-properties</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>JAR file with properties</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The properties files from conf/, conf/plugins/ and src/upgrade/</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-renew-war</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Self-service certificate renewal in public web.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-rest-api</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>WAR with entry point for the REST API.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-rest-*</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR file with REST Resource</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>REST Resource for different parts of the API (common, camanagement, cryptotoken).</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-scep-war</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>SCEP protocol for creating and renewing certificate.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-webdist-war</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>CertDistServlet which implements download of certificates and CRL.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-webtest</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>No build artifact</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>This module contains Selenium tests for the AdminWeb, PublicWeb and RA Web.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-ws</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR files with interface and implementation</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>This is the module for the WebService (SOAP) interface.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ejbca-ws-cli</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR files with WS module of ClientToolBox</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>This module is included in ClientToolBox, and provides a WebService (SOAP) client.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>est</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-war: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Provides an EST protocol interface to EJBCA.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>externalra</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR files for client and service</p>
+            </td>
+                <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>The ExternalRA is a legacy module for running an external Registration Authority. It consists of a service built into EJBCA, and an external web GUI.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: Standalone application (externalra-cli.jar)</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>externalra-gui</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The web GUI part of ExternalRA, to be deployed on a remote server.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>externalra-scep</p>
+            </td>
+                <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: Standalone application</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>SCEP client for ExternalRA.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>healthcheck-war</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Provides a Health Check URL to check CA status.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>oldlogexport-cli</p>
+            </td>
+                <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: Standalone application</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Tool to export legacy LogEntryData database table to a file.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="8" colspan="1">
+    <p   
+>peerconnector</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-cli: JAR files with subcommands for ejbca-ejb-cli</p>
+            </td>
+                <td  class="confluenceTd" rowspan="8" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="8" colspan="1">
+    <p   
+>Module for handling peer connections, such as CA-RA or CA-VA.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-common: JAR file with common classes</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="highlight-yellow confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-ejb: EJB SSBs</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="highlight-yellow confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-interface: EJB SSB interface</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-publ: JAR file with classes for handling peer publisher communication</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-ra: JAR file with classes for handling RA peer communication</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-rar: RAR file</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-war: WAR file</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>plugins-ee</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: JAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Extra plugins, such as Publishers, included in Enterprise Edition only.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>publicweb-gui</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The EJBCA Public Web pages (/ejbca/ URL).</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>ra-gui</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The EJBCA RA Web pages (/ejbca/ra/ URL).</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="3" colspan="1">
+    <p   
+>statedump</p>
+            </td>
+                <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-cli: Standalone application</p>
+            </td>
+                <td  class="confluenceTd" rowspan="3" colspan="1">
+    <p   
+>Internal</p>
+            </td>
+                <td  class="confluenceTd" rowspan="3" colspan="1">
+    <p   
+>Statedump is a PrimeKey internal tool, not included in EJBCA releases. It is the predecessor of Configdump.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-common: JAR file with common classes</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="highlight-yellow confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-ejb: EJB SSB</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>systemtests</p>
+            </td>
+                <td  class="highlight-yellow confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: EJB SSBs</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="2" colspan="1">
+    <p   
+>Contains functional tests of EJBCA. These require an app server to be running.</p>
+<p   
+></p>
+<p   
+>The EJBs provide additional Remote EJB access that is required by the test, and are only built into the app server when productionmode is set to false.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="highlight-yellow confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-interface: EJB SSB interfaces</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>unidfnr</p>
+            </td>
+                <td  class="highlight-yellow confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-ejb: EJB SSB and entity</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>UNID-FNR allows authenticated OCSP clients to obtain personal information from a certificate identifier.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>va</p>
+            </td>
+                <td  class="highlight-blue confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src-war: WAR file</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>OCSP responder servlet.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>validationtool</p>
+            </td>
+                <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>src: Standalone application</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Enterprise</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Command line application for validating certificates.</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-1" id="src-75858644_id-.InternalArchitecturev7.2.0-EJBStatelessSessionBeansDependencies">
+        <h1 class="heading "><span>EJB Stateless Session Beans Dependencies</span></h1>
+<p   
+>The following diagram shows the internal relations between the Stateless Session Beans as they are injected. An updated version of this diagram can be generated by running &quot;ant gen-depgraph&quot; on a machine where the &quot;dot&quot; application is available.</p>
+<p   
+><img  class="confluence-embedded-image"  src="images/download/attachments/75858644/ejbca_7.2.0.Alpha-SNAPSHOT.png" alt="images/download/attachments/75858644/ejbca_7.2.0.Alpha-SNAPSHOT.png" width="1040"  />
+    </p>
+    </div>
+    <div class="section section-1" id="src-75858644_id-.InternalArchitecturev7.2.0-DatabaseDiagram">
+        <h1 class="heading "><span>Database Diagram</span></h1>
+<p   
+>This is generated with MySQL / MariaDB Workbench, by using the Tools &rarr; Reverse Engineer tool and then selecting Arrange &rarr; Autolayout.</p>
+<p   
+><img  class="confluence-embedded-image"  src="images/download/attachments/75858644/ejbca_7_2_0_db_schema.png" alt="images/download/attachments/75858644/ejbca_7_2_0_db_schema.png" width="829"  />
+    </p>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="External_OCSP_Responders.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>External OCSP Responders</span>
+        </a>
+                <a href="Interoperability_and_Certifications.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Interoperability and Certifications</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

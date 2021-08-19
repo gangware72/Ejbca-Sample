@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>ECDSA Keys and Signatures - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=69042211"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Documentation.html">EJBCA Documentation</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_Operations.html">EJBCA Operations</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_CA_Concept_Guide.html">EJBCA CA Concept Guide</a></li>
+                                                                                     <li><a href="Certificate_Authority_Overview.html">Certificate Authority Overview</a></li>
+                                                            </ul>
+</div>            <h1 id="src-69042211"> <span>ECDSA Keys and Signatures</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p   
+>EJBCA supports ECDSA signature keys in addition to RSA. You can create a CA using ECDSA keys both using the Admin GUI and the CLI (bin/ejbca.sh ca init).</p>
+<p   
+>This section provides information on ECDSA Keys and Signatures in the following sections:</p>
+<p   
+></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-GeneratedKeysandCertificatesGenerated_keys_and_certificate">Generated Keys and Certificates</a></p>
+</li><li class=" "><p   
+><a   href="#src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-UsingECDSAwithanHSMUsing_ECDSA_with_an_HSM">Using ECDSA with an HSM</a></p>
+</li><li class=" "><p   
+><a   href="#src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-ECCnamedcurvesvsexplicitparametersECC_named_curves_vs_explicit_parameters">ECC named curves vs explicit parameters</a></p>
+</li><li class=" "><p   
+><a   href="#src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-NamedcurvesNamed_curves">Named curves</a></p>
+</li><li class=" "><p   
+><a   href="#src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-ImplicitlyCAcurvesImplicitlyCA_curves">ImplicitlyCA curves</a></p>
+</li><li class=" "><p   
+><a   href="#src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-CreatingclientcertificatesCreating_client_certificates">Creating client certificates</a></p>
+</li><li class=" "><p   
+><a   href="#src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-LimitationsLimitations">Limitations</a></p>
+</li></ul>    <div class="section section-1" id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-GeneratedKeysandCertificatesGenerated_keys_and_certificate">
+        <h1 class="heading "><span id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-Generated_keys_and_certificate" class="confluence-anchor-link"></span><span>Generated Keys and Certificates </span></h1>
+<p   
+>When generating a CA in EJBCA, up to three keys and certificates are generated:</p>
+<ul class=" "><li class=" "><p   
+>A CA signing keypair and certificate</p>
+</li><li class=" "><p   
+>An encryption keypair, used for encrypting key recovery information</p>
+</li><li class=" "><p   
+>An OCSP signer keypair and certificate</p>
+</li></ul><p   
+>When using ECDSA keys, the CA signing keypair and the OCSP signer keypair will be the ECDSA keytype you select when creating the CA. The CA signing and OCSP signing certificate will be signed using your selected signature algorithm. The encryption keypair will always be RSA, using 1024 or 2048 bit key length. It uses the key length set in the Admin GUI or 2048 bit by default using the CLI.</p>
+    </div>
+    <div class="section section-1" id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-UsingECDSAwithanHSMUsing_ECDSA_with_an_HSM">
+        <h1 class="heading "><span id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-Using_ECDSA_with_an_HSM" class="confluence-anchor-link"></span><span>Using ECDSA with an HSM </span></h1>
+<p   
+>Note that the keyEncryptKey cannot be ECDSA, but should be an RSA key. Your HSM must support both ECDSA and RSA keys. You can use PKCS11HSMKeyTool from the clientToolBox to generate keys and certificate requests from an HSM. For more information, see the section about HSM property parameters.</p>
+    <div class="section section-2" id="src-69042211_safe-id-aWQtLkVDRFNBS2V5c2FuZFNpZ25hdHVyZXN2Ny4yLjAtVXNpbmduYW1lZEJyYWlucG9vbGN1cnZlc2luSmF2YVBLQ1MjMTFVc2luZ19uYW1lZF9CcmFpbnBvb2xfY3VydmVzX2luX0phdmFfUEtD">
+        <h2 class="heading "><span id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-Using_named_Brainpool_curves_in_Java_PKC" class="confluence-anchor-link"></span><span>Using named Brainpool curves in Java PKCS#11 </span></h2>
+<p   
+>Until recently, OracleJDK/OpenJDK did not have named curve definitions for the Brainpool curves. This functionality is available in later revisions of Java, such as late Java 8 and Java 11 releases. For older releases, Enterprise users can get a compiled patch together with an installation script for Debian-based operating systems from <a  class="external-link" href="https://www.primekey.com/">PrimeKey</a>.</p>
+<p   
+>Brainpool should work on all HSMs that have <i class=" ">named curve support</i> for Brainpool. It has been tested on SafeNet Luna SA and Utimaco CryptoServer. SafeNet ProtectServer supports Brainpool but not using named curves, see below for brainpool support on ProtectServer using custom domain parameters.</p>
+<p   
+>You can create and use CAs with brainpool curves in the HSM. Example clientToolBox commands to generate a key:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">./ejbcaClientToolBox.sh PKCS11HSMKeyTool generate /usr/lunasa/lib/libCryptoki2_64.so brainpoolP160r1 keyAliasBp160 1</code></div>
+<div class="line"><code class="plain">./ejbcaClientToolBox.sh PKCS11HSMKeyTool test /usr/lunasa/lib/libCryptoki2_64.so 1 </code></div>
+<div class="line"><code class="plain">./ejbcaClientToolBox.sh PKCS11HSMKeyTool generate /etc/utimaco/libcs2_pkcs11.so brainpoolP160r1 keyAliasBp160 1</code></div>
+<div class="line"><code class="plain">./ejbcaClientToolBox.sh PKCS11HSMKeyTool test /etc/utimaco/libcs2_pkcs11.so 1 </code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-69042211_safe-id-aWQtLkVDRFNBS2V5c2FuZFNpZ25hdHVyZXN2Ny4yLjAtVXNpbmdTSEEyMjRXaXRoRUNEU0FpbkphdmFQS0NTIzExVXNpbmdfU0hBMjI0V2l0aEVDRFNBX2luX0phdmFfUEtDUyMxMQ">
+        <h2 class="heading "><span id="src-69042211_safe-id-aWQtLkVDRFNBS2V5c2FuZFNpZ25hdHVyZXN2Ny4yLjAtVXNpbmdfU0hBMjI0V2l0aEVDRFNBX2luX0phdmFfUEtDUyMxMQ" class="confluence-anchor-link"></span><span>Using SHA224WithECDSA in Java PKCS#11 </span></h2>
+<p   
+>OracleJDK/OpenJDK did not have support for SHA224WithECDSA in the PKCS#11 provider until recently. This functionality is available in later revisions of Java, such as late Java 8 and Java 11 releases. For older releases, Enterprise users can get a compiled patch together with an installation script for Debian-based operating systems from <a  class="external-link" href="https://www.primekey.com/">PrimeKey</a>.</p>
+<p   
+>It should work on all HSMs that have support for SHA224WithECDSA.</p>
+    </div>
+    <div class="section section-2" id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-IssuewithexplicitparametersinJavaIssue_with_explicit_parameters_in_Java">
+        <h2 class="heading "><span id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-Issue_with_explicit_parameters_in_Java" class="confluence-anchor-link"></span><span>Issue with explicit parameters in Java </span></h2>
+<p   
+>In order to use elliptic curves with explicit parameters (as opposed to the standard named curves), you need to apply a patch to the file ECParameters.java.</p>
+<ul class=" "><li class=" "><p   
+>Download the JDK source code and locate the file sun/security/ec/ECParameters.java.</p>
+</li><li class=" "><p   
+>Starting at line 210 there is code for handling of non-named curve EC parameters. Remove the Exception thrown in line 208 and enable the code that is commented out.</p>
+</li><li class=" "><p   
+>Compile the class by running 'javac *.java' in the directory where the file is located.</p>
+</li><li class=" "><p   
+>Replace the existing sun/security/ec/ECParameters.class file in jre/lib/rt.jar with your patched and compiled version.</p>
+</li></ul>    </div>
+    <div class="section section-2" id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-UsingBrainpoolECCwithSafeNetProtectServerGoldHSMUsing_Brainpool_ECC_with_SafeNet_Protect">
+        <h2 class="heading "><span id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-Using_Brainpool_ECC_with_SafeNet_Protect" class="confluence-anchor-link"></span><span>Using Brainpool ECC with SafeNet ProtectServer Gold HSM </span></h2>
+<p   
+>The following instructions were contributed by DGBK, Netherlands and apply for using Brainpool curves with the SafeNet ProtectServer Gold HSM. Note that ProtectServer needs explicit parameters for the Brainpool curves. Also, when using explicit parameters (and using the Sun PKCS#11 provider), you cannot use the EJBCA tools to generate keys, but have to use the HSM vendors tools.</p>
+<p   
+>Before generating domain parameters and keys, first apply the patch for explicit parameters, as described above.</p>
+<p   
+>Note that the following commands apply for <i class=" ">ProtectServer Gold software version 3.33, firmware version 2.07</i>.</p>
+<ol class=" "><li class=" "><p   
+>Create domain parameters file brainpoolP160r1.txt from ptk_c_administration_manual_rev-c.pdf, Appendix G, Sample EC Domain Parameter Files. Note that you must add &quot;cofactor=01&quot; last in the parameters file, the cofactor is always one (in the spec document) for brainpool curves (cofactor=1 does not work, it has to be 01).</p>
+</li><li class=" "><p   
+>Configure the HSM to accept custom domain parameters (E flag):</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">./ctconf -fcE</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>Import the domain parameters to the HSM:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">/ctkmu idp -s 1 -t ec -n brainpoolP160r1 brainpoolP160r1.txt</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>Generate keys and a (dummy) certificate. The dummy certificate is needed for the java PKCS#11 provider, the DN does not matter.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">./ctcert c -k -l bpkey -tec -s1 -CbrainpoolP160r1 -d30y</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>Test the keys with:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">./ejbcaClientToolBox.sh PKCS11HSMKeyTool test /opt/PTK/lib/libcryptoki.so 1</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>Start EJBCA and create a new CA with CAToken Properties:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">sharedLibrary=/opt/PTK/lib/libcryptoki.so</code></div>
+<div class="line"><code class="plain">defaultKey=bpkey</code></div>
+<div class="line"><code class="plain">slotLabelType=SLOT_NUMBER</code></div>
+<div class="line"><code class="plain">slotLabelValue=1</code></div>
+</div>
+    </div>
+</li></ol>    </div>
+    </div>
+    <div class="section section-1" id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-ECCnamedcurvesvsexplicitparametersECC_named_curves_vs_explicit_parameters">
+        <h1 class="heading "><span id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-ECC_named_curves_vs_explicit_parameters" class="confluence-anchor-link"></span><span>ECC named curves vs explicit parameters </span></h1>
+<p   
+>Normally, you want to generate requests and certificates using named curves encoded in certificates and requests, this is what IETF recommends. In some cases you need to generate the request and certificate with explicit parameters instead, this is for instance mandated by ICAO for usage in CSCA's and DS's for ePassports.</p>
+<ul class=" "><li class=" "><p   
+>When generating requests with <i class=" ">clientToolBox PKCS11HSMKeyTool certreq</i> you can specify a flag to use explicit parameters instead of named curves. Named curves is the default.</p>
+</li><li class=" "><p   
+>When creating CAs with <i class=" ">ejbca.sh ca init</i> you can specify a flag to use explicit parameters instead of named curves. Named curves is the default.</p>
+</li><li class=" "><p   
+>When EJBCA issues certificate with public keys from certificate requests (csr's) the key in the certificate will be the same as in the csr. If the csr uses explicit parameters, so will the issued certificate.</p>
+</li></ul><p   
+>If you generate a CA with explicit ECC parameters in the CA certificate you will not be able to run commands like 'ejbca.sh ca listcas' because Java only supports named curves when serializing certificates. You can resolve this by adding the BC provider as the first provider:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ sudo vi /etc/java-7-openjdk/security/java.security </code></div>
+<div class="line"><code class="plain">security.provider.1=org.bouncycastle.jce.provider.BouncyCastleProvider</code></div>
+<div class="line"><code class="plain">(renumber the ones below)</code></div>
+</div>
+    </div>
+<p   
+>After editing this (make sure you edit the right file) you need to restart JBoss.</p>
+    </div>
+    <div class="section section-1" id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-NamedcurvesNamed_curves">
+        <h1 class="heading "><span id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-Named_curves" class="confluence-anchor-link"></span><span>Named curves </span></h1>
+<p   
+>EJBCA supports the curves that BouncyCastle supports, including named curves from Nist, SEC and X9.62. New curves may be supported without this list being updated, give it a try. For more information about ECDSA curves, refer to the <a  class="external-link" href="http://www.bouncycastle.org/wiki/">Bouncycastle wiki</a>.</p>
+<p   
+>Note that EJBCA does not support/allow EC keys less than 224 bits long. Shorter curves are noted below for reference only.</p>
+    <div  class="tablewrap">
+        <table class="confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>X9.62 Curves</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>SEC Curves</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Nist Curves</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Teletrust Curves</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>prime192v1</p>
+<p   
+>prime192v2</p>
+<p   
+>prime192v3</p>
+<p   
+>prime239v1</p>
+<p   
+>prime239v2</p>
+<p   
+>prime239v3</p>
+<p   
+>prime256v1</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>sect571r1</p>
+<p   
+>sect409r1</p>
+<p   
+>sect283r1</p>
+<p   
+>sect233r1</p>
+<p   
+>sect163r2</p>
+<p   
+>secp521r1</p>
+<p   
+>secp256r1</p>
+<p   
+>secp224r1</p>
+<p   
+>secp384r1</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>P-224</p>
+<p   
+>P-256</p>
+<p   
+>P-384</p>
+<p   
+>P-521</p>
+<p   
+>B-163</p>
+<p   
+>B-233</p>
+<p   
+>B-283</p>
+<p   
+>B-409</p>
+<p   
+>B-571</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>brainpoolp160r1</p>
+<p   
+>brainpoolp160t1</p>
+<p   
+>brainpoolp192r1</p>
+<p   
+>brainpoolp192t1</p>
+<p   
+>brainpoolp224r1</p>
+<p   
+>brainpoolp224t1</p>
+<p   
+>brainpoolp256r1</p>
+<p   
+>brainpoolp256t1</p>
+<p   
+>brainpoolp320r1</p>
+<p   
+>brainpoolp320t1</p>
+<p   
+>brainpoolp384r1</p>
+<p   
+>brainpoolp384t1</p>
+<p   
+>brainpoolp512r1</p>
+<p   
+>brainpoolp512t1</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-1" id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-ImplicitlyCAcurvesImplicitlyCA_curves">
+        <h1 class="heading "><span id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-ImplicitlyCA_curves" class="confluence-anchor-link"></span><span>ImplicitlyCA curves </span></h1>
+<p   
+>X9.62 provides 3 alternatives for the parameters that can be found in an EC public key. One of these is named implicitlyCA and indicates that the parameters are defined else where, implicit in the name of the certification authority (CA) that issued the key. In this situation the actual parameters appear in the ASN.1 encoding of the key as a DER encoded NULL. As the definition says, when the key is used, the parameters will have to come from elsewhere. In EJBCA the parameters are configured in <i class=" ">conf/cesecore.properties</i>.</p>
+<p   
+>When creating a new CA using the implicitlyCA facility, you first configure your curve parameters in conf/cesecore.properties and issue commands:</p>
+<ul class=" "><li class=" "><p   
+>ant clean</p>
+</li><li class=" "><p   
+>ant deploy</p>
+</li></ul><p   
+>After restarting the application server you can now create a new CA using the name <strong class=" ">implicitlyCA</strong> instead of a curve name as keyspec in the Admin GUI or CLI. The CA certificate will now be created with the NULL encoding of the public key.</p>
+<p   
+>When issuing client certificates where the client public key uses implicitlyCA, you must allow key length 0 in the certificate profile, because EJBCA can not read the key length, since the parameters are defined elsewhere.</p>
+<p   
+>See <a  class="external-link" href="http://www.bouncycastle.org/wiki/">Bouncycastle wiki</a> for more information about the implicitlyCA facility.</p>
+<p   
+>The curve parameters in <i class=" ">conf/cesecore.parameters</i> are configured in Bouncycastle using the following code:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">ECCurve curve = new ECCurve.Fp(</code></div>
+<div class="line"><code class="plain">    new BigInteger(ecdsa.implicitlyca.q), // q</code></div>
+<div class="line"><code class="plain">    new BigInteger(ecdsa.implicitlyca.a, 16), // a</code></div>
+<div class="line"><code class="plain">    new BigInteger(ecdsa.implicitlyca.b, 16)); // b</code></div>
+<div class="line"><code class="plain">org.bouncycastle.jce.spec.ECParameterSpec implicitSpec = new org.bouncycastle.jce.spec.ECParameterSpec(</code></div>
+<div class="line"><code class="plain">    curve,</code></div>
+<div class="line"><code class="plain">    curve.decodePoint(Hex.decode(ecdsa.implicitlyca.g)), // G</code></div>
+<div class="line"><code class="plain">    new BigInteger(ecdsa.implicitlyca.n)); // n</code></div>
+<div class="line"><code class="plain">ConfigurableProvider config = (ConfigurableProvider)Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);</code></div>
+<div class="line"><code class="plain">config.setParameter(ConfigurableProvider.EC_IMPLICITLY_CA, implicitSpec); </code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-CreatingclientcertificatesCreating_client_certificates">
+        <h1 class="heading "><span id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-Creating_client_certificates" class="confluence-anchor-link"></span><span>Creating client certificates </span></h1>
+<p   
+>You can also issue normal requests for client certificates using ECDSA keys.</p>
+<p   
+>All certificates signed by an ECDSA CA will naturally use ECDSA signatures, regardless if the client keys are RSA or ECDSA.</p>
+<p   
+>When batch generating client keys using the CLI command 'bin/ejbca.sh batch' you configure the type of client keys that will be generated in the file <i class=" ">conf/batchtool.properties</i>. The possible parameters are explained there. If using the implicitlyCA facility the same parameters as configured for the ca in <i class=" ">conf/cesecore.properties</i> are used.</p>
+    </div>
+    <div class="section section-1" id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-LimitationsLimitations">
+        <h1 class="heading "><span id="src-69042211_id-.ECDSAKeysandSignaturesv7.2.0-Limitations" class="confluence-anchor-link"></span><span>Limitations </span></h1>
+<p   
+>When using the <strong class=" ">implicitlyCA</strong> mode only one set of curve parameters can be set for the whole EJBCA instance. This means that if you have several CAs using ECDSA with <strong class=" ">implicitlyCA</strong>, they will all use the same curve parameters. You can mix <strong class=" ">implicitlyCA</strong> with named curves according to your liking.</p>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="ePassport_PKI.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>ePassport PKI</span>
+        </a>
+                <a href="EdDSA_Keys_and_Signatures.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>EdDSA Keys and Signatures</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

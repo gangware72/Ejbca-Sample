@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>ACME - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=99157453"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Documentation.html">EJBCA Documentation</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_Operations.html">EJBCA Operations</a></li>
+                                                                                                         <li class="shortcut"><a href="EJBCA_CA_Concept_Guide.html">EJBCA CA Concept Guide</a></li>
+                                                                                     <li><a href="Protocols.html">Protocols</a></li>
+                                                            </ul>
+</div>            <h1 id="src-99157453"> <span>ACME</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p   
+></p>
+<p   
+><span class="status blue " >ENTERPRISE</span>
+ This is an EJBCA Enterprise feature.</p>
+<p   
+>The Automatic Certificate Management Environment (ACME) is a protocol that a Certificate Authority (CA) and an applicant can use to automate the process of verification of the ownership of a domain (or other identifier) and certificate management.</p>
+<p   
+></p>
+<ul class="toc-indentation "></ul>    <div class="section section-1" id="src-99157453_id-.ACMEv7.4.3-ACMEReference">
+        <h1 class="heading "><span>ACME Reference</span></h1>
+<p   
+>Each EJBCA release is bundled with an auto-generated ACME reference available on the URL <a  class="external-link" href="https://localhost:8442/ejbca/doc/acme/">https://localhost:8442/ejbca/doc/acme/</a><strong class=" "> </strong>if deployed, or online on <a  class="external-link" href="https://doc.primekey.com/ejbca/ejbca-operations/ejbca-ca-concept-guide/protocols/acme">https://doc.primekey.com/ejbca/ejbca-operations/ejbca-ca-concept-guide/protocols/acme</a>.</p>
+<p   
+><img  class="confluence-embedded-image"  src="images/download/attachments/99157453/image2018-10-9_10-55-10.png" alt="images/download/attachments/99157453/image2018-10-9_10-55-10.png" width="900"  />
+    </p>
+    </div>
+    <div class="section section-1" id="src-99157453_id-.ACMEv7.4.3-SwaggerUI">
+        <h1 class="heading "><span>Swagger UI</span></h1>
+<p   
+>    <span style="color: #000000;">
+Swagger UI allows you to visualize and interact with the API&rsquo;s resources. The Swagger UI playground is available in your browser on the URL <a  class="external-link" href="https://localhost:8443/ejbca/swagger-ui">https://localhost:8443/    <span style="color: #000000;">
+ejbca/swagger-ui    </span>
+</a>    </span>
+    <span style="color: #0000ff;">
+<strong class=" "> </strong>    </span>
+    <span style="color: #000000;">
+(use port 8443 since ACME uses client certificate authentication).    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+    <span style="color: #000000;">
+You can switch between displaying ACME or the REST API using the Swagger UI <strong class=" ">Select a spec</strong> list.    </span>
+    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+<img  class="confluence-embedded-image"  src="images/download/attachments/99157453/image2018-10-9_10-57-19.png" alt="images/download/attachments/99157453/image2018-10-9_10-57-19.png" width="900"  />
+<br/>    </span>
+</p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<ul class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+Swagger UI is only available if you build EJBCA in non-production mode, i.e. with <strong class=" ">ejbca.productionmode=false</strong> set in <tt class=" ">conf/ejbca.properties</tt>.    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+The Swagger UI for ACME will only be available if ACME is activated as a protocol, see <a   href="#src-99157453_id-.ACMEv7.4.3-EnablingACME">Enabling ACME</a>.    </span>
+</p>
+</li></ul>        </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-99157453_id-.ACMEv7.4.3-SupportedOperationssupported_operations">
+        <h1 class="heading "><span id="src-99157453_id-.ACMEv7.4.3-supported_operations" class="confluence-anchor-link"></span><span>Supported Operations </span></h1>
+<p   
+>EJBCAs ACME implementation currently complies with the final ACME standard <a  class="external-link" href="https://tools.ietf.org/html/rfc8555">IETF - RFC8555</a>. All operations must be called with POST requests. For the directory operation there is a GET request offered and for the newNonce operation a GET and HEAD request as well.</p>
+    <div  class="tablewrap">
+        <table class="wrapped relative-table confluenceTable">
+                    <colgroup>
+                                    <col  width="10%"/>
+                                    <col  width="27%"/>
+                                    <col  width="48%"/>
+                                    <col  width="12%"/>
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Operation</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>URL</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Description</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>RFC 8555 Reference</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>directory</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>/ejbca/acme/directory</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Get the directory object listing all ACME operation URLs and the ACME configuration meta data.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.1.1">7.1.1</a></p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>newNonce</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>/ejbca/acme/newNonce</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Before any POST action is performed, the client needs to retrieve an anti-replay nonce from the server.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.2">7.2</a></p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>newAccount</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>/ejbca/acme/newAccount</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Create a new ACME account, or retrieve an existing account, including the account URL and the account ID.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.3">7.3</a></p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>updateAccount</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>/ejbca/acme/acct/{accountId}</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Update or deactivate an existing account. Change its contact information or agree to the ACME service terms of service.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.3.2">7.3.2</a></p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>newOrder</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>/ejbca/acme/newOrder</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Create a new ACME order for one or multiple domains (or other identifiers). This is the first step to request certificate issuance.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.4">7.4</a></p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>challenge</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>/ejbca/acme/acct/{accountId}/chall/{challengeId}</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Tell the ACME server that it can validate your challenge response and retrieve the challenge object.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.5.1">7.5.1</a></p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>newAuthz</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>/ejbca/acme/newAuthz</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Only if <strong class=" ">Pre-Authorization Allowed</strong> is enabled in the Alias configuration.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.4.1">7.4.1</a></p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>finalizeOrder</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>/ejbca/acme/acct/{accountId}/orders/{orderId}/finalize</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Send your Certificate Signing Request (CSR) and let the CA issue your certificate.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.1.3">7.1.3</a></p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>revokeCert</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>/ejbca/acme/revokeCert</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Revoke a certificate.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.6">7.6</a></p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>keyChange</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>/ejbca/acme/keyChange</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Replace the key of an existing account.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.3.5">7.3.5</a></p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>cert</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>/ejbca/acme/cert/{certificateId}</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Download a certificate.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.4.2">7.4.2</a></p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-1" id="src-99157453_id-.ACMEv7.4.3-URLEndpointsandAliases">
+        <h1 class="heading "><span>URL Endpoints and Aliases</span></h1>
+<p   
+>The ACME service is available on the following URLs.</p>
+<p   
+>Some ACME clients (like PJAC) may cut the URL query string (<strong class=" ">?configurationId=&lt;alias_name&gt;</strong>). Please use the URL style with the alias name specified in the URL path.</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Default alias with client authentication</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>https://&lt;server&gt;:8443/ejbca/acme/directory</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Default alias without client authentication</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>https://&lt;server&gt;:8442/ejbca/acme/directory</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Custom alias &lt;alias_name&gt; with client authentication</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>https://&lt;server&gt;:8443/ejbca/acme/directory?configurationId=&lt;alias_name&gt;<br/>or<br/>https://&lt;server&gt;:8443/ejbca/acme/&lt;alias_name&gt;/directory</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Custom alias &lt;alias_name&gt; without client authentication</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>https://&lt;server&gt;:8442/ejbca/acme/directory?configurationId=&lt;alias_name&gt;<br/>or<br/>https://&lt;server&gt;:8442/ejbca/acme/&lt;alias_name&gt;/directory</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-1" id="src-99157453_id-.ACMEv7.4.3-EJBCASpecifics">
+        <h1 class="heading "><span>EJBCA Specifics</span></h1>
+<ul class=" "><li class=" "><p   
+>Approvals in EJBCA for enrollment and revocation cannot be used with ACME.</p>
+</li><li class=" "><p   
+>All ACME operations are performed over the peers protocol. Thus it is perfectly possible to use an external RA running EJBCA as an ACME proxy.</p>
+</li><li class=" "><p   
+>Validators for CAA checking etc. are configured as described in <a   href="Validators_Overview.html">Validators Overview</a>.</p>
+</li><li class=" "><p   
+>You need to set up separate aliases for each end entity profile/certificate profile and CA.</p>
+</li></ul>    </div>
+    <div class="section section-1" id="src-99157453_id-.ACMEv7.4.3-Configurationoverview">
+        <h1 class="heading "><span id="src-99157453_id-.ACMEv7.4.3-overview" class="confluence-anchor-link"></span><span>Configuration </span></h1>
+    <div class="section section-2" id="src-99157453_id-.ACMEv7.4.3-EnablingACME">
+        <h2 class="heading "><span>Enabling ACME</span></h2>
+<p   
+>    <span style="color: #000000;">
+The ACME protocol is by default disabled. To enable the service, go to <strong class=" ">CA UI</strong><strong class=" "> &gt; System Configuration &gt; Protocol Configuration</strong> and select <strong class=" ">Enable</strong> for <strong class=" ">ACME</strong>.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+<img  class="confluence-embedded-image"  src="images/download/attachments/99157453/Screen_Shot_2018-08-02_at_14.41.27.png" alt="images/download/attachments/99157453/Screen_Shot_2018-08-02_at_14.41.27.png"  height="250" />
+    </span>
+</p>
+    </div>
+    <div class="section section-2" id="src-99157453_id-.ACMEv7.4.3-ManagingACMEConfigurations">
+        <h2 class="heading "><span>Managing ACME Configurations</span></h2>
+<p   
+>    <span style="color: #000000;">
+Much like other protocols in EJBCA, several different ACME configurations can be maintained at the same time using aliases.<br/>    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+To configure ACME, select <strong class=" ">ACME Configuration</strong>    <span style="color: #000000;">
+ under the     </span>
+    <span style="color: #000000;">
+    <span style="color: #000000;">
+<strong class=" ">System Configuration </strong>menu.    </span>
+    </span>
+    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+    <span style="color: #000000;">
+    <span style="color: #000000;">
+<img  class="confluence-embedded-image image-left"                 style="float:left;"
+     src="images/download/attachments/99157453/Screen_Shot_2018-08-02_at_14.44.14.png" alt="images/download/attachments/99157453/Screen_Shot_2018-08-02_at_14.44.14.png" width="600"  />
+    </span>
+    </span>
+    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+    <span style="color: #000000;">
+    <span style="color: #000000;">
+<br/>    </span>
+    </span>
+    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+    <span style="color: #000000;">
+    <span style="color: #000000;">
+<br/>    </span>
+    </span>
+    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+    <span style="color: #000000;">
+    <span style="color: #000000;">
+<br/>    </span>
+    </span>
+    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+    <span style="color: #000000;">
+    <span style="color: #000000;">
+<br/>    </span>
+    </span>
+    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+    <span style="color: #000000;">
+    <span style="color: #000000;">
+<br/>    </span>
+    </span>
+    </span>
+</p>
+<p   
+></p>
+    <div class="section section-3" id="src-99157453_id-.ACMEv7.4.3-GlobalFields">
+        <h3 class="heading "><span>Global Fields</span></h3>
+<p   
+>    <span style="color: #000000;">
+The following fields are defined globally for all ACME operations.    </span>
+</p>
+    <div  class="tablewrap">
+        <table class="relative-table wrapped confluenceTable">
+                    <colgroup>
+                                    <col  width="31%"/>
+                                    <col  width="68%"/>
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Field</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Description</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Default ACME Configuration</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The configuration to use if the specified alias does not exist.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Replay Nonce Validity Number</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Defines the validity in milliseconds of a generated replay nonce.</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-3" id="src-99157453_id-.ACMEv7.4.3-AliasSpecificFieldsAliasSpecificFields">
+        <h3 class="heading "><span>Alias Specific Fields </span></h3>
+<p   
+>Example of ACME Alias configuration.</p>
+<p   
+><img  class="confluence-embedded-image"  src="images/download/attachments/99157453/AcmeAlias.jpg" alt="images/download/attachments/99157453/AcmeAlias.jpg"  height="250" />
+    </p>
+<p   
+>    <span style="color: #000000;">
+The following table lists ACME specific fields for each individual alias.    </span>
+</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Field</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Description</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>End Entity Profile</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The end entity profile to use for end entities enrolled using this alias. The CA signing the certificate is the default CA of this end entity profile, and the certificate profile used for the certificate is the default certificate profile of this end entity profile.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Pre-Authorization Allowed</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Pre-authorization, as defined in <a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.4.1">section 7.4.1 of RFC 8555</a>.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Wildcard Certificate Issuance Allowed</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Whether this alias can be used to issue certificates with wildcard DNS names in their SANs. See <a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.1.3">section 7.1.3 of RFC 8555</a>.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Site URL</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>URL to a website describing this CA. Optional. See <a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.1.1">section 7.1.1 of RFC 8555</a>.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Terms of Service URL</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>URL to your terms of service for ACME. Optional. See <a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.1.1">section 7.1.1 of RFC 8555</a>.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Require client approval for Terms of Service changes</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #212121;">
+Specifies whether users must approve the new version if the Terms of Service URL is changed.    </span>
+</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>DNS Resolver</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>A specified DNS resolver, used when processing dns01 challenges.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>DNS Port</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Port used for DNS communications.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>DNSSEC Trust Anchor</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>The ICANN trust anchor, configurable should it ever change.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Retry After</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Value used to indicate that client should try polling the authorization endpoint again after a while (in seconds). Default is 0 and this is used mainly for clients such as cert-manager which send post-as-get request while waiting for ACME server to prepare the challenge.</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>External Account Binding is an optional feature and will not be supported in this release! The corresponding field in the directory output (<strong class=" ">externalAccountRequired</strong>) is false by default and it is not changeable for now.</p>
+        </div>
+    </div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-99157453_id-.ACMEv7.4.3-EndEntityProfileConfiguration">
+        <h2 class="heading "><span>End Entity Profile Configuration</span></h2>
+<p   
+>The following settings should be used for an end entity profile used with ACME.</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Field</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Value</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Username</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Auto-generated</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Password (or Enrollment Code)    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Leave empty</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+End Entity E-mail    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Use, Required, Modifiable</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+><strong class=" ">Subject DN Attributes</strong></p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+CN, Common name    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Required, Modifiable</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Default Certificate Profile</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>&lt;The certificate profile to use&gt;</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Default CA</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>&lt;The CA signing the certificate&gt;</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Default Token</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>User Generated</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Other subject attributes    </span>
+</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+></p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+DNS Name    </span>
+</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>    <span style="color: #000000;">
+Modifiable    </span>
+</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-99157453_id-.ACMEv7.4.3-AuthenticationandValidationauthentication">
+        <h1 class="heading "><span id="src-99157453_id-.ACMEv7.4.3-authentication" class="confluence-anchor-link"></span><span>Authentication and Validation </span></h1>
+<p   
+>EJBCA currently supports the two validation methods http01 and dns01, defined in <a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-8">section 8 of RFC 8555</a><i class=" ">.</i></p>
+    <div class="section section-2" id="src-99157453_safe-id-aWQtLkFDTUV2Ny40LjMtSFRUUENoYWxsZW5nZShodHRwMDEp">
+        <h2 class="heading "><span>HTTP Challenge (http01)</span></h2>
+<p   
+>If the client chooses to use the http01<i class=" "> </i>challenge type, it intends to prove that it controls the domain requested in the certificate by provisioning a resource under the same domain name. As per RFC 8555, EJBCA will send out a challenge to the client, which the client will sign using its private key and provide on the domain in a known location for EJBCA to retrieve. EJBCA will then be able to use the public key provided in the original request to verify domain control. The HTTP connection for validation is done from the CA to the client, even if an external RA is used, since the CA does the validation.</p>
+    </div>
+    <div class="section section-2" id="src-99157453_safe-id-aWQtLkFDTUV2Ny40LjMtRE5TQ2hhbGxlbmdlKGRuczAxKQ">
+        <h2 class="heading "><span>DNS Challenge (dns01)</span></h2>
+<p   
+>If the client chooses to use the dns01 challenge type, it instead obligates itself to supply a TXT record containing the same token response as described above. As per RFC 8555, DNSSEC is required for dns01 challenges. The DNS lookup for validation is done from the CA, even if an external RA is used, since the CA does the validation.</p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-99157453_id-.ACMEv7.4.3-CompatibilitywithACMEClients">
+        <h1 class="heading "><span>Compatibility with ACME Clients</span></h1>
+<p   
+>EJBCA is compatible with the following ACME clients (taken from <a  class="external-link" href="https://letsencrypt.org/docs/client-options/">Letsencrypt's list of compatible ACME clients</a>):</p>
+<ul class=" "><li class=" "><p   
+><a   href="#src-99157453_id-.ACMEv7.4.3-EJBCAACMEwithCertbot0.37.0">Certbot 0.37.0 and 0.39.0</a></p>
+</li><li class=" "><p   
+><a   href="#src-99157453_id-.ACMEv7.4.3-EJBCAACMEwithPJAC3.0.1">PJAC 3.0.1</a></p>
+</li><li class=" "><p   
+><a   href="#src-99157453_id-.ACMEv7.4.3-EJBCAACMEwithACMETiny">ACME Tiny</a></p>
+</li></ul>    <div class="section section-2" id="src-99157453_id-.ACMEv7.4.3-EJBCAACMEwithCertbot0.37.0or0.39.0">
+        <h2 class="heading "><span>EJBCA ACME with Certbot 0.37.0 or 0.39.0</span></h2>
+<p   
+><a  class="external-link" href="https://certbot.eff.org/">Certbot</a> used to be Let's Encrypt's official client but is now maintained by the Electronic Frontier Foundation. It is one of the most used ACME clients, supporting issuance, renewal and revocation operations, which are all supported by EJBCA. For more information, refer to the <a  class="external-link" href="https://certbot.eff.org/docs/">Certbot Documentation</a>.</p>
+    <div  class="confbox admonition admonition-info">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>For more information on integration, see our integration guide <a   href="Using_CertBot_to_Issue_Certificates_with_ACME_to_an_Apache_Web_Server.html">Using Certbot to Issue Certificates with ACME to an Apache Web Server</a>.</p>
+        </div>
+    </div>
+<p   
+>Certbot by default uses Let's Encrypts servers. To specify an alternative server URL, use the <tt class=" ">--server</tt> option:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">--server https:</code><code class="comments">//localhost:8442/ejbca/acme/directory</code></div>
+</div>
+    </div>
+<p   
+>Note that you can also use the <tt class=" ">server</tt> option in cli.ini.</p>
+    <div class="section section-3" id="src-99157453_id-.ACMEv7.4.3-ExampleScenarios">
+        <h3 class="heading "><span>Example Scenarios</span></h3>
+    <div class="section section-4" id="src-99157453_id-.ACMEv7.4.3-Prerequisites">
+        <h4 class="heading "><span>Prerequisites</span></h4>
+<p   
+>The following examples assume that a Ubuntu machine with JBoss or Wildfly is used and that EJBCA is accessible under <a  class="external-link" href="https://localhost:8442">https://localhost:8442</a> public HTTPS, using Certbot 0.37.0. To get the Certbot latest release, use the certbot-auto installation command.</p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>The following example assumes that EJBCA, Certbot and Apache are set up on the same host. If you for example run EJBCA on a separate VM, then the Apache virtual hosts must be accessible from that VM, for EJBCA to be able to access HTTP challenges under the specified domains.</p>
+        </div>
+    </div>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ wget https:</code><code class="plain">//dl</code><code class="plain">.eff.org</code><code class="plain">/certbot-auto</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> </code><code class="functions">mv</code><code class="plain"> certbot-auto </code><code class="plain">/usr/local/bin/certbot-auto</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> </code><code class="functions">chown</code><code class="plain"> root </code><code class="plain">/usr/local/bin/certbot-auto</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> </code><code class="functions">chmod</code><code class="plain"> 0755 </code><code class="plain">/usr/local/bin/certbot-auto</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> </code><code class="plain">/usr/local/bin/certbot-auto</code><code class="plain"> –help</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> </code><code class="plain">/usr/local/bin/certbot-auto</code><code class="plain"> --</code><code class="functions">install</code><code class="plain">-only</code></div>
+</div>
+    </div>
+<p   
+>Run the following command in the console to ensure that a connection to the ACME server is up and running:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ curl -k https:</code><code class="plain">//localhost</code><code class="plain">:8442</code><code class="plain">/ejbca/acme/directory</code></div>
+</div>
+    </div>
+<p   
+>The successful output of the above command should be as follows (showing the resources available in the EJBCA ACME server), otherwise the scenarios will fail:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">{</code><code class="string">"newNonce"</code><code class="plain">:</code><code class="string">"https://localhost:8442/ejbca/acme/newNonce"</code><code class="plain">,</code><code class="string">"newAccount"</code><code class="plain">:</code><code class="string">"https://localhost:8442/ejbca/acme/newAccount"</code><code class="plain">,</code><code class="string">"newOrder"</code><code class="plain">:</code><code class="string">"https://localhost:8442/ejbca/acme/newOrder"</code><code class="plain">,</code><code class="string">"revokeCert"</code><code class="plain">:</code><code class="string">"https://localhost:8442/ejbca/acme/revokeCert"</code><code class="plain">,</code><code class="string">"keyChange"</code><code class="plain">:</code><code class="string">"https://localhost:8442/ejbca/acme/keyChange"</code><code class="plain">,</code><code class="string">"meta"</code><code class="plain">:{</code><code class="string">"termsOfService"</code><code class="plain">:</code><code class="string">"https://example.com/acme/terms"</code><code class="plain">,</code><code class="string">"website"</code><code class="plain">:</code><code class="string">"https://www.example.com/"</code><code class="plain">,</code><code class="string">"caaIdentities"</code><code class="plain">:[],</code><code class="string">"externalAccountRequired"</code><code class="plain">:</code><code class="keyword">false</code><code class="plain">}}</code></div>
+</div>
+    </div>
+    </div>
+    </div>
+    <div class="section section-3" id="src-99157453_id-.ACMEv7.4.3-HTTPValidationScenario">
+        <h3 class="heading "><span>HTTP Validation Scenario</span></h3>
+<ol class=" "><li class=" "><p   
+>Issue certificate for an identifier (example.com) using HTTP validation:</p>
+<p   
+>Setup a local HTTP server (for example Apache with the default working directory <tt class=" ">/var/www/html</tt>). Add the following virtual host under     <span style="color: #242729;">
+<tt class=" ">/etc/apache2/sites-available/example.com.conf</tt>:<br/>    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">&lt;VirtualHost *:</code><code class="value">80</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">  ServerName example.com</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">  DocumentRoot </code><code class="string">"/var/www/"</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">&lt;/VirtualHost&gt; </code></div>
+</div>
+    </div>
+<p   
+>Enable the site using the command:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> a2ensite example.com </code></div>
+</div>
+    </div>
+<p   
+>Then run:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> service apache2 reload</code></div>
+</div>
+    </div>
+<p   
+>Next, restart Apache:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> </code><code class="plain">/etc/init</code><code class="plain">.d</code><code class="plain">/apache2</code><code class="plain"> restart</code></div>
+</div>
+    </div>
+<p   
+>Then add the following line to your <tt class=" ">/etc/hosts</tt> file:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="value">127.0</code><code class="plain">.</code><code class="value">0.1</code><code class="plain">       example.com</code></div>
+</div>
+    </div>
+<p  class="auto-cursor-target" 
+>Create the directory structure of .well-known/acme-challenge inside /var/www/example/ and change its permissions to 755 recursively.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">mkdir -p .well-known/acme-challenge </code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">chmod </code><code class="value">755</code><code class="plain"> -R .well-known/</code></div>
+</div>
+    </div>
+</li><li class=" "><p   
+>Having Certbot installed on your machine, try the following command (EJBCA should be up and running with ACME enabled and with an ACME alias configured with appropriate end entity profile):</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> certbot --no-verify-ssl --server https:</code><code class="plain">//localhost</code><code class="plain">:8442</code><code class="plain">/ejbca/acme/directory</code><code class="plain"> certonly --webroot -w </code><code class="plain">/var/www/</code><code class="plain"> -d example.com --agree-tos --email </code><code class="functions">test</code><code class="plain">@example.com --no-eff-email --noninteractive</code></div>
+</div>
+    </div>
+<p   
+>The command should run successfully and in the display a message similar to the following:</p>
+    <div  class="confbox programlisting">
+                <div class="content">
+        <pre><code>IMPORTANT NOTES:
+ - Congratulations! Your certificate and chain have been saved at:
+ /etc/letsencrypt/live/example.com/fullchain.pem
+ Your key file has been saved at:
+ /etc/letsencrypt/live/example.com/privkey.pem
+ Your cert will expire on 2020-08-21. To obtain a new or tweaked
+ version of this certificate in the future, simply run certbot
+ again. To non-interactively renew *all* of your certificates, run
+ &quot;certbot renew&quot;
+ - If you like Certbot, please consider supporting our work by:</code></pre>
+        </div>
+    </div>
+<p   
+>Go to EJBCA Admin Web and search for End Entities, there should be one with the status Generated and CN = example.com.</p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>The error message<i class=" "> The client lacks sufficient authorization :: The client lacks sufficient authorization</i> indicates a conflict between the new account creation and existing ACME accounts. To resolve, remove everything under /etc/letsencrypt/live, /etc/letsencrypt/accounts and /etc/letsencrypt/keys and try again.</p>
+        </div>
+    </div>
+</li><li class=" "><p   
+>If you want to issue a certificate containing multiple domains (for instance, example.com and example.org), set up another Apache virtual host as follows:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">&lt;VirtualHost *:</code><code class="value">80</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">  ServerName </code><code class="string">"example.org"</code></div>
+<div class="line"><code class="plain">  DocumentRoot </code><code class="string">"/var/www/"</code></div>
+<div class="line"><code class="plain">&lt;/VirtualHost&gt;</code></div>
+</div>
+    </div>
+<p   
+></p>
+<p   
+>Repeat the steps mentioned above to enable it and add it to your hosts.</p>
+<p   
+>Next, issue the following command and ensure to remove the <tt class=" ">live, keys</tt> and <tt class=" ">account</tt> directories of certbot otherwise it will ask for expansion of the already existing certificate. Note that the domains specified using <tt class=" ">-d</tt> are comma separated.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">sudo certbot --no-verify-ssl --server https:</code><code class="comments">//localhost:8442/ejbca/acme/directory certonly --webroot -w /var/www/ -d example.com,example.org --agree-tos --email test@example.com --no-eff-email --noninteractive</code></div>
+</div>
+    </div>
+<p   
+>This will result in a certificate which covers both the <a  class="external-link" href="http://example.com">example.com</a> and <a  class="external-link" href="http://example.org">example.org</a> domains. To verify, decode the produced certificate .pem file and observe that the SAN section includes two domains as two different dnsNames.</p>
+</li><li class=" "><p   
+>To revoke the certificate issued in the step above, run the following command:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> certbot --no-verify-ssl --server https:</code><code class="plain">//localhost</code><code class="plain">:8442</code><code class="plain">/ejbca/acme/directory</code><code class="plain"> revoke --cert-name example.com --reason keycompromise</code></div>
+</div>
+    </div>
+<p  class="auto-cursor-target" 
+>If asked for deleting the just issued certificate, reply with Y. Alternatively use the option switch --no-delete-after-revoke and delete the certificates for the domain afterwards with the certbot delete command. The following success message must be shown:</p>
+    <div  class="confbox programlisting">
+                <div class="content">
+        <pre><code>Congratulations! You have successfully revoked the certificate that was located at /etc/letsencrypt/live/example.com/fullchain.pem</code></pre>
+        </div>
+    </div>
+<p  class="auto-cursor-target" 
+>Go to EJBCA Admin Web and check the status for the corresponding End Entity certificate and make sure it is revoked.</p>
+</li><li class=" "><p  class="auto-cursor-target" 
+>In order to issue a certificate for a wildcard domain do as follows:<br/>First you need to enable the wildcard certificate issuance via Acme Configuration alias page.<br/>Then run the same command as in step two providing a wildcard domain as identifier.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> certbot --no-verify-ssl --server https:</code><code class="plain">//localhost</code><code class="plain">:8442</code><code class="plain">/ejbca/acme/directory</code><code class="plain"> certonly --webroot -w </code><code class="plain">/var/www/html/</code><code class="plain"> -d *.example.com</code></div>
+</div>
+    </div>
+<p  class="auto-cursor-target" 
+>The rest of procedure should be same as above.</p>
+</li></ol>    </div>
+    <div class="section section-3" id="src-99157453_id-.ACMEv7.4.3-DNSValidationScenario">
+        <h3 class="heading "><span>DNS Validation Scenario</span></h3>
+<ol class=" "><li class=" "><p  class="auto-cursor-target" 
+>Issue certificate for an identifier (allow.klaan.nu) using Domain Name System Security Extensions    <span style="color: #222222;">
+ (    </span>
+DNSSEC    <span style="color: #222222;">
+)    </span>
+ validation:<br/>Make sure you have a DNS server setup which you can add TXT records to. In this example, dnsmasq is used,     <span style="color: #222222;">
+included in most     </span>
+Linux distributions.</p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>The EJBCA ACME server currently supports DNSSEC validation and this example uses allow.klaan.nu to be able to pass DNSSEC validation.</p>
+        </div>
+    </div>
+</li><li class=" "><p   
+>To issue the certificate, run the following command in the command line:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> certbot --no-verify-ssl --server https:</code><code class="plain">//localhost</code><code class="plain">:8442</code><code class="plain">/ejbca/acme/directory</code><code class="plain"> certonly --manual --preferred-challenges=dns -d allow.klaan.nu</code></div>
+</div>
+    </div>
+    <div  class="confbox admonition admonition-info">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>The <tt class=" ">--manual</tt> flag is used to run Certbot interactively and allow preparing the DNS server with the DNS challenge offered by the ACME server.</p>
+        </div>
+    </div>
+<p   
+>Agree to your IP being logged by replying Yes to the following:</p>
+    <div  class="confbox programlisting">
+                <div class="content">
+        <pre><code>Are you OK with your IP being logged?
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+(Y)es/(N)o:</code></pre>
+        </div>
+    </div>
+<p   
+>Certbot displays the TXT record challenge offered by the ACME server which have to be provisioned in the DNS server. Before pressing <strong class=" ">Enter,</strong> run the following command to provision the TXT record in dnsmasq:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> dnsmasq --port=</code><code class="string">"1453"</code><code class="plain"> --txt-record=</code><code class="string">"_acme-challenge.allow.klaan.nu, pULO3RjCbzqjWH0JK2FQ5BDe-5SI2Eo2Vn1l_fmrtdk"</code><code class="plain"> --listen-address=</code><code class="string">"127.0.0.1"</code><code class="plain">  --interface=</code><code class="string">"lo"</code><code class="plain"> --bind-interfaces</code></div>
+</div>
+    </div>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>The port number used above is just an example. Note that the port number must equal the port set for the ACME Alias currently used by the EJBCA ACME server, configured in <strong class=" ">Admin Web&gt;System Configuration&gt;ACME Configuration</strong>. In addition, the <strong class=" ">DNS Resolver</strong> field needs to be set to localhost in the ACME Configuration Alias page, see <a   href="#src-99157453_id-.ACMEv7.4.3-AliasSpecificFields">Alias Specific Fields</a>.</p>
+        </div>
+    </div>
+<p   
+>After running the above command, press <strong class=" ">Enter</strong> in the Certbot command prompt to continue. A message similar to the following is displayed for a successful certificate issuance:</p>
+    <div  class="confbox programlisting">
+                <div class="content">
+        <pre><code>IMPORTANT NOTES:
+ - Congratulations! Your certificate and chain have been saved at:
+   /etc/letsencrypt/live/allow.klaan.nu/fullchain.pem
+   Your key file has been saved at:
+   /etc/letsencrypt/live/allow.klaan.nu/privkey.pem
+   Your cert will expire on 2020-08-21. To obtain a new or tweaked
+   version of this certificate in the future, simply run certbot
+   again. To non-interactively renew *all* of your certificates, run
+   &quot;certbot renew&quot;
+ - If you like Certbot, please consider supporting our work by:
+
+   Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+   Donating to EFF:                    https://eff.org/donate-le
+</code></pre>
+        </div>
+    </div>
+<p   
+>Ensure that the certificate is issued in EJBCA by checking that the Admin Web End Entity Search page includes a row with CN equal to allow.klaan.nu and a valid certificate.</p>
+</li><li class=" "><p  class="auto-cursor-target" 
+>To revoke the certificate issued in the previous step, run:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> certbot --no-verify-ssl --server https:</code><code class="plain">//localhost</code><code class="plain">:8442</code><code class="plain">/ejbca/acme/directory</code><code class="plain"> revoke --cert-path </code><code class="plain">/etc/letsencrypt/live/allow</code><code class="plain">.klaan.nu</code><code class="plain">/fullchain</code><code class="plain">.pem</code></div>
+</div>
+    </div>
+<p  class="auto-cursor-target" 
+>The following message displays if successful:</p>
+    <div  class="confbox programlisting">
+                <div class="content">
+        <pre><code>Congratulations! You have successfully revoked the certificate that was located
+at /etc/letsencrypt/live/allow.klaan.nu/fullchain.pem</code></pre>
+        </div>
+    </div>
+<p  class="auto-cursor-target" 
+>Make sure that the certificate is revoked with the reason <strong class=" ">    <span style="color: #000000;">
+Unspecified    </span>
+</strong> in EJBCA by checking its status in the Admin Web End Entity Search page.</p>
+</li><li class=" "><p  class="auto-cursor-target" 
+>To issue a certificate for a wildcard domain do as follows:<br/>First enable the wildcard certificate issuance via Acme Configuration alias page.<br/>Then issue the following (example) command.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> certbot --no-verify-ssl --server https:</code><code class="plain">//localhost</code><code class="plain">:8442</code><code class="plain">/ejbca/acme/directory</code><code class="plain"> certonly --manual --preferred-challenges=dns -d *.allow.klaan.nu</code></div>
+</div>
+    </div>
+<p  class="auto-cursor-target" 
+>The rest of the procedure is similar to the above.</p>
+</li></ol>    </div>
+    </div>
+    <div class="section section-2" id="src-99157453_id-.ACMEv7.4.3-EJBCAACMEwithPJAC3.0.1">
+        <h2 class="heading "><span>EJBCA ACME with PJAC 3.0.1</span></h2>
+<p   
+>Porunov Java ACME Client (PJAC) is an     <span style="color: #24292e;">
+application based on     </span>
+<a  class="external-link" href="https://github.com/shred/acme4j">acme4j</a>    <span style="color: #24292e;">
+, a Java ACME library implementation.     </span>
+To try out EJBCA with <a  class="external-link" href="https://github.com/porunov/acme_client">PJAC</a>, refer to GitHub documentation on <a  class="external-link" href="https://github.com/porunov/acme_client/wiki/Example-scenarios">Example scenarios</a>.</p>
+<p   
+>EJBCA is tested with the following PJAC flows:</p>
+<ul class=" "><li class=" "><p   
+>Get a certificate for multiple domains</p>
+</li><li class=" "><p   
+>Renew a certificate for multiple domains</p>
+</li><li class=" "><p   
+>Get a wildcard certificate</p>
+</li><li class=" "><p   
+>Revoke certificate</p>
+</li><li class=" "><p   
+>Deactivate account</p>
+</li><li class=" "><p   
+>Pre-authorization (does not seem to be part of PJAC, but is supported by underlying acme4j)</p>
+</li><li class=" "><p   
+>HTTP01 and DNS01 challenge types</p>
+</li></ul><p   
+><img  class="emoticon emoticon-warning"  src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ Note that you have to import the certification path of EJBCAs Management CA into the truststore of the concrete JVM installation, or to reference it as -D parameter 'javax.net.ssl.trustStore'. For self-signed certificates your are asked to trust it. Confirm with 'Yes'.:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> </code><code class="plain">/usr/lib/jvm/jdk-11</code><code class="plain">.0.1</code><code class="plain">/bin/keytool</code><code class="plain"> -</code><code class="functions">import</code><code class="plain"> -</code><code class="functions">file</code><code class="plain"> </code><code class="plain">/opt/ejbca/ejbca/p12/ManagementCA</code><code class="plain">.cacert.pem -keystore </code><code class="plain">/usr/lib/jvm/jdk-11</code><code class="plain">.0.1</code><code class="plain">/lib/security/cacerts</code><code class="plain"> -</code><code class="functions">alias</code><code class="plain"> ManagementCA</code></div>
+</div>
+    </div>
+<p   
+><img  class="emoticon emoticon-warning"  src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ Note that you need to configure PJAC to have the EJBCA instance as its ACME service, by adding an extra '-u' parameter to <tt class=" ">acme_client.jar</tt> command executions:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">-u https:</code><code class="comments">//localhost:8442/ejbca/acme/directory</code></div>
+</div>
+    </div>
+<p   
+><img  class="emoticon emoticon-warning"  src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ You may reuse these parts of the PJAC command with an alias:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">alias</code><code class="plain"> acme-client=</code><code class="string">"sudo /usr/lib/jvm/jdk-11.0.1/bin/java -Djavax.net.ssl.trustStore=$JAVA_HOME/lib/security/cacerts -Djavax.net.ssl.trustStorePassword=changeit -jar acme-client.jar -u https://localhost:8442/ejbca/acme/directory --log-level TRACE --with-agreement-update"</code></div>
+</div>
+    </div>
+<p   
+>Configure the virtual hosts and local resolution like above with certbot.</p>
+<p   
+>Run some PJAC commands now to register a new account and to issue a certificate for two different domains, using your CMD alias.</p>
+<p   
+>1. Test your installation with the retrieval of the ACME configurations terms of service URL.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ acme-client --</code><code class="functions">command</code><code class="plain"> get-agreement-url</code></div>
+</div>
+    </div>
+<p   
+>The response returned by PJAC must contain the URL like this {&ldquo;agreement_url&ldquo;:&ldquo;https://example.com/acme/terms&ldquo;, &ldquo;status&rdquo;:&rdquo;ok&rdquo;}.</p>
+<p   
+>Create a new account key pair.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> openssl genrsa -out </code><code class="plain">/etc/pjac/account</code><code class="plain">.key </code></div>
+</div>
+    </div>
+<p   
+>2. Create a new ACME account for this key pair:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">vacme_client --</code><code class="functions">command</code><code class="plain"> register -a </code><code class="plain">/etc/pjac/account</code><code class="plain">.key --email pjacuser@primekey.com </code></div>
+</div>
+    </div>
+<p   
+>3. Add some more email address to the accounts contact information:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ acme_client --</code><code class="functions">command</code><code class="plain"> add-email -a </code><code class="plain">/etc/pjac/account</code><code class="plain">.key --email pjacuser2@primekey.com </code></div>
+</div>
+    </div>
+<p   
+>The second hostname is stored in a SAN DNS name field, so you have to use openssl with an openssl.cfg configuration file with the following content.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">[req]</code></div>
+<div class="line"><code class="plain">distinguished_name = req_distinguished_name</code></div>
+<div class="line"><code class="plain">req_extensions = v3_req</code></div>
+<div class="line"><code class="plain">prompt = no</code></div>
+<div class="line"><code class="plain">[req_distinguished_name]</code></div>
+<div class="line"><code class="plain">C = acme-</code><code class="functions">test</code><code class="plain">-1.com</code></div>
+<div class="line"><code class="plain">[v3_req]</code></div>
+<div class="line"><code class="plain">keyUsage = keyEncipherment, dataEncipherment</code></div>
+<div class="line"><code class="plain">subjectAltName = @alt_names</code></div>
+<div class="line"><code class="plain">[alt_names]</code></div>
+<div class="line"><code class="plain">DNS.1 = acme-</code><code class="functions">test</code><code class="plain">-2.com</code></div>
+</div>
+    </div>
+<p   
+>Create a key pair and a CSR for the TSL certificate for the 2 domains to issue.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> openssl genrsa -out </code><code class="plain">/etc/pjac/acme-test</code><code class="plain">.key</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> openssl req -new -key </code><code class="plain">/etc/pjac/acme-test</code><code class="plain">.key -subj </code><code class="string">"/CN=acme-test-1.com"</code><code class="plain"> -out </code><code class="plain">/etc/pjac/acme-test</code><code class="plain">.com.csr -config openssl.cfg</code></div>
+</div>
+    </div>
+<p   
+>4. Now you can order a certificate for the two domains (i.e. with a HTTP01 challenge). Note, that you have to create the directories, if not existing.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ acme-client --</code><code class="functions">command</code><code class="plain"> order-certificate -a </code><code class="plain">/etc/pjac/account</code><code class="plain">.key -w </code><code class="plain">/etc/pjac/workdir/</code><code class="plain"> --cert-</code><code class="functions">dir</code><code class="plain"> </code><code class="plain">/var/acme_work_dir/cert</code><code class="plain"> --csr acme-</code><code class="functions">test</code><code class="plain">.com.csr --well-known-</code><code class="functions">dir</code><code class="plain"> </code><code class="plain">/var/www/html/</code><code class="plain">.well-known</code><code class="plain">/acme-challenge</code><code class="plain"> --one-</code><code class="functions">dir</code><code class="plain">-</code><code class="keyword">for</code><code class="plain">-well-known –-challenge-</code><code class="functions">type</code><code class="plain"> HTTP01</code></div>
+</div>
+    </div>
+<p   
+>5. Verify the challenges.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ acme-client --</code><code class="functions">command</code><code class="plain"> verify-domains -a </code><code class="plain">/etc/pjac/account</code><code class="plain">.key -w </code><code class="plain">/etc/pjac/workdir/</code><code class="plain"> --cert-</code><code class="functions">dir</code><code class="plain"> </code><code class="plain">/var/acme_work_dir/cert</code><code class="plain"> --csr </code><code class="plain">/etc/pjac/acme-test</code><code class="plain">.com.csr –-challenge-</code><code class="functions">type</code><code class="plain"> HTTP01</code></div>
+</div>
+    </div>
+<p   
+>6. If the challenge responses were verified by the server, you may request your certificate.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ acme-client --</code><code class="functions">command</code><code class="plain"> generate-certificate -a </code><code class="plain">/etc/pjac/account</code><code class="plain">.key -w </code><code class="plain">/etc/pjac/workdir/</code><code class="plain"> --cert-</code><code class="functions">dir</code><code class="plain"> </code><code class="plain">/var/acme_work_dir/cert/</code><code class="plain"> --csr </code><code class="plain">/etc/pjac/acme-test</code><code class="plain">.com.csr</code></div>
+</div>
+    </div>
+<p   
+>7. Download the certificate.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ acme-client --</code><code class="functions">command</code><code class="plain"> download-certificates -a </code><code class="plain">/etc/pjac/account</code><code class="plain">.key -w </code><code class="plain">/etc/pjac/workdir/</code><code class="plain"> --cert-</code><code class="functions">dir</code><code class="plain"> </code><code class="plain">/var/acme_work_dir/cert</code></div>
+</div>
+    </div>
+<p   
+>8. You may revoke the certificate for some reason later.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ acme-client --</code><code class="functions">command</code><code class="plain"> revoke-certificate -a </code><code class="plain">/etc/pjac/account</code><code class="plain">.key -w </code><code class="plain">/etc/pjac/workdir/</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-99157453_id-.ACMEv7.4.3-EJBCAACMEwithACMETiny">
+        <h2 class="heading "><span>EJBCA ACME with ACME Tiny</span></h2>
+<ol class=" "><li class=" "><p  class="auto-cursor-target" 
+>Clone the repository:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ git clone https:</code><code class="plain">//github</code><code class="plain">.com</code><code class="plain">/diafygi/acme-tiny</code><code class="plain">.git</code></div>
+</div>
+    </div>
+</li><li class=" "><p  class="auto-cursor-target" 
+>Change EJBCA ACME URLs:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">-DEFAULT_CA = </code><code class="string">"https://acme-v02.api.letsencrypt.org"</code><code class="plain"> # DEPRECATED! USE DEFAULT_DIRECTORY_URL INSTEAD</code></div>
+<div class="line"><code class="plain">-DEFAULT_DIRECTORY_URL = </code><code class="string">"https://acme-v02.api.letsencrypt.org/directory"</code></div>
+<div class="line"><code class="plain">+</code></div>
+<div class="line"><code class="plain">+DEFAULT_CA = </code><code class="string">"https://{ejbca_url}:8442"</code><code class="plain"> # DEPRECATED! USE DEFAULT_DIRECTORY_URL INSTEAD</code></div>
+<div class="line"><code class="plain">+DEFAULT_DIRECTORY_URL = </code><code class="string">"https://{ejbca_url}:8442/ejbca/acme/directory"</code></div>
+</div>
+    </div>
+</li><li class=" "><p  class="auto-cursor-target" 
+>Prepare input for ACME:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain"># Generate </code><code class="keyword">private</code><code class="plain"> key</code></div>
+<div class="line"><code class="plain">openssl genrsa </code><code class="value">4096</code><code class="plain"> &gt; account.key</code></div>
+<div class="line"><code class="plain"># Generate CSR</code></div>
+<div class="line"><code class="plain">openssl req -</code><code class="keyword">new</code><code class="plain"> -sha256 -key account.key -subj </code><code class="string">"/emailAddress=acme_test@primekey.com/CN=my.acme"</code><code class="plain"> &gt; account.csr</code></div>
+</div>
+    </div>
+</li><li class=" "><p  class="auto-cursor-target" 
+>Launch ACME Tiny (Tested with Python2):</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> python acme_tiny.py --account-key .</code><code class="plain">/account</code><code class="plain">.key --csr .</code><code class="plain">/account</code><code class="plain">.csr --acme-</code><code class="functions">dir</code><code class="plain"> .</code><code class="plain">/acme-dir/</code><code class="plain"> --contact </code><code class="string">'mailto:acme@primekey.com'</code><code class="plain"> &gt; .</code><code class="plain">/signed_chain</code><code class="plain">.crt</code></div>
+</div>
+    </div>
+</li></ol><p   
+>where <tt class=" ">--acme-dir ./acme-dir/</tt> might be integrated and/or point to your current web server, for example Apache2 /var/www/html/.well-known/acme-challenge/.</p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-99157453_id-.ACMEv7.4.3-WorkflowExamplesexamples">
+        <h1 class="heading "><span id="src-99157453_id-.ACMEv7.4.3-examples" class="confluence-anchor-link"></span><span>Workflow Examples </span></h1>
+<p   
+>The following lists ACME operations to perform in order to get a certificate. For newAccount and for revokeCert requests there MUST be a 'jwk' field, otherwise a 'kid' field.</p>
+    <div class="section section-2" id="src-99157453_id-.ACMEv7.4.3-getDirectoryrequest">
+        <h2 class="heading "><span>getDirectory request</span></h2>
+<p   
+>Returns the URLs for each ACME operation and the service meta data.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">GET /acme/directory HTTP/</code><code class="value">1.1</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">{  </code></div>
+<div class="line"><code class="plain">   </code><code class="string">"newNonce"</code><code class="plain">:</code><code class="string">"https://footrust.local:8443/ejbca/acme/newNonce"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"newAccount"</code><code class="plain">:</code><code class="string">"https://footrust.local:8443/ejbca/acme/newAccount"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"newOrder"</code><code class="plain">:</code><code class="string">"https://footrust.local:8443/ejbca/acme/newOrder"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"newAuthz"</code><code class="plain">:</code><code class="string">"https://footrust.local:8443/ejbca/acme/newAuthz"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"revokeCert"</code><code class="plain">:</code><code class="string">"https://footrust.local:8443/ejbca/acme/revokeCert"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"keyChange"</code><code class="plain">:</code><code class="string">"https://footrust.local:8443/ejbca/acme/keyChange"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"meta"</code><code class="plain">:{  </code></div>
+<div class="line"><code class="plain">      </code><code class="string">"termsOfService"</code><code class="plain">:</code><code class="string">"https://footrust.com/acme/terms"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"website"</code><code class="plain">:</code><code class="string">"https://footrust.com"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"caaIdentities"</code><code class="plain">:[  </code></div>
+<div class="line"><code class="plain">         </code><code class="string">"footrust.com"</code></div>
+<div class="line"><code class="plain">      ],</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"externalAccountRequired"</code><code class="plain">:</code><code class="keyword">false</code></div>
+<div class="line"><code class="plain">   }</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-99157453_id-.ACMEv7.4.3-newAccountrequest">
+        <h2 class="heading "><span>newAccount request</span></h2>
+<p   
+>Creates a new ACME account to EJBCA and returns it with the response. EJBCA uses a public key to verify the JWS (that is, the <tt class=" ">jwk</tt> element of the JWS header) to authenticate future requests from the account. EJBCA supports RSA and EC key types. If the account with this key already exists, it is returned with the response.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">POST https:</code><code class="comments">//localhost:8442/ejbca/acme/newAccount HTTP/1.1</code></div>
+<div class="line"><code class="plain">Content-Type: application/jose+json</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"protected"</code><code class="plain">: base64url({</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"alg"</code><code class="plain">: </code><code class="string">"ES256"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"jwk"</code><code class="plain">: {...},</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"nonce"</code><code class="plain">: </code><code class="string">"6S8IqOGY7eL2lsGoTZYifg"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"url"</code><code class="plain">: </code><code class="string">"https://example.com/acme/newAccount"</code></div>
+<div class="line"><code class="plain">  }),</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"payload"</code><code class="plain">: base64url({</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"termsOfServiceAgreed"</code><code class="plain">: </code><code class="keyword">true</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"contact"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"mailto:cert-admin@example.com"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"tel:+12025551212"</code></div>
+<div class="line"><code class="plain">    ]</code></div>
+<div class="line"><code class="plain">  }),</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"signature"</code><code class="plain">: </code><code class="string">"RZPOnYoPs1PhjszF...-nh6X1qtOFPB519I"</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-99157453_id-.ACMEv7.4.3-newOrderrequest">
+        <h2 class="heading "><span>newOrder request</span></h2>
+<p   
+>Creates a new ACME order.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">POST /acme/newOrder HTTP/</code><code class="value">1.1</code></div>
+<div class="line"><code class="plain">Content-Type: application/jose+json</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"protected"</code><code class="plain">: base64url({</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"alg"</code><code class="plain">: </code><code class="string">"ES256"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"kid"</code><code class="plain">: </code><code class="string">"https://example.com/acme/acct/evOfKhNU60wg"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"nonce"</code><code class="plain">: </code><code class="string">"5XJ1L3lEkMG7tR6pA00clA"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"url"</code><code class="plain">: </code><code class="string">"https://example.com/acme/new-order"</code></div>
+<div class="line"><code class="plain"> }),</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"payload"</code><code class="plain">: base64url({</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"identifiers"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">	 { </code><code class="string">"type"</code><code class="plain">: </code><code class="string">"dns"</code><code class="plain">, </code><code class="string">"value"</code><code class="plain">: </code><code class="string">"www.example.org"</code><code class="plain"> },</code></div>
+<div class="line"><code class="plain">	 { </code><code class="string">"type"</code><code class="plain">: </code><code class="string">"dns"</code><code class="plain">, </code><code class="string">"value"</code><code class="plain">: </code><code class="string">"example.org"</code><code class="plain"> }</code></div>
+<div class="line"><code class="plain">   ],</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"notBefore"</code><code class="plain">: </code><code class="string">"2016-01-01T00:00:00Z"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"notAfter"</code><code class="plain">: </code><code class="string">"2016-01-08T00:00:00Z"</code></div>
+<div class="line"><code class="plain"> }),</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"signature"</code><code class="plain">: </code><code class="string">"H6ZXtGjTZyUnPeKn...wEA4TklBdh3e454g"</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+    </div>
+<p   
+>The newOrder response contains information about challenges. For more information, refer to the <a  class="external-link" href="https://tools.ietf.org/html/rfc8555#section-7.5.1">section 7.5.1 of RFC 8555.</a></p>
+    </div>
+    <div class="section section-2" id="src-99157453_id-.ACMEv7.4.3-newAuthzrequest">
+        <h2 class="heading "><span>newAuthz request</span></h2>
+<p   
+>Request a pre-authorization.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">POST /acme/newAuthz HTTP/</code><code class="value">1.1</code></div>
+<div class="line"><code class="plain">Host: example.com</code></div>
+<div class="line"><code class="plain">Content-Type: application/jose+json</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"protected"</code><code class="plain">: base64url({</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"alg"</code><code class="plain">: </code><code class="string">"ES256"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"kid"</code><code class="plain">: </code><code class="string">"https://example.com/acme/acct/evOfKhNU60wg"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"nonce"</code><code class="plain">: </code><code class="string">"uQpSjlRb4vQVCjVYAyyUWg"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"url"</code><code class="plain">: </code><code class="string">"https://example.com/acme/newAuthz"</code></div>
+<div class="line"><code class="plain">  }),</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"payload"</code><code class="plain">: base64url({</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"identifier"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"type"</code><code class="plain">: </code><code class="string">"dns"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"value"</code><code class="plain">: </code><code class="string">"example.org"</code></div>
+<div class="line"><code class="plain">    }</code></div>
+<div class="line"><code class="plain">  }),</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"signature"</code><code class="plain">: </code><code class="string">"nuSDISbWG8mMgE7H...QyVUL68yzf3Zawps"</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-99157453_id-.ACMEv7.4.3-challengerequest">
+        <h2 class="heading "><span>challenge request</span></h2>
+<p   
+>Call EJBCA's ACME service verify the challenge response, that proves you possess control over the domain.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">POST /acme/acct/{accountId}/chall/{challengeId} HTTP/</code><code class="value">1.1</code></div>
+<div class="line"><code class="plain">Content-Type: application/jose+json</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"protected"</code><code class="plain">: base64url({</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"alg"</code><code class="plain">: </code><code class="string">"ES256"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"kid"</code><code class="plain">: </code><code class="string">"https://example.com/acme/acct/evOfKhNU60wg"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"nonce"</code><code class="plain">: </code><code class="string">"Q_s3MWoqT05TrdkM2MTDcw"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"url"</code><code class="plain">: </code><code class="string">"https://example.com/acme/chall/prV_B7yEyA4"</code></div>
+<div class="line"><code class="plain"> }),</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"payload"</code><code class="plain">: base64url({}),</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"signature"</code><code class="plain">: </code><code class="string">"9cbg5JO1Gf5YLjjz...SpkUfcdPai9uVYYQ"</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-99157453_id-.ACMEv7.4.3-finalizeOrderrequest">
+        <h2 class="heading "><span>finalizeOrder request</span></h2>
+<p   
+>To generate the certificate.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">POST /acme/acct/{accountId}/orders/{orderId}/finalize HTTP </code><code class="value">1.1</code></div>
+<div class="line"><code class="plain">Content-Type: application/jose+json</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"protected"</code><code class="plain">: base64url({</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"alg"</code><code class="plain">: </code><code class="string">"ES256"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"kid"</code><code class="plain">: </code><code class="string">"https://example.com/acme/acct/evOfKhNU60wg"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"nonce"</code><code class="plain">: </code><code class="string">"MSF2j2nawWHPxxkE3ZJtKQ"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"url"</code><code class="plain">: </code><code class="string">"https://example.com/acme/order/TOlocE8rfgo/finalize"</code></div>
+<div class="line"><code class="plain"> }),</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"payload"</code><code class="plain">: base64url({</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"csr"</code><code class="plain">: </code><code class="string">"MIIBPTCBxAIBADBFMQ...FS6aKdZeGsysoCo4H9P"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain"> }),</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"signature"</code><code class="plain">: </code><code class="string">"uOrUfIIk5RyQ...nw62Ay1cl6AB"</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+    </div>
+<p   
+>The response to the <tt class=" ">finalizeOrder</tt> call is the certificate.</p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-99157453_id-.ACMEv7.4.3-StatusCodesstatus_codes">
+        <h1 class="heading "><span id="src-99157453_id-.ACMEv7.4.3-status_codes" class="confluence-anchor-link"></span><span>Status Codes </span></h1>
+    <div  class="tablewrap">
+        <table class="wrapped relative-table confluenceTable">
+                    <colgroup>
+                                    <col  width="31%"/>
+                                    <col  width="68%"/>
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>HTTP Status Code</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Description</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>200</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Success</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>201</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Created</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>204</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>No content</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>400</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Bad request</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>401</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Unauthorized</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>403</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Forbidden</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>404</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Not found</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>409</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Conflict</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>500</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>Internal Server Error</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="Protocols.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Protocols</span>
+        </a>
+                <a href="Certificate_Store_Access_via_HTTP.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Certificate Store Access via HTTP</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

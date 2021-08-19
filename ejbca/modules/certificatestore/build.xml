@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="certificatestore" default="ejbca-build">
+
+	<dirname property="certificatestore.dir" file="${ant.file.certificatestore}"/>	
+
+    <import file="${certificatestore.dir}/../build-helpers.xml"/>
+	
+	<property name="certificatestore.build.dir" location="${certificatestore.dir}/build-certstore"/>
+	<property name="certificatestore.resources.dir" location="${certificatestore.dir}/resources"/>
+	<property name="certificatestore.src.certstore.dir" location="${certificatestore.dir}/src"/>
+
+
+	<path id="compile-common.classpath">
+		<path refid="lib.servlet.classpath"/>
+		<path refid="lib.log4j.classpath"/>
+		<path refid="lib.commons-lang.classpath"/>
+		<path refid="lib.commons-config.classpath"/>
+		<path refid="lib.jee.classpath"/>
+		<path refid="lib.bouncycastle.classpath"/>
+		<path refid="lib.mail.classpath"/>
+	</path>
+
+	<path id="compile-ejbca.classpath">
+		<path refid="compile-common.classpath"/>
+		<path location="${mod.ejbca-ejb-interface.lib}"/>
+		<path location="${mod.ejbca-common-web.lib}"/>
+		<path refid="lib.ejbca-common.classpath"/>
+        <path location="${mod.cesecore-entity.lib}"/>
+        <path location="${mod.cesecore-common.lib}"/>
+        <path location="${mod.cesecore-ejb-interface.lib}"/>
+	</path>
+
+    <target name="clean" description="Clean up this module">
+		<delete dir="${build-status.dir}" />
+		<delete dir="${build-status-va.dir}" />
+    	<delete dir="${certificatestore.build.dir}" />
+    	<delete dir="${build-crlstore.dir}" />
+    	<delete dir="${build-crlstore-va.dir}" />
+    	<delete file="${mod.va.war}" />
+    </target>
+
+	<target name="ejbca-build" description="Build this module" depends="certstore.war"/>
+	<target name="certstore.war" depends="ejbca-certstore-compile">
+		<war destfile="${mod.certstore.war}" webxml="${certificatestore.resources.dir}/WEB-INF/web-certstore-ejbca.xml" basedir="${certificatestore.build.dir}"/>
+	</target>
+	
+	<target name="ejbca-certstore-compile">
+		<mkdir dir="${certificatestore.build.dir}/WEB-INF/classes" />
+		<javac destdir="${certificatestore.build.dir}/WEB-INF/classes" debug="on" includeantruntime="no" encoding="UTF-8" target="${java.target.version}"
+			classpathref="compile-ejbca.classpath">
+        	<include name="org/ejbca/ui/web/protocol/CertStoreServlet.java" />
+			<src path="${certificatestore.src.certstore.dir}"/>
+		</javac>
+	</target>
+</project>

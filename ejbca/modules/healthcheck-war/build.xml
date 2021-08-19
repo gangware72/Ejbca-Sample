@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="healthcheck-war" default="ejbca-build">
+    <description>
+            Build file for the HealthCheck Web components
+    </description>
+
+	<dirname property="healthcheck-war.dir" file="${ant.file.healthcheck-war}"/>
+
+    <import file="${healthcheck-war.dir}/../build-helpers.xml"/>
+	
+	<property name="healthcheck-war.build.dir" location="${healthcheck-war.dir}/build"/>
+	<property name="healthcheck-war.build-test.dir" location="${healthcheck-war.dir}/build-test"/>
+	<property name="healthcheck-war.src.dir" location="${healthcheck-war.dir}/src"/>
+	<property name="healthcheck-war.src-test.dir" location="${healthcheck-war.dir}/src-test"/>
+	<property name="healthcheck-war.resources.dir" location="${healthcheck-war.dir}/resources"/>
+
+	<path id="compile-common.classpath">
+		<path refid="lib.json-simple.classpath"/>
+		<path refid="lib.servlet.classpath"/>
+		<path refid="lib.log4j.classpath"/>
+		<path refid="lib.commons-lang.classpath"/>
+		<path refid="lib.jee.classpath"/>
+                <path location="${mod.cesecore-entity.lib}"/>
+                <path location="${mod.cesecore-common.lib}"/>
+                <path location="${mod.cesecore-ejb-interface.lib}"/>
+	</path>
+
+	<path id="compile-ejbca.classpath">
+		<path refid="compile-common.classpath"/>
+		<path refid="lib.ejbca-common-web.classpath"/>
+	</path>
+	
+	<path id="test.classpath">
+		<path refid="compile-common.classpath"/>
+		<path location="${healthcheck-war.build-test.dir}" />
+		<path location="${healthcheck-war.build.dir}/WEB-INF/classes" />
+		<path refid="lib.junit.classpath"/>
+	</path>
+
+    <target name="clean" description="Clean up this module">
+		<delete dir="${healthcheck-war.build.dir}" />
+		<delete dir="${healthcheck-war.build-test.dir}" />
+    	<delete file="${mod.healthcheck-war.war}" />
+    </target>
+
+    <target name="ejbca-build" description="Build this module" depends="ejbca-compile">
+        <war destfile="${mod.healthcheck-war.war}" webxml="${healthcheck-war.resources.dir}/WEB-INF/web-ejbca.xml" basedir="${healthcheck-war.build.dir}"/>
+    </target>
+
+    <target name="ejbca-compile" depends="">
+    	<mkdir dir="${healthcheck-war.build.dir}/WEB-INF/classes" />
+        <javac srcdir="${healthcheck-war.src.dir}" destdir="${healthcheck-war.build.dir}/WEB-INF/classes" debug="on" includeantruntime="no" encoding="UTF-8" target="${java.target.version}"
+			excludes="org/ejbca/ui/web/pub/cluster/ExtOCSPHealthCheck.java, org/ejbca/ui/web/pub/OCSPHealthServlet.java" classpathref="compile-ejbca.classpath"/>
+    </target>
+
+	<target name="compile-tests" depends="ejbca-compile">
+		<mkdir dir="${healthcheck-war.build-test.dir}" />
+		<javac srcdir="${healthcheck-war.src-test.dir}" destdir="${healthcheck-war.build-test.dir}" debug="on" includeantruntime="no"
+        	encoding="UTF-8" target="${java.target.version}" classpathref="test.classpath"/>
+		<copy file="${log4j.test.file}" tofile="${healthcheck-war.build-test.dir}/log4j.xml" failonerror="true"/>
+	</target>
+
+	<target name="test" depends="compile-tests">
+		<junit printsummary="yes" haltonfailure="no" showoutput="${test.showoutput}">
+			<classpath>
+				<path refid="test.classpath"/>
+			</classpath>
+			<formatter type="xml" />
+			<batchtest fork="yes" todir="${reports.dir}">
+				<fileset dir="${healthcheck-war.build-test.dir}">
+					<include name="**/*Test.class" />
+				</fileset>
+			</batchtest>
+			<jvmarg line="${tests.jvmargs}"/>
+		</junit>
+	</target>
+
+</project>

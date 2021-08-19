@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="admin-gui" default="build">
+    <description>
+            Build file for the Administration GUI
+    </description>
+
+	<dirname property="admin-gui.dir" file="${ant.file.admin-gui}"/>
+
+    <import file="${admin-gui.dir}/../build-helpers.xml"/>
+	
+	<property name="admin-gui.build.dir" location="${admin-gui.dir}/build"/>
+    <property name="admin-gui.build-test.dir" location="${admin-gui.dir}/build-test"/>
+    <property name="admin-gui.src-test.dir" location="${admin-gui.dir}/src-test"/>
+	<property name="admin-gui.src.dir" location="${admin-gui.dir}/src"/>
+	<property name="admin-gui.resources.dir" location="${admin-gui.dir}/resources"/>
+
+	<path id="compile.classpath">
+		<path refid="lib.ejbca-common-web.classpath"/>
+		<path refid="lib.bouncycastle.classpath"/>
+		<path refid="lib.log4j.classpath"/>
+		<path refid="lib.servlet.classpath"/>
+		<path refid="lib.jsf.classpath"/>
+		<path refid="lib.jsp.classpath"/>
+		<path refid="lib.commons-lang.classpath"/>
+		<path refid="lib.commons-fileupload.classpath"/>
+		<path refid="lib.commons-config.classpath"/>
+		<path refid="lib.commons-collections.classpath"/>
+		<path refid="lib.commons-io.classpath"/>
+		<path refid="lib.commons-codec.classpath"/>
+		<path refid="lib.jee.classpath"/>
+		<path refid="lib.tomahawk.classpath"/>
+		<path refid="lib.jacknji.classpath"/>
+		<path refid="lib.guava.classpath"/>
+		<path refid="lib.owaspcsrfguard.classpath"/>
+		<path refid="lib.snakeyaml.classpath"/>
+		<path refid="lib.nimbus-jose-jwt.classpath"/>
+		<path location="${mod.ejbca-entity.lib}"/>
+        <path location="${mod.cesecore-entity.lib}"/>
+        <path location="${mod.cesecore-common.lib}"/>
+        <path location="${mod.cesecore-ejb-interface.lib}"/>
+		<path location="${mod.peerconnector-rar.lib}"/>
+		<path location="${mod.peerconnector-common.lib}"/>
+		<path location="${mod.peerconnector-interface.lib}"/>
+		<path location="${mod.peerconnector-publ.lib}"/>
+		<path location="${mod.peerconnector-ra.lib}"/>
+		<path location="${mod.edition-specific-interface.lib}"/>
+		<path location="${mod.edition-specific-ejb.lib}"/>
+		<path location="${mod.statedump-common.lib}"/>
+		<path location="${mod.acme-common.jar}"/>
+	</path>
+	
+    <path id="test.classpath">
+        <path refid="compile.classpath"/>
+        <path location="${admin-gui.build-test.dir}" />
+        <path location="${admin-gui.build.dir}/WEB-INF/classes" />
+        <path refid="lib.junit.classpath"/>
+    	<path refid="lib.easymock.classpath"/>
+    	<path refid="lib.commons-logging.classpath"/>
+    </path>
+	
+    <target name="clean" description="Clean up this module">
+        <delete dir="${admin-gui.build-test.dir}" />
+      	<delete dir="${admin-gui.build.dir}" />
+    	<delete file="${mod.admin-gui.war}" />
+    </target>
+	
+    <target name="build" description="Build this module" depends="compile">
+        <war destfile="${mod.admin-gui.war}" webxml="${admin-gui.resources.dir}/WEB-INF/web.xml" basedir="${admin-gui.build.dir}" excludes="WEB-INF/web.xml">
+        	<zipfileset prefix="WEB-INF/lib" dir="${ejbca.home}/lib/myfaces" includes="tomahawk-1.1.14.jar"/>
+        	<zipfileset prefix="WEB-INF/lib" dir="${ejbca.home}/lib" includes="csrfguard-3.1.0.jar"/>
+        	<fileset dir="${admin-gui.resources.dir}" excludes="languages/*"/>
+        </war>
+    </target>
+
+    <target name="compile" depends="setup">
+        <javac srcdir="${admin-gui.src.dir}" destdir="${admin-gui.build.dir}/WEB-INF/classes" debug="on" includeantruntime="no" encoding="UTF-8" target="${java.target.version}"
+        	classpathref="compile.classpath"/>
+    </target>
+	
+    <target name="setup">
+    	<mkdir dir="${admin-gui.build.dir}/WEB-INF/classes"/>
+    	<native2ascii encoding="UTF-8"
+    		src="${admin-gui.resources.dir}/languages"
+    		dest="${admin-gui.build.dir}/languages"
+    		includes="languagefile.*.properties" 
+    		excludes="languagefile.zh.properties" 
+    	/>
+    	<native2ascii encoding="GBK" 
+    		src="${admin-gui.resources.dir}/languages" 
+    		dest="${admin-gui.build.dir}/languages"
+    		includes="languagefile.zh.properties" 
+    	/>
+    </target>
+
+    <target name="compile-tests" depends="build">
+	     <mkdir dir="${admin-gui.build-test.dir}" />
+	     <javac srcdir="${admin-gui.src-test.dir}" destdir="${admin-gui.build-test.dir}" debug="on" includeantruntime="no"
+	         encoding="UTF-8" target="${java.target.version}" classpathref="test.classpath"/>
+	     <copy file="${log4j.test.file}" tofile="${admin-gui.build-test.dir}/log4j.xml" failonerror="true"/>
+	</target>
+
+	<target name="test:unit" depends="compile-tests">
+	     <junit printsummary="yes" haltonfailure="no" showoutput="${test.showoutput}">
+	         <classpath>
+	             <path refid="test.classpath"/>
+	         </classpath>
+	         <formatter type="xml" />
+	         <batchtest fork="yes" todir="${reports.dir}">
+	             <fileset dir="${admin-gui.build-test.dir}">
+	                 <include name="**/*Test.class" />
+	             </fileset>
+	         </batchtest>
+	     	<jvmarg line="${tests.jvmargs}"/>
+	     </junit>
+	</target>
+
+    <target name="runone" depends="compile-tests">
+	    <fail message="'test.runone' is not set. Example -Dtest.runone=UnidFnrTest . You can also use -Dtest.showoutput=true to send test output to console." unless="test.runone" />
+	    <junit printsummary="yes" haltonfailure="no" showoutput="${test.showoutput}">
+	        <classpath>
+	            <path refid="test.classpath"/>
+	        </classpath>
+	        <formatter type="xml" />
+	        <batchtest fork="yes" todir="${reports.dir}">
+	            <fileset dir="${admin-gui.build-test.dir}">
+	                <include name="**/${test.runone}.class" />
+	            </fileset>
+	        </batchtest>
+	    	<jvmarg line="${tests.jvmargs}"/>
+	    </junit>
+	</target>
+
+</project>

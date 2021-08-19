@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ejbca-ejb" default="build">
+	<description>
+            The EJBCA EJB component.
+    	
+    		The EJBCA util library is also built from this source.  
+    </description>
+
+	<dirname property="ejbca-ejb.dir" file="${ant.file.ejbca-ejb}"/>
+
+    <import file="${ejbca-ejb.dir}/../build-helpers.xml"/>
+
+	<property name="ejbca-ejb.build.dir" location="${ejbca-ejb.dir}/build"/>
+	
+	<property name="ejbca-ejb.build-test.dir" location="${ejbca-ejb.dir}/build-test"/>
+	<property name="ejbca-ejb.src.dir" location="${ejbca-ejb.dir}/src"/>
+	<property name="ejbca-ejb.src-test.dir" location="${ejbca-ejb.dir}/src-test"/>
+	<property name="ejbca-ejb.resources.dir" location="${ejbca-ejb.dir}/resources"/>
+	
+	<path id="compile-ejbca-ejb.classpath">
+		<path refid="lib.jee.classpath"/>
+		<path refid="lib.mail.classpath"/>
+		<path refid="lib.quickserver.classpath"/>
+		<path refid="lib.intune.classpath"/>
+		<path refid="lib.nimbus-jose-jwt.classpath"/>
+		<path refid="lib.json-smart.classpath"/>
+		<path location="${mod.caa.lib}"/>
+		<path location="${mod.cesecore-ejb.lib}"/>
+		<path location="${mod.ejbca-entity.lib}"/>
+		<path location="${mod.ejbca-ejb-interface.lib}"/>
+		<path location="${mod.ejbca-common.lib}"/>
+		<path location="${mod.ejbca-common-web.lib}"/>
+		<path location="${mod.ejbca-ws.lib}"/>
+		<path location="${mod.cesecore-entity.lib}"/>
+		<path location="${mod.cesecore-common.lib}"/>
+		<path location="${mod.cesecore-ejb-interface.lib}"/>
+		<path location="${mod.edition-specific-interface.lib}"/>
+		<path location="${mod.edition-specific-ejb.lib}"/>
+		<pathelement location="${mod.ejbca-ws-cli.lib}"/>
+		<pathelement location="${mod.ejbca-ws.lib}"/>
+	</path>
+
+	<path id="servicemanifest-ejbca-ejb.classpath">
+		<path refid="compile-ejbca-ejb.classpath"/>
+		<!-- Service manifest builder triggers static references to InternalResources -->
+		<path location="${ejbca.home}/src"/>
+	</path>
+
+	<path id="compile-test.classpath">
+		<path refid="compile-ejbca-ejb.classpath"/>
+		<path refid="lib.commons-codec.classpath"/>
+		<path location="${mod.ejbca-common-web.lib}"/>
+		<path location="${mod.ejbca-ejb.lib}"/>
+		<!-- TODO: Refactor so this isn't neccessary for building the tests..? -->
+		<path refid="lib.ejbca-common.classpath"/>
+		<path refid="lib.junit.classpath"/>
+		<path refid="lib.easymock.classpath"/>
+		<path refid="lib.commons-io.classpath"/>		
+		<path refid="lib.ldap.classpath"/>
+		<path location="${mod.ejbca-ejb-interface.lib}"/>
+		<path location="${mod.ejbca-entity.lib}"/>
+        <path location="${mod.cesecore-entity.lib}"/>
+        <path location="${mod.cesecore-common.lib}"/>
+        <path location="${mod.cesecore-ejb-interface.lib}"/>
+        <path location="${mod.cesecore-ejb.lib}"/>
+		<path location="${mod.edition-specific-interface.lib}"/>
+		<path location="${mod.edition-specific-ejb.lib}"/>
+		<path location="${mod.ejbca-common.lib}"/>
+	</path>
+
+	<path id="test.classpath">
+		<path location="${ejbca-ejb.build-test.dir}" />
+		<path location="${mod.ejbca-ejb.lib}" />
+		<path location="${mod.ejbca-common.lib}" />
+		<path location="${mod.ejbca-ejb-interface.lib}"/>
+		<path refid="compile-test.classpath"/>
+		<path refid="lib.junit.classpath"/>
+	</path>
+
+	<condition property="exclude.ee-ejbbridge-implementation" value="org/ejbca/core/ejb/EnterpriseEditionEjbBridgeSessionBean.java" else="exclude.ee-ejbbridge-implementation.nonexistingvalue">
+		<istrue value="${mod.peerconnector.exists}"/>
+	</condition>
+
+	<fileset id="source.fileset.ejbca-ejb" dir="${ejbca-ejb.src.dir}" excludes="${source.fileset.ejbca-common.files}">
+		<!-- Exclude appserver specific code.. -->
+		<exclude name="org/ejbca/appserver/**" />
+		<!-- Samples should never be included.. -->
+		<exclude name="org/ejbca/samples/**/*.java" />
+		<!-- Some common classes used by various components.. TODO: If possible, move to the only component using the class.. -->
+		<exclude name="org/ejbca/util/PluginTool.java" />
+		<exclude name="org/ejbca/util/PerformanceTest.java" />
+		<!-- Tool used to tidy generate EJB depenency graph -->
+		<exclude name="org/ejbca/util/EjbDependencyGraphTool.java"/>
+		<!-- Conditional exclude of EjbBridgeSessionBean implementation -->
+		<exclude name="${exclude.ee-ejbbridge-implementation}"/>
+	</fileset>
+	<pathconvert refid="source.fileset.ejbca-ejb" pathsep=" " property="source.fileset.ejbca-ejb.files">
+		<map from="${ejbca-ejb.src.dir}/" to=""/>
+	</pathconvert>
+
+	<target name="clean" description="Clean up this module">
+		<delete dir="${ejbca-ejb.build.dir}" />
+		<delete dir="${ejbca-ejb.build-test.dir}" />
+		<delete file="${mod.ejbca-ejb.lib}" />
+	</target>
+
+	<target name="build" description="Build this module" depends="compile-ejbca-ejb">
+
+		<!-- Only include the XML defined interceptors for every EJB if we are non-production mode -->
+        <condition property="include-ejb-jar-xml" value="ejb-jar-prod.xml" else="ejb-jar.xml">
+            <equals arg1="${ejbca.productionmode}" arg2="true" casesensitive="false"/>
+        </condition>
+    	<buildservicemanifest interface="org.cesecore.authorization.rules.AccessRulePlugin;org.cesecore.certificates.ocsp.extension.OCSPExtension;org.cesecore.certificates.ca.ExtendedUserDataHandler"
+    		file="${ejbca-ejb.build.dir}" classpath="servicemanifest-ejbca-ejb.classpath"/>
+		<jar destfile="${mod.ejbca-ejb.lib}">
+			<fileset dir="${ejbca-ejb.build.dir}"/>
+			<!--
+            <fileset dir="${tmp}/caTokenClasses">
+        		<exclude name="**/META-INF/**"/>
+        	</fileset>
+        	-->
+			<zipfileset prefix="META-INF" dir="${ejbca-ejb.resources.dir}" includes="${include-ejb-jar-xml} jboss.xml jboss-ejb3.xml"/>
+		</jar>
+	</target>
+
+	<target name="compile-ejbca-ejb" depends="">
+		<mkdir dir="${ejbca-ejb.build.dir}"/>
+		<javac srcdir="${ejbca-ejb.src.dir}" destdir="${ejbca-ejb.build.dir}" debug="on" includeantruntime="no" encoding="UTF-8"
+        	includes="${source.fileset.ejbca-ejb.files}" classpathref="compile-ejbca-ejb.classpath"/>
+	</target>
+
+	<!--depends="cesecore-ejb, ejbca-ejb"  -->
+	<target name="compile-tests" depends="">
+		<mkdir dir="${ejbca-ejb.build-test.dir}" />
+		<javac srcdir="${ejbca-ejb.src-test.dir}" destdir="${ejbca-ejb.build-test.dir}" debug="on" includeantruntime="no"
+        	encoding="UTF-8" target="${java.target.version}" classpathref="compile-test.classpath"/>
+		<copy file="${log4j.test.file}" tofile="${ejbca-ejb.build-test.dir}/log4j.xml" failonerror="true"/>
+		<copy todir="${ejbca-ejb.build-test.dir}" failonerror="true">
+			<fileset dir="${ejbca.home}/src" includes="intresources/**"/>
+			<fileset dir="${ejbca.home}" includes="conf/extendedkeyusage.properties"/>
+		</copy>
+		<!-- systemtests.properties needs to be in the classpath, if it exists for targeting non-default environment-->
+		<copy file="${systemtests.properties.file}" todir="${ejbca-ejb.build-test.dir}" failonerror="false"/>
+	</target>
+
+	<condition property="p11exclude" value="" else="**/*PKCS11*Test.class **/*Pkcs11*Test.class">
+		<isset property="test.includep11"/>
+	</condition>
+
+	<target name="test" depends="compile-tests" description="Run tests for this module, use -Dtest.includep11=true to include P11 tests">
+		<antcall target="showtime" inheritall="true" inheritrefs="true"/>
+    	<echo message="pkcs11-exclude=${p11exclude}"/>
+		<echo message=" ** Running unit tests in parallel chunks. Console output will be a bit scrambled.. **"/>
+		<parallel>
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="org/ejbca/core/model/ra/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="" />
+			</antcall>
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="org/ejbca/core/model/**/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="org/ejbca/core/model/ra/*Test.class" />
+			</antcall>
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="org/ejbca/util/**/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="" />
+			</antcall>
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="org/cesecore/certificates/ca/**/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="${p11exclude}" />
+			</antcall>
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="org/cesecore/certificates/util/**/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="" />
+			</antcall>
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="org/cesecore/certificates/**/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="org/cesecore/certificates/ca/**/*Test.class org/cesecore/certificates/util/**/*Test.class" />
+			</antcall>
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="org/cesecore/util/**/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="" />
+			</antcall>
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="org/cesecore/keys/**/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="${p11exclude}" />
+			</antcall>
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="org/ejbca/core/protocol/**/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="" />
+			</antcall>
+			<antcall target="test-subprocess" inheritall="true" inheritrefs="true">
+				<param name="test-subprocess.include-pattern" value="**/*Test.class" />
+				<param name="test-subprocess.exclude-pattern" value="org/ejbca/core/model/**/*Test.class org/ejbca/util/**/*Test.class org/cesecore/certificates/**/*Test.class org/cesecore/util/**/*Test.class org/ejbca/core/protocol/**/*Test.class org/cesecore/keys/**/*Test.class ${p11exclude}" />
+			</antcall>
+		</parallel>
+		<antcall target="showtime" inheritall="true" inheritrefs="true"/>
+	</target>
+
+	<target name="test-subprocess">
+		<junit printsummary="yes" haltonfailure="no" showoutput="${test.showoutput}" dir="${ejbca-ejb.dir}">
+			<classpath>
+				<path refid="test.classpath"/>
+			</classpath>
+			<formatter type="xml" />
+			<batchtest fork="yes" todir="${reports.dir}">
+				<fileset dir="${ejbca-ejb.build-test.dir}" includes="${test-subprocess.include-pattern}" excludes="${test-subprocess.exclude-pattern}"/>
+			</batchtest>
+			<jvmarg line="${tests.jvmargs}"/>
+		</junit>
+	</target>
+
+	<target name="test:unit" depends="compile-tests" description="Run unit tests for this module">
+	        <antcall target="showtime" inheritall="true" inheritrefs="true"/>
+	        <condition property="remoteDebugJvmArgs"
+	                   value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8787"
+	                   else="-ea">
+	                    <istrue value="${remoteDebug}"/>
+	        </condition>
+	        <junit printsummary="yes" haltonfailure="no" showoutput="${test.showoutput}" dir="${ejbca-ejb.dir}">
+	            <classpath>
+	                <path refid="test.classpath"/>
+	                <path location="${ejbca-ejb.build-test.dir}" />
+	            </classpath>
+	            <formatter type="xml" />
+	            <batchtest fork="yes" todir="${reports.dir}">
+	                <fileset dir="${ejbca-ejb.build-test.dir}" includes="**/*UnitTest.class">
+	                </fileset>
+	            </batchtest>
+	        	<jvmarg line="${tests.jvmargs}"/>
+	            <jvmarg value="${remoteDebugJvmArgs}"/>
+	        </junit>
+	        <antcall target="showtime" inheritall="true" inheritrefs="true"/>
+	    </target>
+	
+	<target name="runone" depends="compile-tests">
+		<fail message="'test.runone' is not set. Example -Dtest.runone=ApprovalExecutorUtilTest . You can also use -Dtest.showoutput=true to send test output to console." unless="test.runone" />
+		<junit printsummary="yes" haltonfailure="no" showoutput="${test.showoutput}">
+			<classpath>
+				<path refid="test.classpath"/>
+			</classpath>
+			<formatter type="xml" />
+			<batchtest fork="yes" todir="${reports.dir}">
+				<fileset dir="${ejbca-ejb.build-test.dir}">
+					<include name="**/${test.runone}.class" />
+				</fileset>
+			</batchtest>
+			<jvmarg line="${tests.jvmargs}"/>
+		</junit>
+	</target>
+</project>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ejbca-interface" default="build" basedir=".">
+    <description>
+    	Builds the EJB 3.0 interfaces.
+    </description>
+	
+	<dirname property="ejbca-interface.dir" file="${ant.file.ejbca-interface}"/>
+
+    <import file="${ejbca-interface.dir}/../build-helpers.xml"/>
+	
+	<property name="ejbca-interface.build.dir" location="${ejbca-interface.dir}/build"/>
+	<property name="ejbca-interface.src.dir" location="${ejbca-interface.dir}/src"/>
+
+	<path id="compile.classpath">
+		<path refid="lib.ejbca-common.classpath"/>
+		<path refid="lib.cert-cvc.classpath"/>
+		<pathelement location="${mod.ejbca-entity.lib}" />
+		<pathelement location="${mod.ejbca-ws-cli.lib}"/>
+		<path refid="lib.log4j.classpath"/>
+		<path refid="lib.jee.classpath"/>
+		<path refid="lib.bouncycastle.classpath"/>
+        <path location="${mod.cesecore-entity.lib}"/>
+        <path location="${mod.cesecore-common.lib}"/>
+        <path location="${mod.cesecore-ejb-interface.lib}"/>
+	</path>
+
+    <target name="build" description="Build this module" depends="compile-ejb3">
+  	 	<jar destfile="${mod.ejbca-ejb-interface.lib}" basedir="${ejbca-interface.build.dir}"/>
+    </target>
+
+    <target name="clean" description="Clean up this module">
+		<delete dir="${ejbca-interface.build.dir}" />
+    	<delete file="${mod.ejbca-ejb-interface.lib}"/>
+    </target>
+
+    <target name="compile-ejb3" depends="">
+        <mkdir dir="${ejbca-interface.build.dir}" />
+        <javac srcdir="${ejbca-interface.src.dir}" destdir="${ejbca-interface.build.dir}" debug="on" includeantruntime="no" encoding="UTF-8" target="${java.target.version}"
+        	classpathref="compile.classpath">	
+        </javac>
+    </target>
+	
+</project>

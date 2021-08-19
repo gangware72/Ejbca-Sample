@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Hardware Security Modules (HSM) - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=85920628"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Documentation.html">EJBCA Documentation</a></li>
+                                                                                     <li><a href="EJBCA_Integration.html">EJBCA Integration</a></li>
+                                                            </ul>
+</div>            <h1 id="src-85920628"> <span>Hardware Security Modules (HSM)</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p   
+>EJBCA has support for several Hardware Security Modules (HSMs) and each HSM has its own specific interface for key generation and maintenance, independent of EJBCA. Make sure you are familiar with how your HSM works.</p>
+<p   
+>The following provides information on Hardware Security Modules (HSMs) in the following sections.</p>
+<p   
+></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtSFNNTW9kdWxlc0F2YWlsYWJsZWludGhlQ0FVSUhTTV9tb2R1bGVzX2F2YWlsYWJsZV9pbl90aGVfQWRtaW5fR1VJ">HSM Modules Available in the CA UI</a></p>
+</li><li class=" "><p   
+><a   href="#src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtQ29uZmlndXJpbmdIU01zQ29uZmlndXJpbmdfSFNNcw">Configuring HSMs</a></p>
+</li><li class=" "><p   
+><a   href="#src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtVGVzdGluZ1BLQ1MjMTFrZXlzZm9ydXNlYnlFSkJDQVRlc3RpbmdfUEtDUyMxMV9rZXlzX2Zvcl91c2VfYnlfRUpCQ0E">Testing PKCS#11 keys for use by EJBCA</a></p>
+</li><li class=" "><p   
+><a   href="#src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtQXV0by1hY3RpdmF0aW9ub2ZDcnlwdG9Ub2tlbnNBdXRvLWFjdGl2YXRpb25fb2ZfQ3J5cHRvX1Rva2Vucw">Auto-activation of Crypto Tokens</a></p>
+</li><li class=" "><p   
+><a   href="#src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtSFNNc2FuZERTQW9yRUNEU0FIU01zX2FuZF9EU0Ffb3JfRUNEU0E">HSMs and DSA or ECDSA</a></p>
+</li><li class=" "><p   
+><a   href="#src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtVmVuZG9yU3BlY2lmaWNJbmZvcm1hdGlvbg">Vendor Specific Information</a></p>
+</li><li class=" "><p   
+><a   href="#src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtU3VwcG9ydGZvck5ld0hTTXNTdXBwb3J0X2Zvcl9uZXdfSFNNcw">Support for New HSMs</a></p>
+</li><li class=" "><p   
+><a   href="#src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtUEtDUzExU3B5">PKCS11 Spy</a></p>
+</li><li class=" "><p   
+><a   href="#src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtUmVtb3RlRm9yd2FyZGluZ1BLQ1MjMTF1c2luZ1AxMS1LaXQ">Remote Forwarding PKCS#11 using P11-Kit</a></p>
+</li><li class=" "><p   
+><a   href="#src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtVXNpbmdfU0hBMjU2V2l0aFJTQWFuZE1HRjFfKFJTQVNTQS1QU1MpVXNpbmdTSEEyNTZXaXRoUlNBYW5kTUdGMShSU0FTU0EtUFNTKQ">Using SHA256WithRSAandMGF1 (RSASSA-PSS)</a></p>
+</li><li class=" "><p   
+><a   href="#src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtRXh0ZW5kaW5nX1N1bl9QS0NTIzExX3RvX3NldF9DS0FfTU9ESUZJQUV4dGVuZGluZ1N1blBLQ1MjMTF0b3NldENLQV9NT0RJRklBQkxFPWZhbHNl">Extending Sun PKCS#11 to set CKA_MODIFIABLE=false</a></p>
+</li></ul>    <div class="section section-1" id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtSFNNTW9kdWxlc0F2YWlsYWJsZWludGhlQ0FVSUhTTV9tb2R1bGVzX2F2YWlsYWJsZV9pbl90aGVfQWRtaW5fR1VJ">
+        <h1 class="heading "><span id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtSFNNX21vZHVsZXNfYXZhaWxhYmxlX2luX3RoZV9BZG1pbl9HVUk" class="confluence-anchor-link"></span><span>HSM Modules Available in the CA UI </span></h1>
+<p   
+>You can manage crypto tokens fully in the EJBCA CA UI or CLI. and the CA UI automatically displays the HSMs available in your system.</p>
+<p   
+>When creating a new Crypto Token (<strong class=" ">Crypto Tokens&gt;Create New</strong>) you can select between Soft and PKCS#11 crypto tokens.</p>
+<ul class=" "><li class=" "><p   
+>The PKCS#11 option is only available if EJBCA is able to find any known PKCS#11 modules in the file system.</p>
+</li></ul><p   
+>If EJBCA finds known PKCS#11 modules in the file system, you can select PKCS#11 as <strong class=" ">Type.</strong> As <i class=" ">PKCS#11 Library</i> there is a list of the available known HSMs found in the file system.</p>
+<p   
+>If the PKCS#11 option is not available or your desired HSM is not in the list of available Libraries, there are a few options to configure:</p>
+<ul class=" "><li class=" "><p   
+>If you are using JBoss 7 you must make the java PKCS#11 classes exportable. For more information, see <a   href="Application_Servers.html">Application Servers</a>.</p>
+</li><li class=" "><p   
+>You can configure PKCS#11 modules that are not already known to EJBCA in conf/web.properties. See conf/web.properties.sample how to add new known modules and override existing (overriding should not be needed since you can add new locations with the same name).</p>
+</li></ul><p   
+>    <span style="color: #000000;">
+For more information on creating and using     <span style="color: #000000;">
+Crypto Tokens for HSMs, see <a   href="Managing_Crypto_Tokens.html">Managing Crypto Tokens</a> and <a   href="Managing_CAs.html">Managing CAs</a>.    </span>
+<br/>    </span>
+</p>
+<p   
+>The following sections describe the underlying operations and technical features of using HSMs and PKCS#11.</p>
+    </div>
+    <div class="section section-1" id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtQ29uZmlndXJpbmdIU01zQ29uZmlndXJpbmdfSFNNcw">
+        <h1 class="heading "><span id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtQ29uZmlndXJpbmdfSFNNcw" class="confluence-anchor-link"></span><span>Configuring HSMs </span></h1>
+    <div  class="confbox admonition admonition-warning">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>Please note that     <span style="color: #333333;">
+FIPS mode does not allow the same key to be used for signing and encryption.    </span>
+</p>
+        </div>
+    </div>
+<p   
+>The GUI configuration of CAs is backed by a properties field where properties unique to a particular CAs usage of the HSM is specified. All implemented HSM modules are using the same property keywords to define the identity and the purpose of the keys to be used. These keywords are:</p>
+<ul class=" "><li class=" "><p   
+>certSignKey: Key used when signing certificates, can be RSA or ECDSA.</p>
+</li><li class=" "><p   
+>crlSignKey: Key used when signing CLSs, can be RSA or ECDSA.</p>
+</li><li class=" "><p   
+>keyEncryptKey: Key used for key encryption and decryption, this must be an RSA key.</p>
+</li><li class=" "><p   
+>testKey: Key used by HSM status checks, can be RSA or ECDSA.</p>
+</li><li class=" "><p   
+>hardTokenEncrypt: Key used for hardtoken encryption and decryption. PUK will be decrypted by this key.</p>
+</li><li class=" "><p   
+>defaultKey: Key used when no other key is defined for a purpose. If this is the only definition, then this key will be used for all purposes.</p>
+</li><li class=" "><p   
+>pin: Optional pin code used for auto-activation of CA token, see below. Not recommended for high security set-ups, but very useful in some cases.</p>
+</li></ul><p   
+>You may omit defaultKey if you want to be sure that the right key is used, but then all the other keys must be specified. It is recommended that the certificate and CRL signing keys are linked to the same key since different keys are rarely supported by verifying applications.</p>
+<p   
+>When implementing support for a new HSM the <strong class=" ">KeyStrings</strong> class could be used to manage the key properties described above. When it is an JCA/JCE API for the HSM it could also be wise to extend the BaseCAToken class.</p>
+<p   
+>The same activation code must be used for all keys used by a CA.</p>
+<p   
+>There are four additional key properties that can (optionally) be used when renewing CA keys and to produce roll-over certificates. Some of these (in particular the <strong class=" ">next</strong> keys) are only used when using API methods (such as WS).</p>
+<ul class=" "><li class=" "><p   
+>previousCertSignKey : Alias of the previous signature key, as opposed to <strong class=" ">certSignKey</strong> which is the current signature key.</p>
+</li><li class=" "><p   
+>previousSequence: Sequence identifying the previous signature key, as opposed to the current sequence that is held in the CA token. This sequence will replace the current sequence in the caRef field when signing a request with the CAs previous key.</p>
+</li><li class=" "><p   
+>nextCertSigningKey: Alias of a new generated key on the HSM. When updating a CA signed by an external CA this is used to send a request, but the CA is still active using the old key. When the certificate response is received this key is activate and moved to certSignKey/crlSignKey.</p>
+</li><li class=" "><p   
+>nextSequence: Sequence identifying the next signature key.</p>
+</li></ul><p   
+>Supported and tested HSMs are described below, with sample configurations and HSM specific documentation.</p>
+<p   
+>As of EJBCA 3.6, the recommended HSM connector to use the PKCS#11 interface. Older JCE implementations are deprecated and removed. Contact PrimeKey if you need to migrate.</p>
+    </div>
+    <div class="section section-1" id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtVGVzdGluZ1BLQ1MjMTFrZXlzZm9ydXNlYnlFSkJDQVRlc3RpbmdfUEtDUyMxMV9rZXlzX2Zvcl91c2VfYnlfRUpCQ0E">
+        <h1 class="heading "><span id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtVGVzdGluZ19QS0NTIzExX2tleXNfZm9yX3VzZV9ieV9FSkJDQQ" class="confluence-anchor-link"></span><span>Testing PKCS#11 keys for use by EJBCA </span></h1>
+<p   
+>To test keys on the HSM for use by EJBCA, you can use the <a   href="EJBCA_Client_Toolbox.html">EJBCA Client Toolbox</a>.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">ant clientToolBox</code></div>
+<div class="line"><code class="functions">cd</code><code class="plain"> dist</code><code class="plain">/clientToolBox</code></div>
+<div class="line"><code class="plain">.</code><code class="plain">/ejbcaClientToolBox</code><code class="plain">.sh PKCS11HSMKeyTool </code><code class="functions">test</code></div>
+</div>
+    </div>
+<p   
+>The command gives further instructions about the parameters required, PKCS#11 library and slot.</p>
+    </div>
+    <div class="section section-1" id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtQXV0by1hY3RpdmF0aW9ub2ZDcnlwdG9Ub2tlbnNBdXRvLWFjdGl2YXRpb25fb2ZfQ3J5cHRvX1Rva2Vucw">
+        <h1 class="heading "><span id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtQXV0by1hY3RpdmF0aW9uX29mX0NyeXB0b19Ub2tlbnM" class="confluence-anchor-link"></span><span>Auto-activation of Crypto Tokens </span></h1>
+<p   
+>The <strong class=" ">pin</strong> property is used to be able to automatically activate a CA token. The activation code may be specified in the property field with the keyword <strong class=" ">pin</strong>. If this property is not specified, then the CA has to be manually activated after each restart or re-deployment of EJBCA. Manual activation is done in the Admin GUI under <strong class=" ">Basic Functions &gt; View Information</strong> or using the cli <strong class=" ">bin/ejbca.sh ca activateca</strong>.</p>
+<p   
+>The <strong class=" ">pin</strong> property can use a clear text password or an encrypted one.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">pin foo123</code></div>
+<div class="line"><code class="plain">pin 6bc841b2745e2c95e042a68b4777b34c</code></div>
+</div>
+    </div>
+<p   
+>These two properties contain the same password. The obfuscated pin value can be obtained with the command <strong class=" ">bin/ejbca.sh encryptpwd</strong>:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ bin</code><code class="plain">/ejbca</code><code class="plain">.sh encryptpwd foo123</code></div>
+<div class="line"><code class="plain">Using JBoss JNDI provider...</code></div>
+<div class="line"><code class="plain">Please note that this encryption does not provide absolute security, ....</code></div>
+<div class="line"><code class="plain">Enter word to encrypt:</code></div>
+<div class="line"><code class="plain">hidden</code></div>
+<div class="line"><code class="plain">Encrypting </code><code class="functions">pwd</code><code class="plain">...</code></div>
+<div class="line"><code class="plain">6bc841b2745e2c95e042a68b4777b34c</code></div>
+</div>
+    </div>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>This encrypted password is not a high security encryption. If the <strong class=" ">password.encryption.key</strong> property has not been customized it will not provide more security than just preventing accidental viewing since an EJBCA built-in encryption key is used. If an attacker gets hold of the encrypted password and the <strong class=" ">password.encryption.key</strong> has not been customized, the password can be decrypted using the source code of EJBCA</p>
+        </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtSFNNc2FuZERTQW9yRUNEU0FIU01zX2FuZF9EU0Ffb3JfRUNEU0E">
+        <h1 class="heading "><span id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtSFNNc19hbmRfRFNBX29yX0VDRFNB" class="confluence-anchor-link"></span><span>HSMs and DSA or ECDSA </span></h1>
+<p   
+>Support for DSA or ECDSA in HSMs are dependent on the support for the algorithms in the HSM and you need to confirm whether support is available.</p>
+<p   
+>For more information on HSMs and ECDSA, see <a   href="ECDSA_Keys_and_Signatures.html">ECDSA Keys and Signatures</a>.</p>
+    </div>
+    <div class="section section-1" id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtVmVuZG9yU3BlY2lmaWNJbmZvcm1hdGlvbg">
+        <h1 class="heading "><span>Vendor Specific Information</span></h1>
+<p   
+>For HSM Vendor specific installation and configuration information, see the following sections.</p>
+<ul class="childpages-macro "><li class=" "><p   
+><a   href="AEP_Keyper.html">AEP Keyper</a></p>
+</li><li class=" "><p   
+><a   href="ARX_CoSign.html">ARX CoSign</a></p>
+</li><li class=" "><p   
+><a   href="AWS_CloudHSM.html">AWS CloudHSM</a></p>
+</li><li class=" "><p   
+><a   href="AWS_KMS.html">AWS KMS</a></p>
+</li><li class=" "><p   
+><a   href="Azure_Key_Vault.html">Azure Key Vault</a></p>
+</li><li class=" "><p   
+><a   href="Bull_Trustway_PCI_Crypto_Card.html">Bull Trustway PCI Crypto Card</a></p>
+</li><li class=" "><p   
+><a   href="Bull_Trustway_Proteccio.html">Bull Trustway Proteccio</a></p>
+</li><li class=" "><p   
+><a   href="Generic_PKCS_11_Provider.html">Generic PKCS#11 Provider</a></p>
+</li><li class=" "><p   
+><a   href="Google_KMS.html">Google KMS</a></p>
+</li><li class=" "><p   
+><a   href="nCipher_nShield_netHSM.html">nCipher nShield/netHSM</a></p>
+</li><li class=" "><p   
+><a   href="Nitrokey_HSM.html">Nitrokey HSM</a></p>
+</li><li class=" "><p   
+><a   href="SafeNet_AT_Luna.html">SafeNet AT Luna</a></p>
+</li><li class=" "><p   
+><a   href="SafeNet_Luna.html">SafeNet Luna</a></p>
+</li><li class=" "><p   
+><a   href="SafeNet_ProtectServer.html">SafeNet ProtectServer</a></p>
+</li><li class=" "><p   
+><a   href="SmartCard-HSM.html">SmartCard-HSM</a></p>
+</li><li class=" "><p   
+><a   href="SoftHSM.html">SoftHSM</a></p>
+</li><li class=" "><p   
+><a   href="Utimaco_CryptoServer_CP5.html">Utimaco CryptoServer CP5</a></p>
+</li><li class=" "><p   
+><a   href="Utimaco_CryptoServer.html">Utimaco CryptoServer</a></p>
+</li><li class=" "><p   
+><a   href="YubiHSM_2.html">YubiHSM 2</a></p>
+</li><li class=" "><p   
+><a   href="Unbound_Key_Control.html">Unbound Key Control</a></p>
+</li></ul>    </div>
+    <div class="section section-1" id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtU3VwcG9ydGZvck5ld0hTTXNTdXBwb3J0X2Zvcl9uZXdfSFNNcw">
+        <h1 class="heading "><span id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtU3VwcG9ydF9mb3JfbmV3X0hTTXM" class="confluence-anchor-link"></span><span>Support for New HSMs </span></h1>
+<p   
+>EJBCA uses PKCS#11 and can, in theory, support any HSMs that provide a decent PKCS#11 implementation. If the HSM is uncommon you may have to provide specific attribute parameters as described for an 'attributesFile', see <a   href="Generic_PKCS_11_Provider.html">Generic PKCS#11 Provider</a></p>
+    </div>
+    <div class="section section-1" id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtUEtDUzExU3B5">
+        <h1 class="heading "><span>PKCS11 Spy</span></h1>
+<p   
+>You can debug PKCS11 sessions and all calls made, using OpenSC's P11Spy. As of EJBCA 6.8.0, P11Spy is by default included in the known P11 implementation in con/web.properties.</p>
+<p   
+>Stop JBoss, install P11Spy, and set the environment variables used in the JBoss terminal:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">apt-get install opensc-pkcs11</code></div>
+<div class="line"><code class="plain">export PKCS11SPY=/usr/local/lib/softhsm/libsofthsm2.so</code></div>
+<div class="line"><code class="plain">export PKCS11SPY_OUTPUT=logfile.log</code></div>
+</div>
+    </div>
+<p   
+>Then start JBoss and create a new PKCS11 Crypto Token using the PKCS11Spy <strong class=" ">PKCS#11 Library</strong>.</p>
+    </div>
+    <div class="section section-1" id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtUmVtb3RlRm9yd2FyZGluZ1BLQ1MjMTF1c2luZ1AxMS1LaXQ">
+        <h1 class="heading "><span>Remote Forwarding PKCS#11 using P11-Kit</span></h1>
+<p   
+>P11-kit can be used to forward for example a USB Token HSM connected to your local laptop to a server running EJBCA. This allows you have your HSM in your control, while running the server somewhere else, for example in the cloud. It requires some setup and some work when you disconnect/connect your token, but can work for low scale deployments.</p>
+<p   
+>The following is an outline of commands to get a NitroKey HSM (connected to Local) available to a remote server (Remote) over P11-kit. EJBCA runs on the remote server. This is based on information by Maxence Mohr on <a  class="external-link" href="https://fladnag.net/?page_id=167">PKI and HSM in a SME</a> and <a  class="external-link" href="https://github.com/fladna9/remote-hsm/blob/master/remote-hsm.sh">remote-hsm</a>, and tested on Ubuntu 16.04 and 18.04.</p>
+    <div class="section section-2" id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtSW5zdGFsbHAxMS1raXRvbmJvdGhSZW1vdGVhbmRMb2NhbA">
+        <h2 class="heading "><span>Install p11-kit on both Remote and Local</span></h2>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">sudo apt install gcc make gtk-doc-tools help2man texinfo texlive-base libffi-dev libtasn1-dev gnutls-bin</code></div>
+<div class="line"><code class="plain">wget https:</code><code class="comments">//github.com/p11-glue/p11-kit/releases/download/0.23.15/p11-kit-0.23.15.tar.gz</code></div>
+<div class="line"><code class="plain">tar zxvf p11-kit-</code><code class="value">0.23</code><code class="plain">.</code><code class="value">15</code><code class="plain">.tar.gz</code></div>
+<div class="line"><code class="plain">cd p11-kit-</code><code class="value">0.23</code><code class="plain">.</code><code class="value">15</code><code class="plain">/</code></div>
+<div class="line"><code class="plain">./configure</code></div>
+<div class="line"><code class="plain">make</code></div>
+<div class="line"><code class="plain">make check</code></div>
+<div class="line"><code class="plain">sudo make install</code></div>
+<div class="line"><code class="plain">ls -al /usr/local/bin/p11-kit</code></div>
+<div class="line"><code class="plain">ls -al /usr/local/lib/pkcs11/p11-kit-client.so</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">mkdir -p ~/.config/systemd/user</code></div>
+<div class="line"><code class="plain">vi ~/.config/systemd/user/p11-kit-client.service</code></div>
+<div class="line"><code class="plain">-----</code></div>
+<div class="line"><code class="plain">[Unit]</code></div>
+<div class="line"><code class="plain">Description=p11-kit client</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">[Service]</code></div>
+<div class="line"><code class="plain">Type=oneshot</code></div>
+<div class="line"><code class="plain">RemainAfterExit=</code><code class="keyword">true</code></div>
+<div class="line"><code class="plain">RuntimeDirectory=p11-kit</code></div>
+<div class="line"><code class="plain">ExecStart=/bin/</code><code class="keyword">true</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">[Install]</code></div>
+<div class="line"><code class="plain">WantedBy=</code><code class="keyword">default</code><code class="plain">.target</code></div>
+<div class="line"><code class="plain">-----</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">systemctl --user daemon-reload</code></div>
+<div class="line"><code class="plain">systemctl --user enable p11-kit-client.service</code></div>
+<div class="line"><code class="plain">systemctl --user start p11-kit-client.service</code></div>
+<div class="line"><code class="plain">ls /run/user/`id -u`/</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtVXNlU1NIdG9mb3J3YXJkUDExZnJvbUxvY2FsdG9SZW1vdGU">
+        <h2 class="heading "><span>Use SSH to forward P11 from Local to Remote</span></h2>
+<p   
+>Run SSH from the machine where you plug your USB device (local) towards the server where you run EJBCA (remote).</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain"># see https:</code><code class="comments">//github.com/fladna9/remote-hsm/blob/master/remote-hsm.sh</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Verifying </code><code class="keyword">if</code><code class="plain"> systemd user service is enabled (local).</code></div>
+<div class="line"><code class="plain">systemctl --user status p11-kit-client.service | grep </code><code class="string">"Active: active"</code></div>
+<div class="line"><code class="plain"># If _not_ running, start it</code></div>
+<div class="line"><code class="plain">systemctl --user enable p11-kit-client.service</code></div>
+<div class="line"><code class="plain">systemctl --user start p11-kit-client.service</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Verifying </code><code class="keyword">if</code><code class="plain"> systemd user service is enabled (remote). On Local:</code></div>
+<div class="line"><code class="plain">ssh user</code><code class="color1">@192</code><code class="plain">.168.</code><code class="value">122.1</code><code class="plain"> systemctl --user status p11-kit-client.service | grep </code><code class="string">"Active: active"</code></div>
+<div class="line"><code class="plain"># If _not_ running, start it</code></div>
+<div class="line"><code class="plain">ssh user</code><code class="color1">@192</code><code class="plain">.168.</code><code class="value">122.1</code><code class="plain"> systemctl --user enable p11-kit-client.service</code></div>
+<div class="line"><code class="plain">ssh user</code><code class="color1">@192</code><code class="plain">.168.</code><code class="value">122.1</code><code class="plain"> systemctl --user start p11-kit-client.service</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># On Local (with the USB Token), get tokenURL and start p11-kit server</code></div>
+<div class="line"><code class="plain">p11tool --provider /usr/lib/x86_64-linux-gnu/opensc-pkcs11.so --list-token-urls</code></div>
+<div class="line"><code class="plain">(pkcs11:model=PKCS%</code><code class="value">2315</code><code class="plain">%20emulated;manufacturer=www.CardContact.de;serial=DENK0101866;token=UserPIN%</code><code class="value">20</code><code class="plain">%28SmartCard-HSM%</code><code class="value">29</code><code class="plain">)</code></div>
+<div class="line"><code class="plain">p11-kit server --provider /usr/lib/x86_64-linux-gnu/opensc-pkcs11.so pkcs11:model=PKCS%</code><code class="value">2315</code><code class="plain">%20emulated;manufacturer=www.CardContact.de;serial=DENK0101866;token=UserPIN%</code><code class="value">20</code><code class="plain">%28SmartCard-HSM%</code><code class="value">29</code></div>
+<div class="line"><code class="plain">(P11_KIT_SERVER_ADDRESS=unix:path=/run/user/</code><code class="value">1000</code><code class="plain">/p11-kit/pkcs11-</code><code class="value">389</code><code class="plain">; export P11_KIT_SERVER_ADDRESS;P11_KIT_SERVER_PID=</code><code class="value">390</code><code class="plain">; export P11_KIT_SERVER_PID;)</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">eval P11_KIT_SERVER_ADDRESS=unix:path=/run/user/</code><code class="value">1000</code><code class="plain">/p11-kit/pkcs11-</code><code class="value">389</code><code class="plain">; export P11_KIT_SERVER_ADDRESS;P11_KIT_SERVER_PID=</code><code class="value">390</code><code class="plain">; export P11_KIT_SERVER_PID;</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Done, local socket is at ${P11_KIT_SERVER_ADDRESS}</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># SSH tunneling the socket to remote EJBCA instance. On Local:</code></div>
+<div class="line"><code class="plain">ssh user</code><code class="color1">@192</code><code class="plain">.168.</code><code class="value">122.1</code><code class="plain"> systemd-path user-runtime</code></div>
+<div class="line"><code class="plain">(/run/user/</code><code class="value">1000</code><code class="plain">)</code></div>
+<div class="line"><code class="plain">ssh -N -f -R /run/user/</code><code class="value">1000</code><code class="plain">/p11-kit/pkcs11:${P11_KIT_SERVER_ADDRESS#*=} user</code><code class="color1">@192</code><code class="plain">.168.</code><code class="value">122.1</code></div>
+<div class="line"><code class="plain"># SSH tunneling done, remote socket is at </code><code class="value">192.168</code><code class="plain">.</code><code class="value">122.1</code><code class="plain">:/run/user/</code><code class="value">1000</code><code class="plain">/p11-kit/pkcs11</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Test remote access to token, from Local</code></div>
+<div class="line"><code class="plain">ssh user</code><code class="color1">@192</code><code class="plain">.168.</code><code class="value">122.1</code><code class="plain"> pkcs11-tool --module /usr/local/lib/pkcs11/p11-kit-client.so -L</code></div>
+</div>
+    </div>
+<p   
+>If things fail and you have to start over, you need to clean sockets:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain"># On Local:</code></div>
+<div class="line"><code class="plain">rm /run/user/</code><code class="value">1000</code><code class="plain">/p11-kit/*</code></div>
+<div class="line"><code class="plain">pkill -f p11-kit-server</code></div>
+<div class="line"><code class="plain">pkill -f p11-kit-remote</code></div>
+<div class="line"><code class="plain">pkill -f </code><code class="string">"ssh -N -f -R /run/user/"</code></div>
+<div class="line"><code class="plain"># On Local (to Remote)</code></div>
+<div class="line"><code class="plain">DISTANTRUN=$(ssh user</code><code class="color1">@192</code><code class="plain">.168.</code><code class="value">122.1</code><code class="plain"> systemd-path user-runtime)</code></div>
+<div class="line"><code class="plain">ssh user</code><code class="color1">@192</code><code class="plain">.168.</code><code class="value">122.1</code><code class="plain"> rm </code><code class="string">"$DISTANTRUN/p11-kit"</code><code class="plain">/*</code></div>
+</div>
+    </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtVXNpbmdfU0hBMjU2V2l0aFJTQWFuZE1HRjFfKFJTQVNTQS1QU1MpVXNpbmdTSEEyNTZXaXRoUlNBYW5kTUdGMShSU0FTU0EtUFNTKQ">
+        <h1 class="heading "><span id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtVXNpbmdfU0hBMjU2V2l0aFJTQWFuZE1HRjFfKFJTQVNTQS1QU1Mp" class="confluence-anchor-link"></span><span>Using SHA256WithRSAandMGF1 (RSASSA-PSS)</span></h1>
+<p   
+>Out of the box in Java PKCS#11 RSASSA-PSS is not supported. The software in EJBCA supports it, but some versions of the Java PKCS#11 provider does not.</p>
+<p   
+>Support for RSASSA-PSS was <a  class="external-link" href="https://bugs.openjdk.java.net/browse/JDK-8080462">implemented in OpenJDK     <span style="color: #172b4d;">
+8u241    </span>
+</a>    <span style="color: #172b4d;">
+. Older versions of OpenJDK and OracleJDK does    </span>
+ not have support for SHA256WithRSAandMGF1 (also known as RSASSA-PSS) in the PKCS#11 provider. PrimeKey has made a patch for these versions of the JDK. Enterprise users can get a compiled patch together with an installation script for Debian-based operating systems from <a  class="external-link" href="https://www.primekey.com/">PrimeKey</a>. This issue is registered in the EJBCA issue tracker as <a  class="external-link" href="https://jira.primekey.se/browse/ECA-2014">ECA-2014</a>.</p>
+<p   
+>The patch should work together with HSMs that have support for SHA256WithRSAandMGF1. With the patch applied, you can create CAs using HSMs with the SHA256WithRSAandMGF1 (and SHA384 and SHA512) algorithm.</p>
+    </div>
+    <div class="section section-1" id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtRXh0ZW5kaW5nX1N1bl9QS0NTIzExX3RvX3NldF9DS0FfTU9ESUZJQUV4dGVuZGluZ1N1blBLQ1MjMTF0b3NldENLQV9NT0RJRklBQkxFPWZhbHNl">
+        <h1 class="heading "><span id="src-85920628_safe-id-aWQtLkhhcmR3YXJlU2VjdXJpdHlNb2R1bGVzKEhTTSl2Ny40LjAtRXh0ZW5kaW5nX1N1bl9QS0NTIzExX3RvX3NldF9DS0FfTU9ESUZJQQ" class="confluence-anchor-link"></span><span>Extending Sun PKCS#11 to set CKA_MODIFIABLE=false</span></h1>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>PrimeKey does not recommend using this module. It was created due to a past PKCS#11 vulnerability that has since been patched by HSM vendors.</p>
+<p   
+>The tool described below is not compatible with Java 11 and the following information is kept as a reference only.</p>
+        </div>
+    </div>
+<p   
+>In order to change the CKA_MODIFIABLE attribute of a private key to FALSE directly after it has been generated the Sun PKCS#11 implementation must be extended. This extension must be done by adding classes to <strong class=" ">Installed Extensions</strong> classpath. See <a  class="external-link" href="https://docs.oracle.com/javase/tutorial/ext/basics/install.html">https://docs.oracle.com/javase/tutorial/ext/basics/install.html</a></p>
+<p   
+>This is achieved by:</p>
+<ul class=" "><li class=" "><p   
+>building cesecore-p11.jar with the command 'ant -Dbuild.cesecore.p11.jar=true build'</p>
+</li><li class=" "><p   
+>putting the '$EJBCA_HOME/dist/ext/cesecore-p11.jar' in one of the directories that is defined by the 'java.ext.dirs' system property.</p>
+</li></ul><p   
+>You can put the jar in '$JAVA_HOME/jre/lib/ext'. You may also change the property to include the directory of the jar. Here is an example:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">JAVA_OPTS=</code><code class="string">"-Djava.ext.dirs=/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/ext:$EJBCA_HOME/dist/ext"</code><code class="plain"> $JBOSS_HOME/bin/standalone.sh</code></div>
+</div>
+    </div>
+<p   
+>Ensure to keep '$JAVA_HOME/jre/lib/ext' in the classpath.</p>
+<p   
+>To enable the feature in EJBCA, set 'pkcs11.makeKeyUnmodifiableAfterGeneration=true' in $EJBCA_HOME/conf/cesecore.properties.</p>
+<p   
+>If you use '$EJBCA_HOME/dist/ejbcaClientToolBox.sh' you do not have to set the java.ext.dirs setting as the configuration is performed by the script.</p>
+<p   
+>Everything will work without this jar in the classpath, but if it is not in classpath, the CKA_MODIFIABLE will be TRUE for every key that is generated and a warning written to the log.</p>
+<p   
+>The reason to set CKA_MODIFIABLE to FALSE is that it should not be possible to set CKA_DERIVE to TRUE. If CKA_DERIVE is true it might be possible to extract the private key from some HSMs (CVE-2015-5464), although most vendors have now patched this by not allowing weak key derivation schemes.</p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+<p   
+>The ability to set CKA_MODIFIABLE=true is HSM vendor dependent and using the above method to change CKA_MODIFIABLE to false may not give the desired behaviour and thorough testing is advised.</p>
+        </div>
+    </div>
+<p   
+>Certain HSMs (for example SoftHSM2) refuses to set CKA_MODIFIABLE to FALSE (the PKCS#11 standard says that this behavior is OK).</p>
+<p   
+>In summary, the configuration requires careful testing. Tests can be performed using the clientToolBox tool with a generate-test cycle:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$EJBCA_HOME</code><code class="plain">/dist/ejbcaClientToolBox</code><code class="plain">.sh PKCS11HSMKeyTool generate (to generate a new key)</code></div>
+<div class="line"><code class="plain">$EJBCA_HOME</code><code class="plain">/dist/ejbcaClientToolBox</code><code class="plain">.sh PKCS11HSMKeyTool </code><code class="functions">test</code><code class="plain"> (to </code><code class="functions">test</code><code class="plain">, </code><code class="keyword">in</code><code class="plain"> a new PKCS</code><code class="comments">#11 session if it is usable)</code></div>
+</div>
+    </div>
+<p   
+>If you also generate keys using the Admin GUI, this should also be tested, together with restarting JBoss between generation and usage.</p>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="SensorNet_PKI.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>SensorNet PKI</span>
+        </a>
+                <a href="Generic_PKCS_11_Provider.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Generic PKCS#11 Provider</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

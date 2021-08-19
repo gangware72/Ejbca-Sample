@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Migrating RSA Keon CA with nCipher - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=100273545"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Documentation.html">EJBCA Documentation</a></li>
+                                                                                                         <li class="shortcut"><a href="Tutorials_and_Guides.html">Tutorials and Guides</a></li>
+                                                                                     <li><a href="Migrating_from_other_CAs_to_EJBCA.html">Migrating from other CAs to EJBCA</a></li>
+                                                            </ul>
+</div>            <h1 id="src-100273545"> <span>Migrating RSA Keon CA with nCipher</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p   
+>The following describes how to migrate from another CA to EJBCA.</p>
+<p   
+></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-100273545_id-.MigratingRSAKeonCAwithnCipherv7.4.3-Introduction">Introduction</a></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-100273545_id-.MigratingRSAKeonCAwithnCipherv7.4.3-Environments">Environments</a></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-100273545_id-.MigratingRSAKeonCAwithnCipherv7.4.3-KeonCA">Keon CA</a></p>
+</li><li class=" "><p   
+><a   href="#src-100273545_id-.MigratingRSAKeonCAwithnCipherv7.4.3-EJBCA">EJBCA</a></p>
+</li></ul></li><li class=" "><p   
+><a   href="#src-100273545_safe-id-aWQtLk1pZ3JhdGluZ1JTQUtlb25DQXdpdGhuQ2lwaGVydjcuNC4zLU1pZ3JhdGlvbm9mS0NBJ3PMgVNpZ25pbmdLZXlz">Migration of KCA's ́Signing Keys</a></p>
+</li><li class=" "><p   
+><a   href="#src-100273545_safe-id-aWQtLk1pZ3JhdGluZ1JTQUtlb25DQXdpdGhuQ2lwaGVydjcuNC4zLUNvbmZpZ3VyZVBLQ1MjMTFmb3JuQ2lwaGVy">Configure PKCS#11 for nCipher</a></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-100273545_id-.MigratingRSAKeonCAwithnCipherv7.4.3-SignatureKeys">Signature Keys</a></p>
+</li></ul></li></ul></li><li class=" "><p   
+><a   href="#src-100273545_id-.MigratingRSAKeonCAwithnCipherv7.4.3-ImportingtheCA">Importing the CA</a></p>
+</li><li class=" "><p   
+><a   href="#src-100273545_id-.MigratingRSAKeonCAwithnCipherv7.4.3-ImportingUserCertificates">Importing User Certificates</a></p>
+</li></ul>    <div class="section section-1" id="src-100273545_id-.MigratingRSAKeonCAwithnCipherv7.4.3-Introduction">
+        <h1 class="heading "><span>Introduction</span></h1>
+<p   
+>    <span style="color: #000000;">
+In order to demonstrate specific steps and help you reproduce these steps, one specific CA was chosen, the RSA Keon CA. The general idea how to migrate is the same for other CA implementations.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+Migration from another CA to EJBCA consists of the following steps:    </span>
+</p>
+<ul class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+Migration of the CAs ́ signing keys on nCipher HSM, allowing the keys can be used by EJBCA    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+Import of the CA within EJBCA    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+Import of the user certificates in EJBCA    </span>
+</p>
+</li></ul><p   
+>    <span style="color: #000000;">
+The following outlines how to migrate a simple installation of KCA to EJBCA and it is recommended to first do a test migration to be familiar with the process.    </span>
+</p>
+    <div class="section section-2" id="src-100273545_id-.MigratingRSAKeonCAwithnCipherv7.4.3-Environments">
+        <h2 class="heading "><span>Environments</span></h2>
+    <div class="section section-3" id="src-100273545_id-.MigratingRSAKeonCAwithnCipherv7.4.3-KeonCA">
+        <h3 class="heading "><span>Keon CA</span></h3>
+<p   
+>    <span style="color: #000000;">
+A setup of KCA on a target environment:    </span>
+</p>
+<ul class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+Windows Server 2003    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+KCA 6.5    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+One root CA &ndash; TestKCARootCA    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+One sub CA &ndash; TestKCASubCA    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+Signing keys for the CAs on nCipher nShield PCI card    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+5 users issued by TestKCASubCA    </span>
+</p>
+</li></ul><p   
+>    <span style="color: #000000;">
+After the installation of this environment, make a backup of nCipher security world, CA- certificates and user certificates.    </span>
+</p>
+    </div>
+    <div class="section section-3" id="src-100273545_id-.MigratingRSAKeonCAwithnCipherv7.4.3-EJBCA">
+        <h3 class="heading "><span>EJBCA</span></h3>
+<p   
+>    <span style="color: #000000;">
+A target environment for EJBCA is chosen:    </span>
+</p>
+<ul class=" "><li class=" "><p   
+>    <span style="color: #000000;">
+Utuntu Linux 7.04 AMD64    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+JBoss 4.2.0, MySQL 5.0    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+EJBCA 3.5 or later; 3.9 recommended    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+One root CA &ndash; TestKCARootCA    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+One sub CA &ndash; TestKCASubCA    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+Signing keys for the CAs on nCipher nShield PCI kort    </span>
+</p>
+</li><li class=" "><p   
+>    <span style="color: #000000;">
+5 users issued by TestKCASubCA    </span>
+</p>
+</li></ul>    </div>
+    </div>
+    <div class="section section-2" id="src-100273545_safe-id-aWQtLk1pZ3JhdGluZ1JTQUtlb25DQXdpdGhuQ2lwaGVydjcuNC4zLU1pZ3JhdGlvbm9mS0NBJ3PMgVNpZ25pbmdLZXlz">
+        <h2 class="heading "><span>Migration of KCA's &#769;Signing Keys</span></h2>
+<p   
+>    <span style="color: #000000;">
+This example assumes that the Keon CA keys are used in a Thales/nCipher HSM. If another HSM is used, key migration is likely easier as PKCS#11 can be used immediately. Note however that it is still needed to generate a certificate object in the HSM for Java to use the keys.    </span>
+</p>
+    </div>
+    <div class="section section-2" id="src-100273545_safe-id-aWQtLk1pZ3JhdGluZ1JTQUtlb25DQXdpdGhuQ2lwaGVydjcuNC4zLUNvbmZpZ3VyZVBLQ1MjMTFmb3JuQ2lwaGVy">
+        <h2 class="heading "><span>Configure PKCS#11 for nCipher</span></h2>
+<p   
+>    <span style="color: #000000;">
+For nCipher, the slot number is a virtual slot, with an unknown name. You can use the default slot by omitting giving the slot number. In order to use nCipher PKCS#11, certain parameters need to be set.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+Create the file <tt class=" ">/opt/nfast/cknfastrc</tt> with the following content:    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">CKNFAST_LOADSHARING=1</code></div>
+<div class="line"><code class="plain"> CKNFAST_NO_ACCELERATOR_SLOTS=1</code></div>
+<div class="line"><code class="plain"> CKNFAST_NO_UNWRAP=1</code></div>
+<div class="line"><code class="plain"> CKNFAST_OVERRIDE_SECURITY_ASSURANCES=import</code></div>
+</div>
+    </div>
+    <div class="section section-3" id="src-100273545_id-.MigratingRSAKeonCAwithnCipherv7.4.3-SignatureKeys">
+        <h3 class="heading "><span>Signature Keys</span></h3>
+<p   
+>    <span style="color: #000000;">
+When KCA is installed, it generates keys on the nCipher HSM. The keys are in &quot;native&quot; format and can only be used by KCA. There is no public key associated on the HSM.    </span>
+</p>
+<p   
+>    <span style="color: #000000;">
+Start by listing some general information about the HSM:    </span>
+</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">C:\nfast\bin&gt;enquiry</code></div>
+<div class="line"><code class="plain">Server:</code></div>
+<div class="line"><code class="plain">  enquiry reply flags  none</code></div>
+<div class="line"><code class="plain">  enquiry reply level  Six</code></div>
+<div class="line"><code class="plain">  serial number        B1BB-0EE9-3511</code></div>
+<div class="line"><code class="plain">  mode                 operational</code></div>
+<div class="line"><code class="plain">  version              2.23.6</code></div>
+<div class="line"><code class="plain">  speed index          440</code></div>
+<div class="line"><code class="plain">  rec. queue           422..622</code></div>
+<div class="line"><code class="plain">  level one flags      Hardware HasTokens</code></div>
+<div class="line"><code class="plain">  version string       2.23.6cam6, 2.22.43cam8 built on Oct 13 2006</code></div>
+<div class="line"><code class="plain">16:16:12</code></div>
+<div class="line"><code class="plain">  checked </code><code class="keyword">in</code><code class="plain">           00000000431dca98 Tue Sep 06 18:58:00 2005</code></div>
+<div class="line"><code class="plain">  level two flags      none</code></div>
+<div class="line"><code class="plain">  max. write size      8192</code></div>
+<div class="line"><code class="plain">  level three flags    KeyStorage</code></div>
+<div class="line"><code class="plain">  level four flags     OrderlyClearUnit HasRTC HasNVRAM HasNSOPermsCmd</code></div>
+<div class="line"><code class="plain">ServerHasPollCmds FastPollSlotList HasSEE HasKLF HasShareACL</code></div>
+<div class="line"><code class="plain">HasFeatureEnable Ha sFileOp HasPCIPush HasKernelInterface HasLongJobs</code></div>
+<div class="line"><code class="plain">ServerHasLongJobs AESModuleKeys NTokenCmds LongJobsPreferred</code></div>
+<div class="line"><code class="plain">  module </code><code class="functions">type</code><code class="plain"> code     0</code></div>
+<div class="line"><code class="plain">  product name         nFast server</code></div>
+<div class="line"><code class="plain">  device name</code></div>
+<div class="line"><code class="plain">  EnquirySix version   4</code></div>
+<div class="line"><code class="plain">  impath kx </code><code class="functions">groups</code></div>
+<div class="line"><code class="plain">  feature ctrl flags   none</code></div>
+<div class="line"><code class="plain">  features enabled     none</code></div>
+<div class="line"><code class="plain">  version serial       0</code></div>
+<div class="line"><code class="plain">Module </code><code class="comments">#1:</code></div>
+<div class="line"><code class="plain">  enquiry reply flags  none</code></div>
+<div class="line"><code class="plain">  enquiry reply level  Six</code></div>
+<div class="line"><code class="plain">  serial number        B1BB-0EE9-3511</code></div>
+<div class="line"><code class="plain">  mode                 operational</code></div>
+<div class="line"><code class="plain">  version              2.22.43</code></div>
+<div class="line"><code class="plain">  speed index          440</code></div>
+<div class="line"><code class="plain">  rec. queue           19..152</code></div>
+<div class="line"><code class="plain">  level one flags      Hardware HasTokens</code></div>
+<div class="line"><code class="plain">  version string       2.22.43cam8 built on Oct 13 2006 16:16:12</code></div>
+<div class="line"><code class="plain">  checked </code><code class="keyword">in</code><code class="plain">           00000000452f6a4d Fri Oct 13 12:28:29 2006</code></div>
+<div class="line"><code class="plain">  level two flags      none</code></div>
+<div class="line"><code class="plain">  max. write size      8192</code></div>
+<div class="line"><code class="plain">  level three flags    KeyStorage</code></div>
+<div class="line"><code class="plain">  level four flags     OrderlyClearUnit HasRTC HasNVRAM HasNSOPermsCmd</code></div>
+<div class="line"><code class="plain">ServerHasPollCmds FastPollSlotList HasSEE HasKLF HasShareACL</code></div>
+<div class="line"><code class="plain">HasFeatureEnable Ha sFileOp HasPCIPush HasKernelInterface HasLongJobs</code></div>
+<div class="line"><code class="plain">ServerHasLongJobs AESModuleKeys NTokenCmds LongJobsPreferred</code></div>
+<div class="line"><code class="plain">  module </code><code class="functions">type</code><code class="plain"> code     7</code></div>
+<div class="line"><code class="plain">  product name         nC1003P</code><code class="plain">/nC3023P</code></div>
+<div class="line"><code class="plain">  device name          </code><code class="comments">#1 PCI bus 7 slot 1</code></div>
+<div class="line"><code class="plain">  EnquirySix version   5</code></div>
+<div class="line"><code class="plain">  impath kx </code><code class="functions">groups</code><code class="plain">     DHPrime1024</code></div>
+<div class="line"><code class="plain">  feature ctrl flags   LongTerm</code></div>
+<div class="line"><code class="plain">  features enabled     StandardKM</code></div>
+<div class="line"><code class="plain">  version serial       24</code></div>
+<div class="line"><code class="plain">  rec. LongJobs queue  18</code></div>
+<div class="line"><code class="plain">  SEE machine </code><code class="functions">type</code><code class="plain">     PowerPCSXF</code></div>
+<div class="line"><code class="plain">C:\nfast\bin&gt;nfkminfo.exe</code></div>
+<div class="line"><code class="plain">World</code></div>
+<div class="line"><code class="plain">  generation  2</code></div>
+<div class="line"><code class="plain">  state       0x17270000 Initialised Usable Recovery !PINRecovery</code></div>
+<div class="line"><code class="plain">!ExistingClient RTC NVRAM FTO SEEDebug</code></div>
+<div class="line"><code class="plain">  n_modules   1</code></div>
+<div class="line"><code class="plain">  hknso       057731d6c635560900003fed89eba88c5082f2a1</code></div>
+<div class="line"><code class="plain">  hkm         b08e66b01777fcf34dceb77c0684c8d1a071144e (</code><code class="functions">type</code><code class="plain"> DES3)</code></div>
+<div class="line"><code class="plain">  hkmwk       1d572201be533ebc89f30fdd8f3fac6ca3395bf0</code></div>
+<div class="line"><code class="plain">  hkre        b0f5dbebedc703c6acd7685b261f6748bc4a9535</code></div>
+<div class="line"><code class="plain">  hkra        7368a945efc76505a19092c5115f493716de3172</code></div>
+<div class="line"><code class="plain">  hkmc        1d1e3fb769837be06e028bc038d1789ced2ac9e1</code></div>
+<div class="line"><code class="plain">  hkrtc       55f17755cae9ae49a588f154260306deeae1f5cc</code></div>
+<div class="line"><code class="plain">  hknv        82674f0623407fbaac5a3aaa0fc08346dff34f37</code></div>
+<div class="line"><code class="plain">  hkdsee      6df83c268c25939c307f61245235a2ac44e487ae</code></div>
+<div class="line"><code class="plain">  hkfto       cae32a48bd1b9e68e606ae723f8dcb93eb4ee9ab</code></div>
+<div class="line"><code class="plain">  hkmnull     1d572201be533ebc89f30fdd8f3fac6ca3395bf0</code></div>
+<div class="line"><code class="plain">  ex.client   none</code></div>
+<div class="line"><code class="plain">  k-out-of-n  1</code><code class="plain">/1</code></div>
+<div class="line"><code class="plain">  other quora m=1 r=1 nv=1 rtc=1 dsee=1 fto=1</code></div>
+<div class="line"><code class="plain">  createtime  2007-07-16 14:58:41</code></div>
+<div class="line"><code class="plain">  nso timeout 10 min</code></div>
+<div class="line"><code class="plain"> </code></div>
+<div class="line"><code class="plain">Module </code><code class="comments">#1</code></div>
+<div class="line"><code class="plain">  generation 2</code></div>
+<div class="line"><code class="plain">  state      0x2 Usable</code></div>
+<div class="line"><code class="plain">  flags      0x0 !ShareTarget</code></div>
+<div class="line"><code class="plain">  n_slots    2</code></div>
+<div class="line"><code class="plain">  esn        B1BB-0EE9-3511</code></div>
+<div class="line"><code class="plain">  hkml       5e43facc6aa39068092762d80a1954bded193b4b</code></div>
+<div class="line"><code class="plain">Module </code><code class="comments">#1 Slot #0 IC 25</code></div>
+<div class="line"><code class="plain">  generation    1</code></div>
+<div class="line"><code class="plain">  phystype      SmartCard</code></div>
+<div class="line"><code class="plain">  slotlistflags 0x2 SupportsAuthentication</code></div>
+<div class="line"><code class="plain">  state         0x5 Operator</code></div>
+<div class="line"><code class="plain">  flags         0x10000 Passphrase</code></div>
+<div class="line"><code class="plain">  shareno       1</code></div>
+<div class="line"><code class="plain">  shares        LTU(PIN)</code></div>
+<div class="line"><code class="plain">  error         OK</code></div>
+<div class="line"><code class="plain">Cardset</code></div>
+<div class="line"><code class="plain">  name          ”oper”</code></div>
+<div class="line"><code class="plain">  k-out-of-n    1</code><code class="plain">/1</code></div>
+<div class="line"><code class="plain">  flags         NotPersistent PINRecoveryForbidden(disabled) !RemoteEnabled</code></div>
+<div class="line"><code class="plain">  timeout       none</code></div>
+<div class="line"><code class="plain">  card names    ””</code></div>
+<div class="line"><code class="plain">  hkltu         3126f2b3cf7d9d53e3ba278a081ef471644298f8</code></div>
+<div class="line"><code class="plain">  gentime       2007-07-16 15:00:07</code></div>
+<div class="line"><code class="plain">Module </code><code class="comments">#1 Slot #1 IC 0</code></div>
+<div class="line"><code class="plain">  generation    1</code></div>
+<div class="line"><code class="plain">  phystype      SoftToken</code></div>
+<div class="line"><code class="plain">  slotlistflags 0x0</code></div>
+<div class="line"><code class="plain">  state         0x2 Empty</code></div>
+<div class="line"><code class="plain">  flags         0x0</code></div>
+<div class="line"><code class="plain">  shareno       0</code></div>
+<div class="line"><code class="plain">  shares</code></div>
+<div class="line"><code class="plain">  error         OK</code></div>
+<div class="line"><code class="plain">No Cardset</code></div>
+<div class="line"><code class="plain">No Pre-Loaded Objects</code></div>
+</div>
+    </div>
+<p   
+>To view keys used, run the following command:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">C:\nfast\bin&gt;nfkminfo -k</code></div>
+<div class="line"><code class="plain">Key list - </code><code class="value">19</code><code class="plain"> keys</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184599865281000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184599867765000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184599888484000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">11845998900</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184599947937000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184599969937000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184599971843000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184599974609000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184599977718000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184599980515000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184599982765000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184599985656000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184599987625000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184599989140000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184599991234000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184600151640000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184600153609000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184659106609000</code></div>
+<div class="line"><code class="plain"> AppName rsa-keon-ca-</code><code class="value">65</code><code class="plain">       Ident </code><code class="value">1184659187875000</code></div>
+</div>
+    </div>
+<p   
+>There are a number of keys, and we cannot immediately say which one is the CAs signing key. This can be determined according to the following example:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">C:\nfast\bin&gt;pubkey-find.exe c:\kca.pem</code></div>
+<div class="line"><code class="plain"> input format cert</code></div>
+<div class="line"><code class="plain"> nCore hash d0196ea2e070315e9e162c28dcdc5a524bf6380d</code></div>
+<div class="line"><code class="plain"> unnamed</code></div>
+<div class="line"><code class="plain"> appname rsa-keon-ca-</code><code class="value">65</code></div>
+<div class="line"><code class="plain"> ident </code><code class="value">1184659106609000</code></div>
+</div>
+    </div>
+<p   
+>Then, add the corresponding public key:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">C:\nfast\bin&gt;pubkey-find.exe --augment c:\kca.pem</code></div>
+</div>
+    </div>
+<p   
+>Next, &rdquo;move&rdquo; the key as to be usable by PKCS#11:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">C:\nfast\bin&gt;generatekey --retarget –no-verify pkcs11</code></div>
+<div class="line"><code class="value">13</code><code class="plain">:</code><code class="value">40</code><code class="plain">:</code><code class="value">30</code><code class="plain"> WARNING: nfgk_debug_output is now deprecated (see manual).</code></div>
+<div class="line"><code class="plain">from-application: Source application? (jcecsp, pkcs11, rsa-keon-ca-</code><code class="value">65</code><code class="plain">)</code></div>
+<div class="line"><code class="plain">  [</code><code class="keyword">default</code><code class="plain"> jcecsp] &gt; rsa-keon-ca-</code><code class="value">65</code></div>
+<div class="line"><code class="plain">from-ident: Source key identifier? (</code><code class="value">1184599865281000</code><code class="plain">, </code><code class="value">1184599867765000</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                                    </code><code class="value">1184599888484000</code><code class="plain">, </code><code class="value">11845998900</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                                    </code><code class="value">1184599947937000</code><code class="plain">, </code><code class="value">1184599969937000</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                                    </code><code class="value">1184599971843000</code><code class="plain">, </code><code class="value">1184599974609000</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                                    </code><code class="value">1184599977718000</code><code class="plain">, </code><code class="value">1184599980515000</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                                    </code><code class="value">1184599982765000</code><code class="plain">, </code><code class="value">1184599985656000</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                                    </code><code class="value">1184599987625000</code><code class="plain">, </code><code class="value">1184599989140000</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                                    </code><code class="value">1184599991234000</code><code class="plain">, </code><code class="value">1184600151640000</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                                    </code><code class="value">1184600153609000</code><code class="plain">, </code><code class="value">1184659106609000</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                                    </code><code class="value">1184659187875000</code><code class="plain">) [</code><code class="value">1184599865281000</code><code class="plain">]</code></div>
+<div class="line"><code class="plain">&gt; </code><code class="value">1184659106609000</code></div>
+<div class="line"><code class="plain">plainname: Key name? [] &gt;</code></div>
+<div class="line"><code class="plain">ERROR: plainname: key name unspecified</code></div>
+<div class="line"><code class="plain">plainname: Key name? [] &gt; kcaSign</code></div>
+<div class="line"><code class="plain">key generation parameters:</code></div>
+<div class="line"><code class="plain"> operation         Operation to perform     retarget</code></div>
+<div class="line"><code class="plain"> application       Application              pkcs11</code></div>
+<div class="line"><code class="plain"> slot              Slot to read cards from  </code><code class="value">0</code></div>
+<div class="line"><code class="plain"> verify            Verify security of key   no</code></div>
+<div class="line"><code class="plain"> from-application  Source application       rsa-keon-ca-</code><code class="value">65</code></div>
+<div class="line"><code class="plain"> from-ident        Source key identifier    </code><code class="value">1184659106609000</code></div>
+<div class="line"><code class="plain"> plainname         Key name                 kcaSign</code></div>
+<div class="line"><code class="plain">****************************************************</code></div>
+<div class="line"><code class="plain">* WARNING: will not verify the security of the key *</code></div>
+<div class="line"><code class="plain">****************************************************</code></div>
+<div class="line"><code class="plain">Loading `oper’:</code></div>
+<div class="line"><code class="plain"> Module </code><code class="value">1</code><code class="plain">: </code><code class="value">0</code><code class="plain"> cards of </code><code class="value">1</code><code class="plain"> read</code></div>
+<div class="line"><code class="plain"> Module </code><code class="value">1</code><code class="plain"> slot </code><code class="value">0</code><code class="plain">: `oper’ #</code><code class="value">1</code></div>
+<div class="line"><code class="plain"> Module </code><code class="value">1</code><code class="plain"> slot </code><code class="value">0</code><code class="plain">:- passphrase supplied - reading card</code></div>
+<div class="line"><code class="plain">Card reading complete.</code></div>
+<div class="line"><code class="plain">Key successfully retargetted.</code></div>
+<div class="line"><code class="plain">Path to key: c:\nfast\kmdata\local\key_pkcs11_uc3126f2b3cf7d9d53e3ba278a081</code></div>
+<div class="line"><code class="plain">ef471644298f8-628484d430c6c0502fdb1a520fb84b9dc73c8372</code></div>
+</div>
+    </div>
+<p   
+>To use the public key via PKCS#11, associate a certificate to the key. For this, we take the actual certificate:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">C:\nfast\bin&gt;ckcerttool.exe -c oper -f c:\ca\kca.pem -k uc3126f2b3cf7d9d53e3ba27</code></div>
+<div class="line"><code class="plain">8a081ef471644298f8-628484d430c6c0502fdb1a520fb84b9dc73c8372 -L kcaSign</code></div>
+<div class="line"><code class="plain">Certificate found, processing...</code></div>
+<div class="line"><code class="plain">Please enter the passphrase </code><code class="keyword">for</code><code class="plain"> ”oper” token (No echo set).</code></div>
+<div class="line"><code class="plain">Passphrase:</code></div>
+<div class="line"><code class="plain">Certificate successfully imported.</code></div>
+<div class="line"><code class="plain">Run cklist to view your certificate object.</code></div>
+<div class="line"><code class="plain">OK</code></div>
+</div>
+    </div>
+<p   
+>Next, generate two more keys to be used by EJBCA. One of the keys will be used by EJBCA for internal encryption within EJBCA, and the other for testing of the HSM. This generation should be done as described in the <a   href="EJBCA_Operations_Guide.html">EJBCA Operations Guide</a>, using the regular EJBCA tools. Generate one RSA key of length 2048 bits with alias kcaDefault, and one RSA key of length 1024 with alias kcaTest:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">keytool -generate -keystore NONE -storetype PKCS11-NFastJava -storepass foo123</code></div>
+<div class="line"><code class="plain">-alias kcaDefault -keyalg RSA -keysize </code><code class="value">2048</code></div>
+<div class="line"><code class="plain">keytool -generate -keystore NONE -storetype PKCS11-NFastJava -storepass foo123</code></div>
+<div class="line"><code class="plain">-alias kcaTest -keyalg RSA -keysize </code><code class="value">1024</code></div>
+</div>
+    </div>
+<p   
+>We use the EJBCA tools to get automatic association between the private key and a (dummy) certificate, in order for it to be used through the Java PKCS#11 provider.</p>
+    </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-100273545_id-.MigratingRSAKeonCAwithnCipherv7.4.3-ImportingtheCA">
+        <h1 class="heading "><span>Importing the CA</span></h1>
+<p   
+>After doing retarget on the keys for the Root CA and the Sub CA, you can use the keys from EJBCA and start importing CA certificates into EJBCA.</p>
+<p   
+>Note that KCA does not use the same DN order as EJBCA does by default, so if you want the issued certificate to look exactly the same, clear the EJBCA option <strong class=" ">Use LDAP DN order</strong> after the installation.</p>
+<p   
+>Install EJBCA as usual with one ManagementCA, after which you can import the CAs from KCA from the help script.</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">bin/ejbca.sh ca importca TestKCARootCA --hard --cp org.cesecore.keys.token.PKCS11CryptoToken --ctpassword foo123 --prop rootca.properties --cert TestKCARootCA-chain.pem</code></div>
+</div>
+    </div>
+<p   
+>The <tt class=" ">rootca.properties</tt> contains:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">defaultKey rootDefault</code></div>
+<div class="line"><code class="plain">certSignKey rootSign</code></div>
+<div class="line"><code class="plain">crlSignKey rootSign</code></div>
+<div class="line"><code class="plain">testKey rootTest</code></div>
+<div class="line"><code class="plain">pin foo123</code></div>
+<div class="line"><code class="plain">sharedLibrary /opt/nfast/toolkits/pkcs11/libcknfast.so</code></div>
+</div>
+    </div>
+<p   
+>Do the same for the SubCA:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">bin/ejbca.sh ca importca TestKCASubCA --hard --cp org.cesecore.keys.token.PKCS11CryptoToken --ctpassword foo123 --prop rootca.properties --cert TestKCASubCA-chain.pem</code></div>
+</div>
+    </div>
+<p   
+>The <tt class=" ">subca.properties</tt> contains:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">defaultKey subDefault</code></div>
+<div class="line"><code class="plain">certSignKey subSign</code></div>
+<div class="line"><code class="plain">crlSignKey subSign</code></div>
+<div class="line"><code class="plain">testKey subTest</code></div>
+<div class="line"><code class="plain">pin foo123</code></div>
+<div class="line"><code class="plain">sharedLibrary /opt/nfast/toolkits/pkcs11/libcknfast.so</code></div>
+</div>
+    </div>
+<p   
+>TestKCASubCA-chain.pem is created with:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">cat TestKCASubCA.pem TestKCARootCA.pem &gt; TestKCASubCA-chain.pem</code></div>
+</div>
+    </div>
+<p   
+>Now EJBCA has one Root CA and one Sub CA that use the same signing keys as KCA.</p>
+    </div>
+    <div class="section section-1" id="src-100273545_id-.MigratingRSAKeonCAwithnCipherv7.4.3-ImportingUserCertificates">
+        <h1 class="heading "><span>Importing User Certificates</span></h1>
+<p   
+>In EJBCA, the following command imports user certificates:</p>
+    <div  class="confbox programlisting" style="counter-reset: scroll-code-numbering 1">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">bin/ejbca.sh ca importcert --username kca1 --password foo123 --caname TestKCASubCA -a ACTIVE -f user1.pem</code></div>
+</div>
+    </div>
+<p   
+>The command does not import information about revocation. Full revocation information is possible to implement in a programmatic way.</p>
+<p   
+>You can write your own migration tool, speeding up the process by using the command line code as a template. It is found in <tt class=" ">modules/ejbca-ejb-cli/src/org/ejbca/ui/cli/ca/CaImportCertCommand.java</tt>.</p>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="Migrating_from_other_CAs_to_EJBCA.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Migrating from other CAs to EJBCA</span>
+        </a>
+                <a href="Migrating_Microsoft_CA_to_EJBCA.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Migrating Microsoft CA to EJBCA</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

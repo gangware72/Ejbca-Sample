@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>EJBCA 7.2 Upgrade Notes - EJBCA - Documentation Space</title>
+
+    
+    <link rel="stylesheet" href="assets/css/expand-macro.css">
+
+            <meta name="scroll-content-language-key" content="">
+    
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/translate.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+    <script type="text/javascript" src="assets/js/iframeResizer.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="108530570">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">EJBCADS</span>
+                    <img class="space-logo" src="EJBCADS.png" />
+                </h1>
+                <a href="EJBCA_7.4.3.2_Documentation.html" class="ht-space-link">
+                    <h2>EJBCA - Documentation Space</h2>
+                </a>
+            </header>
+                            <iframe id="ht-nav" src="toc.html?pageId=78940727"></iframe>
+                <script>
+                    $('iframe#ht-nav').iFrameResize(
+                            { 'log': true, 'autoResize': true, 'heightCalculationMethod': 'lowestElement', 'checkOrigin': false });
+                </script>
+                    </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <li><a href="EJBCA_7.4.3.2_Documentation.html">EJBCA - Documentation Space</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="EJBCA_Release_Information.html">EJBCA Release Information</a></li>
+                                                                                     <li><a href="EJBCA_Upgrade_Notes.html">EJBCA Upgrade Notes</a></li>
+                                                            </ul>
+</div>            <h1 id="src-78940727"> <span>EJBCA 7.2 Upgrade Notes</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+<p  class="p1" 
+>Below are important changes and requirements when upgrading from EJBCA 7.1 to EJBCA 7.2:</p>
+<p   
+></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-78940727_id-.EJBCA7.2UpgradeNotesv7.3.0-CertificateStoreandCRLStoreServletsAlwaysAvailable">Certificate Store and CRL Store Servlets Always Available</a></p>
+</li><li class=" "><p   
+><a   href="#src-78940727_id-.EJBCA7.2UpgradeNotesv7.3.0-ImprovedServiceExecutionLogging">Improved Service Execution Logging</a></p>
+</li><li class=" "><p   
+><a   href="#src-78940727_id-.EJBCA7.2UpgradeNotesv7.3.0-DefaultCAforSCEPAliases">Default CA for SCEP Aliases</a></p>
+</li><li class=" "><p   
+><a   href="#src-78940727_id-.EJBCA7.2UpgradeNotesv7.3.0-CertificateTransparency">Certificate Transparency</a></p>
+<ul class="toc-indentation "><li class=" "><p   
+><a   href="#src-78940727_id-.EJBCA7.2UpgradeNotesv7.3.0-PersistentCaching">Persistent Caching</a></p>
+</li><li class=" "><p   
+><a   href="#src-78940727_safe-id-aWQtLkVKQkNBNy4yVXBncmFkZU5vdGVzdjcuMy4wLU5vbi1GdW5jdGlvbmFsTG9nc0NhY2hpbmcoZmFzdGZhaWwp">Non-Functional Logs Caching (fast fail)</a></p>
+</li></ul></li><li class=" "><p   
+><a   href="#src-78940727_id-.EJBCA7.2UpgradeNotesv7.3.0-PostUpgrade">Post Upgrade</a></p>
+</li></ul><p  class="p1" 
+>For upgrade instructions and information on upgrade paths, see <a   href="Upgrading_EJBCA.html">Upgrading EJBCA</a>. For details of the new features and improvements in this release, see the <a   href="EJBCA_7.2_Release_Notes.html">EJBCA 7.2 Release Notes</a>.</p>
+    <div class="section section-1" id="src-78940727_id-.EJBCA7.2UpgradeNotesv7.3.0-BehavioralChanges">
+        <h1 class="heading "><span>Behavioral Changes</span></h1>
+    <div class="section section-2" id="src-78940727_id-.EJBCA7.2UpgradeNotesv7.3.0-CertificateStoreandCRLStoreServletsAlwaysAvailable">
+        <h2 class="heading "><span>Certificate Store and CRL Store Servlets Always Available</span></h2>
+<p   
+>The configuration files certstore.properties and crlstore.properties are removed and should no longer be used.</p>
+<p   
+>These configuration files allowed you to specify the context root of the servlet and whether the servlet should be available in the EAR file. As of EJBCA 7.2, these two servlets are always available and the context root property has been removed.</p>
+<p   
+>Access to these servlets is controlled using <a   href="Modular_Protocol_Configuration.html">Modular Protocols Configuration.</a></p>
+<p   
+>If you are using a custom context root for these servlets, you should reconfigure your client to use the new context root, or put an HTTP proxy between EJBCA and your client. Wildfly can act as HTTP proxy, see <a   href="WildFly_14___JBoss_EAP_7.2.html">WildFly 14 / JBoss EAP 7.2</a>.</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Property</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Default setting in EJBCA &lt;7.2</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Default setting as of EJBCA 7.2</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="highlight-yellow confluenceTh" rowspan="1" colspan="3">
+    <p   
+>CRL Store</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>crlstore.enabled</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><tt class=" ">false</tt><br/><br/>Setting configured in <tt class=" ">crlstore.properties</tt> at compile time.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><tt class=" ">true</tt>Setting configured using <a   href="Modular_Protocol_Configuration.html">Modular Protocols Configuration</a> at runtime.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>crlstore.contextroot</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><tt class=" ">/ejbca/publicweb/crls</tt>Setting configured in<tt class=" "> crlstore.properties </tt>at compile time.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><tt class=" ">/ejbca/publicweb/crls</tt><br/><br/>Setting is not configurable.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="highlight-yellow confluenceTh" rowspan="1" colspan="3">
+    <p   
+>Certificate Store</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>certstore.enabled</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><tt class=" ">false</tt><br/><br/>Setting configured in <tt class=" ">certstore.properties</tt> at compile time.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><tt class=" ">true</tt>Setting configured using <a   href="Modular_Protocol_Configuration.html">Modular Protocols Configuration</a> at runtime.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+>certstore.contextroot</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><tt class=" ">/ejbca/publicweb/certificates</tt>Setting configured in<tt class=" "> certstore.properties </tt>at compile time.</p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <p   
+><tt class=" ">/ejbca/publicweb/certificates</tt><br/><br/>Setting is not configurable.</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+<p   
+>If you are upgrading from EJBCA 6.11 or later, and your previous deployment did not contain the servlet, access to it will be disabled after an upgrade. However, if you are upgrading from EJBCA 6.10 or older (where the Modular Protocols Configuration feature was not implemented) access to the servlet cannot be configured automatically during an upgrade, since there is no way of determining whether your previous deployment contained the servlet or not. If your previous deployment did not contain the servlet and you do not want it to be accessible, you need to manually disable it.</p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Upgrading from</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>EJBCA 6.10 or older</p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>EJBCA 6.11 and later versions</p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Previous deployment contained servlet</p>
+            </td>
+                <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>New deployment will still contain the servlet, and it will be enabled.</p>
+            </td>
+                <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>New deployment will still contain the servlet, and the existing configuration value in Modular Protocols Configuration is kept.</p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+    <p   
+>Previous deployment did not contain servlet</p>
+            </td>
+                <td  class="highlight-red confluenceTd" rowspan="1" colspan="1">
+    <p   
+>New deployment will contain the servlet, and it will be enabled.<br/>You can disable it manually using <a   href="Modular_Protocol_Configuration.html">Modular Protocols Configuration</a>.</p>
+            </td>
+                <td  class="highlight-green confluenceTd" rowspan="1" colspan="1">
+    <p   
+>New deployment will contain the servlet, but it will be disabled.</p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-2" id="src-78940727_id-.EJBCA7.2UpgradeNotesv7.3.0-ImprovedServiceExecutionLogging">
+        <h2 class="heading "><span>Improved Service Execution Logging</span></h2>
+<p   
+>Previously the logs stated that service workers had executed or not, but didn't note the state of the execution (any errors being rendered as parts of output). Service workers have been modified to report to the logs the complete execution state, which can be Successful (if run), Failed (if run, although with some failures) or No Action (if executed, but no actions needed to be taken).</p>
+    </div>
+    <div class="section section-2" id="src-78940727_id-.EJBCA7.2UpgradeNotesv7.3.0-DefaultCAforSCEPAliases">
+        <h2 class="heading "><span>Default CA for SCEP Aliases</span></h2>
+<p   
+>If the alias being used is operating in RA mode and the message parameter is not specified in the SCEP request, the SCEP operations <tt class=" ">GetCACert</tt>, <tt class=" ">GetCACertChain</tt>, <tt class=" ">GetNextCACert</tt> and <tt class=" ">GetCACaps</tt> use the RA CA name defined by the alias, instead of relying on the <tt class=" ">scep.defaultca</tt> property. This allows for more flexibility and easier configuration for deployments where editing configuration files is inconvenient or not possible.</p>
+<p   
+>The old behavior for determining the CA name to use was as follows:</p>
+<ul class=" "><li class=" "><p   
+>If a message was sent, use the CA specified by the message.</p>
+</li><li class=" "><p   
+>If no message was sent, use the CA specified by the property <tt class=" ">scep.defaultca</tt>.</p>
+</li></ul><p   
+>As of EJBCA 7.2, the name of the CA to use is computed as follows:</p>
+<ul class=" "><li class=" "><p   
+>If a message was sent, use the CA specified by the message.</p>
+</li><li class=" "><p   
+>If the alias is in RA mode and no message is sent, use the RA CA name specified by the alias.</p>
+</li><li class=" "><p   
+>If the alias is in CA mode, the property <tt class=" ">scep.defaultca</tt> is defined, and no message is sent, use the CA specified by the property <tt class=" ">scep.defaultca.</tt></p>
+</li><li class=" "><p   
+>If the alias is in CA mode, the property <tt class=" ">scep.defaultca</tt> is not defined, and no message is sent, produce an error.</p>
+</li></ul><p   
+>For more information, see <a   href="SCEP.html">SCEP</a>.</p>
+    </div>
+    <div class="section section-2" id="src-78940727_id-.EJBCA7.2UpgradeNotesv7.3.0-CertificateTransparency">
+        <h2 class="heading "><span>Certificate Transparency</span></h2>
+    <div class="section section-3" id="src-78940727_id-.EJBCA7.2UpgradeNotesv7.3.0-PersistentCaching">
+        <h3 class="heading "><span>Persistent Caching</span></h3>
+<p   
+>Persistent caching of Certificate Transparency SCTs (Signed Certificate Timestamps) has been added in addition to the existing in-memory caching. This adds a new table, <strong class=" "><tt class=" ">SctData</tt></strong> for storing cached SCT data. Please ensure this table exists if you use Certificate Transparency.</p>
+<p   
+>As there can be several SCTs per certificate, the SctData table will grow large over time. Therefore, we <strong class=" ">strongly recommend</strong> creating an index on the <tt class=" ">fingerprint</tt> column. Refer to <tt class=" ">doc/sql-scripts/create-index-ejbca.sql</tt> for an SQL command to create the index.</p>
+    </div>
+    <div class="section section-3" id="src-78940727_safe-id-aWQtLkVKQkNBNy4yVXBncmFkZU5vdGVzdjcuMy4wLU5vbi1GdW5jdGlvbmFsTG9nc0NhY2hpbmcoZmFzdGZhaWwp">
+        <h3 class="heading "><span>Non-Functional Logs Caching (fast fail)</span></h3>
+<p   
+>The &quot;fast fail&quot; cache is now enabled by default. For details, see <a   href="EJBCA_7.2_Release_Notes.html">EJBCA 7.2 Release Notes</a>.</p>
+<p   
+>Please make sure that only CAs that are trusted by the CT logs are used in certificate profiles where CT is enabled. If a certificate issued by an untrusted CA is submitted, the CT log will return an error, and EJBCA will consider the log to be non-functional (for all CAs, not just the untrusted one).</p>
+<p   
+>To disable the &quot;fast fail&quot; cache, set the property <tt class=" ">ct.fastfail.enabled</tt> to false in the file <tt class=" ">conf/cesecore.properties</tt>.</p>
+<p   
+>For more information, see <a   href="Certificate_Transparency.html">Certificate Transparency</a>.</p>
+    </div>
+    </div>
+    <div class="section section-2" id="src-78940727_id-.EJBCA7.2UpgradeNotesv7.3.0-PostUpgrade">
+        <h2 class="heading "><span>Post Upgrade</span></h2>
+<p   
+>When upgrading to EJBCA 7.2.0, you must perform a post-upgrade after all nodes have been upgraded. The post-upgrade is required because of an improvement allowing custom certificate start time/end time to be set with seconds granularity. The time value was previously saved with minutes granularity.</p>
+<p   
+>To perform the post-upgrade, click the EJBCA <strong class=" ">System Upgrade</strong> menu option, and then click <strong class=" ">Start post-upgrade</strong>. For more information, see <a   href="Upgrading_EJBCA.html">Upgrading EJBCA.</a></p>
+    </div>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="EJBCA_7.2.1_Upgrade_Notes.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>EJBCA 7.2.1 Upgrade Notes</span>
+        </a>
+                <a href="EJBCA_7.1_Upgrade_Notes.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>EJBCA 7.1 Upgrade Notes</span>
+        </a>
+    </nav>    
+            
+    <footer id="ht-footer">
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+    <script src="assets/js/expand-macro.js"></script>
+</body>
+</html>

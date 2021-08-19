@@ -1,0 +1,2 @@
+org.ejbca.core.model.validation.DomainBlacklistValidator
+org.ejbca.core.model.validation.GoogleSafeBrowsingValidator
